@@ -2,7 +2,7 @@
   "name": "mabinogi-foreground-limiter",
   "productName": "mabinogi-foreground-limiter",
   "version": "1.0.0",
-  "description": "Mabinogi game cpu limit when game is not focus.",
+  "description": "Mabinogi game CPU limit when game is not focused.",
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "electron-forge start",
