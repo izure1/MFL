@@ -1,0 +1,62 @@
+{
+  "name": "mabinogi-foreground-limiter",
+  "productName": "mabinogi-foreground-limiter",
+  "version": "1.0.0",
+  "description": "Mabinogi game cpu limit when game is not focus.",
+  "main": ".vite/build/main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "eslint --ext .ts,.tsx ."
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.4.0",
+    "@electron-forge/maker-deb": "^7.4.0",
+    "@electron-forge/maker-rpm": "^7.4.0",
+    "@electron-forge/maker-squirrel": "^7.4.0",
+    "@electron-forge/maker-zip": "^7.4.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
+    "@electron-forge/plugin-fuses": "^7.4.0",
+    "@electron-forge/plugin-vite": "^7.4.0",
+    "@electron/fuses": "^1.8.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "electron": "31.2.1",
+    "electron-vite": "^2.3.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.29.1",
+    "ts-node": "^10.9.2",
+    "typescript": "~4.5.4",
+    "vite": "^5.3.3"
+  },
+  "keywords": [
+    "mabinogi",
+    "cpu",
+    "limit",
+    "bes"
+  ],
+  "author": {
+    "name": "izure",
+    "email": "admin@izure.org"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@fontsource/roboto": "^5.0.13",
+    "@mui/icons-material": "^5.16.1",
+    "@mui/material": "^5.16.1",
+    "@paymoapp/active-window": "^2.1.1",
+    "electron-squirrel-startup": "^1.0.1",
+    "find-process": "^1.4.7",
+    "is-elevated": "^4.0.0",
+    "ntsuspend": "^1.0.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tissue-roll": "^5.1.0"
+  }
+}

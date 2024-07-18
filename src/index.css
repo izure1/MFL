@@ -1,0 +1,28 @@
+@font-face {
+  font-family: 'Mabinogi';
+  src: url('./renderer/assets/fonts/Mabinogi_Classic_TTF.ttf');
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  user-select: none;
+}
+
+.titlebar {
+  -webkit-app-region: drag;
+}
+
+.titlebar button {
+  -webkit-app-region: no-drag;
+}
+
+.MuiTypography-root {
+  font-family: 'Mabinogi' !important;
+  font-weight: normal !important;
+  text-shadow: 0 0 1px black;
+}
