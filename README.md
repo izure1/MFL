@@ -2,6 +2,10 @@
 
 게임 [마비노기](https://mabinogi.nexon.com)를 활성화된 상태가 아니라면 CPU 점유율을 낮춰줍니다.
 
+## 다운로드
+
+[릴리즈 페이지](https://github.com/izure1/mabinogi-foreground-limter/releases)에서 다운받을 수 있습니다.
+
 ## 왜 사용하는가?
 
 다른 작업을 하면서 마비노기를 바탕화면처럼 쓰시는 분들이 많습니다.  
@@ -14,10 +18,6 @@
 1. 압축 해제 후, **mabinogi-foreground-limiter.exe** 프로그램을 관리자 권한으로 실행하세요.  
 2. 게임이 실행 중이면 자동으로 감지됩니다. 이후 **시작하기** 버튼을 누르세요.
 3. **성능 제한** 기능을 사용하여 CPU를 얼마나 제한할 지 설정할 수 있습니다.
-
-## 다운로드
-
-[릴리즈 페이지](https://github.com/izure1/mabinogi-foreground-limter/releases)에서 다운받을 수 있습니다.
 
 ## 테스트 환경
 
