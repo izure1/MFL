@@ -141,6 +141,7 @@ export async function handle(active: boolean) {
 
   if (!active) {
     mabinogiActivated = false
+    subscriberAttached = false
     cleanUp(pid)
     subscriber.destroy()
     rendererLog('Mabinogi limit activation off.')
@@ -165,6 +166,7 @@ export async function handle(active: boolean) {
       checkMabinogiTerminated().then((terminated: boolean) => {
         if (terminated) {
           mabinogiActivated = false
+          subscriberAttached = false
           stopLoop()
           subscriber.destroy()
           rendererLog('Can\'t found Mabinogi process. Stop loop.')
