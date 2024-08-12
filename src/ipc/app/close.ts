@@ -3,8 +3,8 @@ import { handle as limit } from './limit'
 import { unsubscribeAll } from '../../processObserver'
 
 export async function handle() {
-  unsubscribeAll()
   await limit(false)
+  unsubscribeAll()
   BrowserWindow.getAllWindows().forEach((w) => w.close())
 }
 

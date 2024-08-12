@@ -1,5 +1,5 @@
+import path from 'node:path'
 import { app, BrowserWindow, Menu, Tray, dialog, nativeImage } from 'electron'
-import path from 'path'
 
 import { handle as checkPermission } from './ipc/hardware/checkPermission'
 import { handle as limit } from './ipc/app/limit'
@@ -28,6 +28,7 @@ function *generateIpc() {
   yield import('./ipc/app/minimize')
   yield import('./ipc/app/limit')
   yield import('./ipc/app/devtool')
+  yield import('./ipc/app/log')
   
   yield import('./ipc/config/get')
   yield import('./ipc/config/set')
@@ -64,6 +65,9 @@ function createTray() {
 }
 
 async function isElevated() {
+  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    return true
+  }
   const elevated = await checkPermission()
   if (!elevated) {
     dialog.showErrorBox('권한이 부족합니다', '관리자 권한으로 실행해주세요.\n앱을 종료합니다.')
@@ -88,6 +92,11 @@ async function createWindow() {
     titleBarOverlay: false,
     resizable: false,
     icon: iconImage,
+    frame: false,
+    transparent: true,
+    minimizable: false,
+    maximizable: false,
+    fullscreenable: false,
     webPreferences: {
       sandbox: false,
       preload: path.join(__dirname, 'preload.js'),

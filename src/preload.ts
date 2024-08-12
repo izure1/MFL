@@ -27,3 +27,7 @@ export const context = {
 }
 
 contextBridge.exposeInMainWorld('ipc', context)
+
+ipcRenderer.on('log', (_e, ...message: any) => {
+  console.log(...message)
+})

@@ -53,18 +53,10 @@ export default function AboutButton() {
     ],
     [
       {
-        title: '카브 최대 응가',
-        users: ['주덕배']
-      },
-      {
-        title: '응가 방구 코딱디',
-        users: ['스우임']
-      },
-      {
-        title: '제작 중 관음한 사람',
+        title: '제작 중 염탐한 사람',
         users: ['궐련설화']
       }
-    ]
+    ],
   ]
 
   return (

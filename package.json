@@ -1,8 +1,8 @@
 {
   "name": "mabinogi-foreground-limiter",
   "productName": "mabinogi-foreground-limiter",
-  "version": "1.0.0",
-  "description": "Mabinogi game CPU limit when game is not focused.",
+  "version": "1.0.1",
+  "description": "Limit your computer CPU when Mabinogi game is not activated.",
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -53,10 +53,11 @@
     "@paymoapp/active-window": "^2.1.1",
     "electron-squirrel-startup": "^1.0.1",
     "find-process": "^1.4.7",
+    "hookall": "^2.1.0",
     "is-elevated": "^4.0.0",
     "ntsuspend": "^1.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tissue-roll": "^5.1.0"
+    "tissue-roll": "^5.1.1"
   }
 }

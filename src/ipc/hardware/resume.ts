@@ -1,4 +1,4 @@
-import { ipcMain, IpcMainInvokeEvent } from 'electron'
+import { ipcMain } from 'electron'
 import { resume } from 'ntsuspend'
 
 export async function handle(pid: number): Promise<boolean> {
@@ -6,7 +6,7 @@ export async function handle(pid: number): Promise<boolean> {
 }
 
 export function ipc() {
-  ipcMain.handle('process-resume', async (e: IpcMainInvokeEvent, pid: number) => {
+  ipcMain.handle('process-resume', async (_e, pid: number) => {
     return await handle(pid)
   })
 }

@@ -79,12 +79,12 @@ export default function Config() {
           </div>
           <div>
             <Typography variant='h5' color='rgb(225, 173, 145)'>성능 제한</Typography>
-            <Typography variant='body1' color='rgb(230, 230, 230)'>0 ~ 99% 사이로 값을 설정할 수 있습니다.</Typography>
+            <Typography variant='body1' color='rgb(230, 230, 230)'>5 ~ 95% 사이로 값을 설정할 수 있습니다.</Typography>
             <Slider
               value={config.limit}
               step={1}
-              min={0}
-              max={99}
+              min={5}
+              max={95}
               valueLabelDisplay='auto'
               onChange={handleChangeLimit}
             />
