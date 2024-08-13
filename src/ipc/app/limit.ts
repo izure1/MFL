@@ -1,4 +1,3 @@
-import { setPriority, constants } from 'node:os'
 import { ipcMain } from 'electron'
 import { suspend, resume } from 'ntsuspend'
 
@@ -152,13 +151,11 @@ export async function handle(active: boolean) {
     subscriberAttached = true
     subscriber.onActivate(() => {
       mabinogiActivated = true
-      setPriority(pid, constants.priority.PRIORITY_HIGH)
       cleanUp(pid)
       rendererLog('Mabinogi activated.')
     })
     subscriber.onDeactivate(() => {
       mabinogiActivated = false
-      setPriority(pid, constants.priority.PRIORITY_LOW)
       startLoop(pid)
       rendererLog('Mabinogi deactivated.')
     })
