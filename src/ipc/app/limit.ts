@@ -1,3 +1,4 @@
+import { setPriority, constants } from 'node:os'
 import { ipcMain } from 'electron'
 import { suspend, resume } from 'ntsuspend'
 
@@ -6,6 +7,7 @@ import { handle as getMabinogiProcess } from '../hardware/mabinogi'
 import { handle as rendererLog } from '../app/log'
 import { getConfig } from '../../config'
 import { IProcess } from '../../types'
+import { createThrottling } from '../../utils/timer'
 
 let loopId: NodeJS.Timeout
 let process: IProcess
@@ -141,34 +143,44 @@ export async function handle(active: boolean) {
   if (!active) {
     mabinogiActivated = false
     subscriberAttached = false
+    setPriority(pid, constants.priority.PRIORITY_NORMAL)
     cleanUp(pid)
     subscriber.destroy()
     rendererLog('Mabinogi limit activation off.')
     return true
   }
-
+  
   if (!subscriberAttached) {
+    const throttling = createThrottling()
     subscriberAttached = true
+
     subscriber.onActivate(() => {
       mabinogiActivated = true
+      setPriority(pid, constants.priority.PRIORITY_HIGH)
       cleanUp(pid)
       rendererLog('Mabinogi activated.')
     })
     subscriber.onDeactivate(() => {
       mabinogiActivated = false
+      setPriority(pid, constants.priority.PRIORITY_LOW)
       startLoop(pid)
       rendererLog('Mabinogi deactivated.')
     })
     subscriber.onDeactivate(() => {
-      checkMabinogiTerminated().then((terminated: boolean) => {
-        if (terminated) {
-          mabinogiActivated = false
-          subscriberAttached = false
-          stopLoop()
-          subscriber.destroy()
-          rendererLog('Can\'t found Mabinogi process. Stop loop.')
+      throttling(() => {
+        if (mabinogiActivated || !subscriberAttached) {
+          return
         }
-      })
+        checkMabinogiTerminated().then((terminated: boolean) => {
+          if (terminated) {
+            mabinogiActivated = false
+            subscriberAttached = false
+            stopLoop()
+            subscriber.destroy()
+            rendererLog('Can\'t found Mabinogi process. Stop loop.')
+          }
+        })
+      }, 10000)
     })
   }
 
