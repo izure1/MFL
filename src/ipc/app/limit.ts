@@ -141,10 +141,12 @@ export async function handle(active: boolean) {
   const subscriber = Subscriber.GetInstance(pid)
 
   if (!active) {
+    const terminated = await checkMabinogiTerminated()
+    if (!terminated) {
+      cleanUp(pid)
+    }
     mabinogiActivated = false
     subscriberAttached = false
-    setPriority(pid, constants.priority.PRIORITY_NORMAL)
-    cleanUp(pid)
     subscriber.destroy()
     rendererLog('Mabinogi limit activation off.')
     return true
@@ -156,13 +158,11 @@ export async function handle(active: boolean) {
 
     subscriber.onActivate(() => {
       mabinogiActivated = true
-      setPriority(pid, constants.priority.PRIORITY_HIGH)
       cleanUp(pid)
       rendererLog('Mabinogi activated.')
     })
     subscriber.onDeactivate(() => {
       mabinogiActivated = false
-      setPriority(pid, constants.priority.PRIORITY_LOW)
       startLoop(pid)
       rendererLog('Mabinogi deactivated.')
     })
