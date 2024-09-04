@@ -1,12 +1,12 @@
 import { ipcMain } from 'electron'
-import { getConfig } from '../../db/config'
+import { getMacroMap } from '../../db/macro'
 
 export async function handle() {
-  return getConfig()
+  return getMacroMap()
 }
 
 export function ipc() {
-  ipcMain.handle('config-get', async () => {
+  ipcMain.handle('macro-get-map', async () => {
     return await handle()
   })
 }

@@ -6,7 +6,7 @@ import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 
 import { ipc } from '../ipc'
 import { delay } from '../../utils/timer'
-import { ConfigScheme } from 'src/types'
+import { ConfigScheme } from '../../types'
 
 export default function Config() {
   const [config, setConfig] = useState<ConfigScheme>({ limit: 50, running: false })
@@ -74,7 +74,7 @@ export default function Config() {
             <Typography variant='body1' color='rgb(230, 230, 230)'>
               { working ?
               '현재 동작 중입니다!' :
-              '마비노기가 백그라운드일 때, 성능을 제한합니다.' }
+              '마비노기 비활성화 시 성능을 제한하며, 활성화 시 매크로가 동작합니다' }
             </Typography>
           </div>
           <div>

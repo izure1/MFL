@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState, } from 'react'
 import { ipc } from '../ipc'
-import { IProcess } from '../../../src/types'
+import { IProcess } from '../../types'
 
 export const context = createContext<IProcess|null>(null)
 

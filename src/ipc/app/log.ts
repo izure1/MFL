@@ -1,9 +1,10 @@
-import { ipcMain, BrowserWindow } from 'electron'
+import { ipcMain } from 'electron'
+import { handle as mainToRenderer } from '../helpers/mainToRenderer'
 
 type StringifyType = string|number|boolean|undefined|null
 
 export async function handle(...message: StringifyType[]) {
-  BrowserWindow.getAllWindows().at(0).webContents.send('log', ...message)
+  mainToRenderer('log', ...message)
 }
 
 export function ipc() {

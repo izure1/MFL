@@ -1,8 +1,12 @@
 import path from 'node:path'
 import { app, BrowserWindow, Menu, Tray, dialog, nativeImage } from 'electron'
 
+import type { IOEvent } from './types'
 import { handle as checkPermission } from './ipc/hardware/checkPermission'
 import { handle as limit } from './ipc/app/limit'
+import { createSubscriber } from './ioObserver'
+import { start as startMacroRunner, stop as stopMacroRunner } from './macroRunner'
+import { sendIOSignal } from './ipc/helpers/sendIOSignal'
 import {
   init as processObserverInit,
   unsubscribeAll
@@ -29,11 +33,20 @@ function *generateIpc() {
   yield import('./ipc/app/limit')
   yield import('./ipc/app/devtool')
   yield import('./ipc/app/log')
+  yield import('./ipc/app/directoryOpen')
   
   yield import('./ipc/config/get')
   yield import('./ipc/config/set')
 
+  yield import('./ipc/macro/getMap')
+  yield import('./ipc/macro/get')
+  yield import('./ipc/macro/set')
+  yield import('./ipc/macro/remove')
+
+  yield import('./ipc/io/listen')
+
   yield import('./ipc/external/open')
+  yield import('./ipc/external/showItem')
 }
 
 let mainWindow: BrowserWindow|null
@@ -77,6 +90,28 @@ async function isElevated() {
   return true
 }
 
+function listenIO() {
+  const {
+    onClick,
+    onKeydown,
+    onKeyup,
+    onMousedown,
+    onMouseup,
+    onWheel,
+  } = createSubscriber()
+  const wrapper = <T extends IOEvent>(e: T) => {
+    sendIOSignal(e)
+    return e
+  }
+
+  onClick(wrapper)
+  onKeydown(wrapper)
+  onKeyup(wrapper)
+  onMousedown(wrapper)
+  onMouseup(wrapper)
+  onWheel(wrapper)
+}
+
 async function createWindow() {
   for await (const { ipc } of generateIpc()) {
     ipc()
@@ -84,10 +119,10 @@ async function createWindow() {
   
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 700,
-    height: 350,
-    maxWidth: 700,
-    maxHeight: 350,
+    width: 900,
+    height: 550,
+    maxWidth: 900,
+    maxHeight: 550,
     titleBarStyle: 'hidden',
     titleBarOverlay: false,
     resizable: false,
@@ -124,6 +159,9 @@ async function createWindow() {
     tray.destroy()
     tray = null
   })
+
+  listenIO()
+  startMacroRunner()
 }
 
 // This method will be called when Electron has finished
@@ -142,6 +180,7 @@ app.on('ready', async () => {
 app.on('window-all-closed', async () => {
   if (process.platform !== 'darwin') {
     unsubscribeAll()
+    stopMacroRunner()
     await limit(false)
     app.quit()
     if (tray) {

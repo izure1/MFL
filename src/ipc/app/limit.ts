@@ -1,11 +1,10 @@
-import { setPriority, constants } from 'node:os'
 import { ipcMain } from 'electron'
 import { suspend, resume } from 'ntsuspend'
 
 import { createHook, getActivateWindow, subscribe, unsubscribe } from '../../processObserver'
 import { handle as getMabinogiProcess } from '../hardware/mabinogi'
 import { handle as rendererLog } from '../app/log'
-import { getConfig } from '../../config'
+import { getConfig } from '../../db/config'
 import { IProcess } from '../../types'
 import { createThrottling } from '../../utils/timer'
 

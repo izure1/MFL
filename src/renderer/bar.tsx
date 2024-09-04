@@ -1,7 +1,9 @@
 import { css } from '@emotion/react'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
+import HomeButton from './components/HomeButton'
 import AboutButton from './components/AboutButton'
+import MacroButton from './components/MacroButton'
 import IconButton from '@mui/material/IconButton'
 import Minimize from '@mui/icons-material/Minimize'
 import Button from '@mui/material/Button'
@@ -49,6 +51,8 @@ export default function Titlebar() {
                 `}
               />
             </Button>
+            <HomeButton />
+            <MacroButton />
             <AboutButton />
           </div>
           <div css={css`
