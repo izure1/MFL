@@ -12,7 +12,6 @@ import { getMacroMap } from './db/macro'
 import { getConfig } from './db/config'
 import { handle as findMabinogi } from './ipc/hardware/mabinogi'
 import { fromLinuxKeycode } from './utils/keycode'
-import { delay } from './utils/timer'
 
 let mabinogiActivated = false
 let mabinogiPID: number = null
@@ -22,7 +21,7 @@ let IOSubscriber: ReturnType<typeof createIOSubscriber> = null
 let bindingLifeCycles: MacroLifecycle[] = []
 
 let running = false
-let sleepDuration = 10
+let standardDelay = 50
 let hardware = new Hardware()
 
 class MacroLifecycle {
@@ -89,12 +88,16 @@ class MacroLifecycle {
       return
     }
     const isDown = unit.toggle === 'down'
-    hardware.keyboard.toggleKey(key, isDown)
+    await hardware.keyboard.toggleKey(key, isDown, standardDelay)
   }
   
   private async _mouseToggle(unit: MacroIOUnit): Promise<void> {
     const isDown = unit.toggle === 'down'
-    hardware.mouse.toggle(this._getMouseButton(unit.button), isDown)
+    await hardware.mouse.toggle(
+      this._getMouseButton(unit.button),
+      isDown,
+      standardDelay
+    )
   }
 
   async run(): Promise<void> {
@@ -114,7 +117,6 @@ class MacroLifecycle {
         break
       }
       await this._runUnit(unit)
-      await delay(sleepDuration)
     }
     running = false
     if (escaped) {
