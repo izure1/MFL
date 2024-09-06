@@ -1,7 +1,7 @@
 {
   "name": "mabinogi-foreground-limiter",
   "productName": "MFL",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Limit your computer CPU when Mabinogi game is not activated.",
   "main": ".vite/build/main.js",
   "scripts": {
@@ -62,7 +62,7 @@
     "react-dom": "^18.3.1",
     "react-sortablejs": "^6.1.4",
     "sortablejs": "^1.15.2",
-    "tissue-roll": "^5.1.1",
+    "tissue-roll": "^5.1.2",
     "uiohook-napi": "^1.5.4"
   }
 }

@@ -89,5 +89,5 @@ typings/
 .vite/
 
 # Electron-Forge
-out/
-db/
+/out/
+/db/
