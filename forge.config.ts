@@ -11,6 +11,9 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     icon: 'resources/img/icon.png',
+    win32metadata: {
+      "requested-execution-level": 'requireAdministrator'
+    }
   },
   rebuildConfig: {},
   makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],

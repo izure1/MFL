@@ -1,7 +1,7 @@
-import 'update-electron-app'
 
 import path from 'node:path'
 import { app, BrowserWindow, Menu, Tray, dialog, nativeImage } from 'electron'
+import { updateElectronApp } from 'update-electron-app'
 
 import type { IOEvent } from './types'
 import { handle as checkPermission } from './ipc/hardware/checkPermission'
@@ -163,6 +163,7 @@ async function createWindow() {
   })
 
   listenIO()
+  updateElectronApp()
 }
 
 // This method will be called when Electron has finished
