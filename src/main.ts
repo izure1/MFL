@@ -1,3 +1,5 @@
+import 'update-electron-app'
+
 import path from 'node:path'
 import { app, BrowserWindow, Menu, Tray, dialog, nativeImage } from 'electron'
 
@@ -5,7 +7,7 @@ import type { IOEvent } from './types'
 import { handle as checkPermission } from './ipc/hardware/checkPermission'
 import { handle as limit } from './ipc/app/limit'
 import { createSubscriber } from './ioObserver'
-import { start as startMacroRunner, stop as stopMacroRunner } from './macroRunner'
+import { stop as stopMacroRunner } from './macroRunner'
 import { sendIOSignal } from './ipc/helpers/sendIOSignal'
 import {
   init as processObserverInit,
@@ -161,7 +163,6 @@ async function createWindow() {
   })
 
   listenIO()
-  startMacroRunner()
 }
 
 // This method will be called when Electron has finished

@@ -1,14 +1,13 @@
 import type { ConfigScheme } from '../types'
-import { mkdirSync, existsSync } from 'node:fs'
 import { TissueRollDocument } from 'tissue-roll'
+import { getFilePathFromHomeDir } from '../homedir'
 
-const CONFIG_PATH = './db/config.db'
+const CONFIG_PATH = getFilePathFromHomeDir('./Data/config.db')
 const DEFAULT_CONFIG: ConfigScheme = {
   limit: 50,
   running: false
 }
 
-mkdirSync('./db', { recursive: true })
 const db = TissueRollDocument.Open({
   path: CONFIG_PATH,
   version: 0,

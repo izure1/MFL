@@ -2,6 +2,7 @@ import { ipcMain } from 'electron'
 import { suspend, resume } from 'ntsuspend'
 
 import { createHook, getActivateWindow, subscribe, unsubscribe } from '../../processObserver'
+import { start as startMacroRunner, stop as stopMacroRunner } from '../../macroRunner'
 import { handle as getMabinogiProcess } from '../hardware/mabinogi'
 import { handle as rendererLog } from '../app/log'
 import { getConfig } from '../../db/config'
@@ -147,6 +148,7 @@ export async function handle(active: boolean) {
     mabinogiActivated = false
     subscriberAttached = false
     subscriber.destroy()
+    await stopMacroRunner()
     rendererLog('Mabinogi limit activation off.')
     return true
   }
@@ -154,6 +156,8 @@ export async function handle(active: boolean) {
   if (!subscriberAttached) {
     const throttling = createThrottling()
     subscriberAttached = true
+    
+    await startMacroRunner()
 
     subscriber.onActivate(() => {
       mabinogiActivated = true
@@ -190,6 +194,7 @@ export async function handle(active: boolean) {
   else {
     subscriber.emitDeactivate()
   }
+
   return true
 }
 

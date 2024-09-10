@@ -1,8 +1,9 @@
-import { app, ipcMain } from 'electron'
+import { ipcMain } from 'electron'
 import { handle as showItem } from '../external/showItem'
+import { getHomeDir } from '../../homedir'
 
 export async function handle() {
-  showItem(app.getAppPath())
+  showItem(getHomeDir())
 }
 
 export function ipc() {

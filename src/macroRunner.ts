@@ -218,7 +218,11 @@ function unbindLifeCycles() {
 
 export async function start() {
   await stop()
-  const { pid } = await findMabinogi()
+  const mabinogiProcess = await findMabinogi()
+  if (!mabinogiProcess) {
+    return
+  }
+  const { pid } = mabinogiProcess
   mabinogiPID = pid
   processHooker = createProcessHook(mabinogiPID)
   processHookerID = processSubscribe(processHooker.hook)

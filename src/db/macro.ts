@@ -1,10 +1,9 @@
 import type { MacroScheme, MacroSchemeMap, MacroUnit, MacroIOUnit } from '../types'
-import { mkdirSync } from 'node:fs'
 import { TissueRollDocument } from 'tissue-roll'
+import { getFilePathFromHomeDir } from '../homedir'
 
-const CONFIG_PATH = './db/macro.db'
+const CONFIG_PATH = getFilePathFromHomeDir('./Data/macro.db')
 
-mkdirSync('./db', { recursive: true })
 const db = TissueRollDocument.Open({
   path: CONFIG_PATH,
   version: 0,
