@@ -4,7 +4,8 @@
 
 ## 다운로드
 
-[릴리즈 페이지](https://github.com/izure1/mabinogi-foreground-limter/releases)에서 다운받을 수 있습니다.
+[릴리즈 페이지](https://github.com/izure1/mabinogi-foreground-limter/releases)에서 다운받을 수 있습니다.  
+최신 버전의 Assets에서 `MFL-x.x.x.Setup.exe` 파일을 다운받아 설치해주세요.
 
 ## 기능
 
@@ -13,7 +14,7 @@
 
 ## 사용법
 
-1. 압축 해제 후, **MFL.exe** 프로그램을 관리자 권한으로 실행하세요.
+1. 설치 후 실행하세요.
 1. 게임이 실행 중이면 자동으로 감지됩니다. 이후 **시작하기** 버튼을 누르세요.
 1. **성능 제한** 기능을 사용하여 CPU를 얼마나 제한할 지 설정할 수 있습니다.
 
@@ -47,8 +48,20 @@ Windows 10, Windows 11에서 테스트를 완료했습니다.
 ## 직접 빌드하고 싶다면?
 
 1. 소스코드를 다운받으세요.
-2. 명령줄에 `npm run package`를 입력하세요.
-3. 빌드된 결과물이 `out` 디렉토리에 출력됩니다.
+1. 명령줄에 `npm run package`를 입력하세요.
+1. 빌드된 결과물이 `out` 디렉토리에 출력됩니다.
+
+### 새로운 저장소에 배포하기
+
+만일 포크하여 새로운 저장소로 퍼블리시 하고 싶다면 다음 순서를 따르세요.
+
+1. 소스코드를 다운받으세요.
+1. [Github 토큰 생성 방법](https://www.electronjs.org/docs/latest/tutorial/tutorial-publishing-updating)을 참고하여 **Github Token** 생성하세요.
+1. 다운받은 소스코드 디렉토리 루트에 **.env** 파일을 생성합니다.  
+파일에 `GITHUB_TOKEN=your-token`을 기입하세요.  
+1. 배포를 위해 `forge.config.ts` 파일을 수정합니다.  
+**repository.owner** 값을 당신의 Github 아이디, **repository.name** 값을 저장소 이름으로 수정하세요.
+1. `npm run publish` 명령어를 입력하여 배포하세요.
 
 ## 라이센스
 

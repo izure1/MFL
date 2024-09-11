@@ -3,7 +3,10 @@ import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
-import { DialogContent, DialogTitle } from '@mui/material'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import Typography from '@mui/material/Typography'
 import { ipc } from '../ipc'
 
 
@@ -85,52 +88,53 @@ export default function AboutButton() {
         }}
       >
         <DialogTitle sx={{ pb: 1 }}>류트 41채 카브 항구 연합 길드 제공</DialogTitle>
-        <DialogContent sx={{ py: 1 }}>
-          <hr css={css`
-            height: 1px;
-            border: 0;
-            background: linear-gradient(90deg, transparent, rgb(225, 173, 145), transparent);
-          `} />
-
-          <div css={css`
-            color: 'white';
-          `}>
+        <DialogContent>
+          <DialogContentText>
+            <hr css={css`
+              height: 1px;
+              border: 0;
+              background: linear-gradient(90deg, transparent, rgb(225, 173, 145), transparent);
+            `} />
             <div css={css`
-              display: grid;
-              grid-template-columns: repeat(2, 1fr);
+              color: 'white';
             `}>
-              {
-                boards.map((board, i) => (
-                  <div key={`board-${i}`}>
-                    {
-                      board.map((section, j) => (
-                        <dl
-                          key={`board-${i}-section-${j}`}
-                          css={css`
-                            & > dt {
-                              font-size: 1.25rem;
-                              font-family: 'Mabinogi';
-                              color: gray;
-                              margin-top: 10px;
-                            }
-                            & > dd {
-                              margin-top: 3px;
-                              margin-left: 5px;
-                            }
-                          `}
-                        >
-                          <dt>{section.title}</dt>
-                          <dd>
-                            <SpecUser>{section.users.join(', ')}</SpecUser>
-                          </dd>
-                        </dl>
-                      ))
-                    }
-                  </div>
-                ))
-              }
+              <div css={css`
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+              `}>
+                {
+                  boards.map((board, i) => (
+                    <div key={`board-${i}`}>
+                      {
+                        board.map((section, j) => (
+                          <dl
+                            key={`board-${i}-section-${j}`}
+                            css={css`
+                              & > dt {
+                                font-size: 1.25rem;
+                                font-family: 'Mabinogi';
+                                color: gray;
+                                margin-top: 10px;
+                              }
+                              & > dd {
+                                margin-top: 3px;
+                                margin-left: 5px;
+                              }
+                            `}
+                          >
+                            <dt>{section.title}</dt>
+                            <dd>
+                              <SpecUser>{section.users.join(', ')}</SpecUser>
+                            </dd>
+                          </dl>
+                        ))
+                      }
+                    </div>
+                  ))
+                }
+              </div>
             </div>
-          </div>
+          </DialogContentText>
         </DialogContent>
       </Dialog>
     </>
