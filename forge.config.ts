@@ -25,8 +25,7 @@ const config: ForgeConfig = {
           owner: 'izure1',
           name: 'MFL'
         },
-        prerelease: false,
-        draft: true
+        prerelease: false
       }
     }
   ],
