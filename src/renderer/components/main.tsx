@@ -1,9 +1,9 @@
 import { useContext } from 'react'
-import { context as detectorContext } from './DetectorProvider'
-import Container from '@mui/material/Container'
-import Loading from './Loading'
-import Config from './Config'
 import { css } from '@emotion/react'
+import { context as detectorContext } from './DetectorProvider.js'
+import { Container } from '@mui/material'
+import Loading from './Loading.js'
+import Config from './Config.js'
 
 import bgImage from '../assets/img/bg.webp'
 

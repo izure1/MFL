@@ -1,7 +1,8 @@
 import { ipcMain, BrowserWindow } from 'electron'
-import { handle as limit } from './limit'
-import { unsubscribeAll } from '../../processObserver'
-import { stop } from '../../macroRunner'
+import { handle as limit } from './limit.js'
+import { unsubscribeAll } from '../../processObserver.js'
+import { stop as stopMacroRunner } from '../../macroRunner.js'
+import { stop as stopLogger } from '../../logger.js'
 
 let closing = false
 
@@ -11,7 +12,8 @@ export async function handle() {
   }
   closing = true
   await limit(false)
-  stop()
+  stopMacroRunner()
+  stopLogger()
   unsubscribeAll()
   BrowserWindow.getAllWindows().forEach((w) => w.close())
   closing = false

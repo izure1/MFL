@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import { handle as mainToRenderer } from '../helpers/mainToRenderer'
+import { handle as mainToRenderer } from '../helpers/mainToRenderer.js'
 
 type StringifyType = string|number|boolean|undefined|null
 

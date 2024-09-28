@@ -1,28 +1,18 @@
-import type { MacroDelayUnit, MacroIOUnit, MacroScheme, MacroUnit } from './types'
-import { Hardware } from 'keysender'
-import {
-  createHook as createProcessHook,
-  subscribe as processSubscribe,
-  unsubscribe as processUnsubscribe
-} from './processObserver'
-import {
-  createSubscriber as createIOSubscriber
-} from './ioObserver'
-import { getMacroMap } from './db/macro'
-import { getConfig } from './db/config'
-import { handle as findMabinogi } from './ipc/hardware/mabinogi'
-import { fromLinuxKeycode } from './utils/keycode'
+import type { MacroDelayUnit, MacroIOUnit, MacroScheme, MacroUnit } from './types/index.js'
+import { hardware } from './hardware.js'
+import { createSubscriber as createProcessSubscriber } from './processObserver.js'
+import { createSubscriber as createIOSubscriber } from './ioObserver.js'
+import { getMacroMap } from './db/macro.js'
+import { getConfig } from './db/config.js'
+import { handle as findMabinogi } from './ipc/hardware/mabinogi.js'
+import { fromLinuxKeycode } from './utils/keycode.js'
 
-let mabinogiActivated = false
-let mabinogiPID: number = null
-let processHookerID: number = null
-let processHooker: ReturnType<typeof createProcessHook> = null
+let processSubscriber: ReturnType<typeof createProcessSubscriber> = null
 let IOSubscriber: ReturnType<typeof createIOSubscriber> = null
 let bindingLifeCycles: MacroLifecycle[] = []
 
 let running = false
 let standardDelay = 50
-let hardware = new Hardware()
 
 class MacroLifecycle {
   readonly name: string
@@ -112,7 +102,7 @@ class MacroLifecycle {
         escaped = true
         break
       }
-      if (!mabinogiActivated) {
+      if (!processSubscriber.windowActivated) {
         escaped = true
         break
       }
@@ -146,7 +136,7 @@ function getLifecycleKeeping(lifecycle: MacroLifecycle, toggle: 'down'|'up'): bo
 
 function bindKeyboard(lifecycle: MacroLifecycle) {
   IOSubscriber.onKeydown((e) => {
-    if (!mabinogiActivated) {
+    if (!processSubscriber.windowActivated) {
       return e
     }
     if (running) {
@@ -160,7 +150,7 @@ function bindKeyboard(lifecycle: MacroLifecycle) {
     return e
   })
   IOSubscriber.onKeyup((e) => {
-    if (!mabinogiActivated) {
+    if (!processSubscriber.windowActivated) {
       return e
     }
     if (e.original.keycode !== lifecycle.trigger.button) {
@@ -173,7 +163,7 @@ function bindKeyboard(lifecycle: MacroLifecycle) {
 
 function bindMouse(lifecycle: MacroLifecycle) {
   IOSubscriber.onMousedown((e) => {
-    if (!mabinogiActivated) {
+    if (!processSubscriber.windowActivated) {
       return e
     }
     if (running) {
@@ -187,7 +177,7 @@ function bindMouse(lifecycle: MacroLifecycle) {
     return e
   })
   IOSubscriber.onMouseup((e) => {
-    if (!mabinogiActivated) {
+    if (!processSubscriber.windowActivated) {
       return e
     }
     if (e.original.button !== lifecycle.trigger.button) {
@@ -223,17 +213,9 @@ export async function start() {
     return
   }
   const { pid } = mabinogiProcess
-  mabinogiPID = pid
-  processHooker = createProcessHook(mabinogiPID)
-  processHookerID = processSubscribe(processHooker.hook)
+  processSubscriber = createProcessSubscriber(pid)
   IOSubscriber = createIOSubscriber()
 
-  processHooker.onActivate(() => {
-    mabinogiActivated = true
-  })
-  processHooker.onDeactivate(() => {
-    mabinogiActivated = false
-  })
   const macroSchemeMap = getMacroMap()
   for (const key in macroSchemeMap) {
     const scheme = macroSchemeMap[key]
@@ -246,12 +228,9 @@ export async function start() {
 }
 
 export async function stop() {
-  if (processHooker) {
-    processUnsubscribe(processHookerID)
-    processHooker = null
-    processHookerID = null
-    mabinogiPID = null
-    mabinogiActivated = false
+  if (processSubscriber) {
+    processSubscriber.destroy()
+    processSubscriber = null
   }
   if (!IOSubscriber) {
     return

@@ -1,13 +1,8 @@
 import { useState } from 'react'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
-import Typography from '@mui/material/Typography'
-import { ipc } from '../ipc'
+import { Button, Dialog, DialogContent, DialogContentText,  DialogTitle } from '@mui/material'
+import { ipc } from '../ipc.js'
 
 
 const SpecUser = styled.span`

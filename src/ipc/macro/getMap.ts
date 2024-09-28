@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import { getMacroMap } from '../../db/macro'
+import { getMacroMap } from '../../db/macro.js'
 
 export async function handle() {
   return getMacroMap()

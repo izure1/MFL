@@ -1,69 +1,22 @@
 import { ipcMain } from 'electron'
 import { suspend, resume } from 'ntsuspend'
 
-import { createHook, getActivateWindow, subscribe, unsubscribe } from '../../processObserver'
-import { start as startMacroRunner, stop as stopMacroRunner } from '../../macroRunner'
-import { handle as getMabinogiProcess } from '../hardware/mabinogi'
-import { handle as rendererLog } from '../app/log'
-import { getConfig } from '../../db/config'
-import { IProcess } from '../../types'
-import { createThrottling } from '../../utils/timer'
+import { getActivateWindow, createSubscriber as createProcessSubscriber } from '../../processObserver.js'
+import { start as startMacroRunner, stop as stopMacroRunner } from '../../macroRunner.js'
+import { handle as getMabinogiProcess } from '../hardware/mabinogi.js'
+import { handle as rendererLog } from '../app/log.js'
+import { getConfig } from '../../db/config.js'
+import { IProcess } from '../../types/index.js'
+import { createThrottling } from '../../utils/timer.js'
 
 let loopId: NodeJS.Timeout
 let process: IProcess
 let sleeping = false
 let step = 0
-let mabinogiActivated = false
-let subscriberAttached = false
+let processSubscriber: ReturnType<typeof createProcessSubscriber> = null
+let eventAttached = false
 
 const JOB_LOOP_INTERVAL = 100
-
-class Subscriber {
-  private static _Instance: Subscriber|null
-
-  static GetInstance(pid: number) {
-    if (!Subscriber._Instance) {
-      Subscriber._Instance = new Subscriber(pid, createHook(pid))
-    }
-    if (Subscriber._Instance.pid !== pid) {
-      throw new Error(`Not matched pid. It expect ${pid}, but existed instance has ${Subscriber._Instance.pid}.`)
-    }
-    return Subscriber._Instance
-  }
-
-  protected readonly pid: number
-  protected readonly hook: ReturnType<typeof createHook>
-  protected readonly subscribeId: number
-
-  private constructor(pid: number, hook: ReturnType<typeof createHook>) {
-    this.pid = pid
-    this.hook = hook
-    this.subscribeId = subscribe(hook.hook)
-  }
-
-  onActivate(...callback: Parameters<typeof this.hook.onActivate>) {
-    return this.hook.onActivate(...callback)
-  }
-
-  onDeactivate(...callback: Parameters<typeof this.hook.onDeactivate>) {
-    return this.hook.onDeactivate(...callback)
-  }
-
-  emitActivate() {
-    return this.hook.emitActivate()
-  }
-
-  emitDeactivate() {
-    return this.hook.emitDeactivate()
-  }
-
-  destroy() {
-    this.hook.hooker.offBefore('activate')
-    this.hook.hooker.offBefore('deactivate')
-    unsubscribe(this.subscribeId)
-    Subscriber._Instance = null
-  }
-}
 
 function stopLoop() {
   if (!loopId) {
@@ -106,7 +59,7 @@ function loop(pid: number) {
     return cleanUp(pid)
   }
   step++
-  if (mabinogiActivated) {
+  if (processSubscriber.windowActivated) {
     awake(pid)
     step = 0
     return
@@ -138,48 +91,48 @@ export async function handle(active: boolean) {
     return false
   }
   const { pid } = process
-  const subscriber = Subscriber.GetInstance(pid)
+  if (!processSubscriber) {
+    processSubscriber = createProcessSubscriber(pid)
+  }
 
   if (!active) {
     const terminated = await checkMabinogiTerminated()
     if (!terminated) {
       cleanUp(pid)
     }
-    mabinogiActivated = false
-    subscriberAttached = false
-    subscriber.destroy()
+    eventAttached = false
+    processSubscriber.destroy()
+    processSubscriber = null
     await stopMacroRunner()
     rendererLog('Mabinogi limit activation off.')
     return true
   }
   
-  if (!subscriberAttached) {
+  if (!eventAttached) {
     const throttling = createThrottling()
-    subscriberAttached = true
+    eventAttached = true
     
     await startMacroRunner()
 
-    subscriber.onActivate(() => {
-      mabinogiActivated = true
+    processSubscriber.onActivate(() => {
       cleanUp(pid)
       rendererLog('Mabinogi activated.')
     })
-    subscriber.onDeactivate(() => {
-      mabinogiActivated = false
+    processSubscriber.onDeactivate(() => {
       startLoop(pid)
       rendererLog('Mabinogi deactivated.')
     })
-    subscriber.onDeactivate(() => {
+    processSubscriber.onDeactivate(() => {
       throttling(() => {
-        if (mabinogiActivated || !subscriberAttached) {
+        if (processSubscriber.windowActivated || !eventAttached) {
           return
         }
         checkMabinogiTerminated().then((terminated: boolean) => {
           if (terminated) {
-            mabinogiActivated = false
-            subscriberAttached = false
+            eventAttached = false
             stopLoop()
-            subscriber.destroy()
+            processSubscriber.destroy()
+            processSubscriber = null
             rendererLog('Can\'t found Mabinogi process. Stop loop.')
           }
         })
@@ -189,10 +142,10 @@ export async function handle(active: boolean) {
 
   const activeWindow = getActivateWindow()
   if (activeWindow.pid === pid) {
-    subscriber.emitActivate()
+    processSubscriber.emitActivate()
   }
   else {
-    subscriber.emitDeactivate()
+    processSubscriber.emitDeactivate()
   }
 
   return true

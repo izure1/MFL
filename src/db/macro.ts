@@ -1,11 +1,13 @@
-import type { MacroScheme, MacroSchemeMap, MacroUnit, MacroIOUnit } from '../types'
+import type { MacroScheme, MacroSchemeMap, MacroUnit, MacroIOUnit } from '../types/index.js'
 import { TissueRollDocument } from 'tissue-roll'
-import { getFilePathFromHomeDir } from '../homedir'
+import { FileSystemEngine } from 'tissue-roll/engine/FileSystem'
+import { getFilePathFromHomeDir } from '../homedir.js'
 
 const CONFIG_PATH = getFilePathFromHomeDir('./Data/macro.db')
 
-const db = TissueRollDocument.Open({
+const db = await TissueRollDocument.Open({
   path: CONFIG_PATH,
+  engine: new FileSystemEngine(),
   version: 0,
   scheme: {
     name: {

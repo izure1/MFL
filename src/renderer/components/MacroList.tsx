@@ -1,15 +1,10 @@
-import { MacroSchemeMap } from '../../types'
+import { MacroSchemeMap } from '../../types/index.js'
 import { useMemo, useState } from 'react'
 import { css } from '@emotion/react'
-import Typography from '@mui/material/Typography'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemText from '@mui/material/ListItemText'
-import IconButton from '@mui/material/IconButton'
-import DeleteForeverOutlined from '@mui/icons-material/DeleteForeverOutlined'
-import MacroDrop from './MacroDrop'
-import MacroEditor from './MacroEditor'
+import { Typography, List, ListItem, ListItemButton, ListItemText, IconButton } from '@mui/material'
+import { DeleteForeverOutlined } from '@mui/icons-material'
+import MacroDrop from './MacroDrop.js'
+import MacroEditor from './MacroEditor.js'
 
 export default function MacroList({
   schemeMap

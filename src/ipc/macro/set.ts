@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
-import { setMacro } from '../../db/macro'
-import { sendMacroUpdateSignal } from '../helpers/sendMacroUpdateSignal'
-import { MacroScheme } from '../../types'
+import { setMacro } from '../../db/macro.js'
+import { sendMacroUpdateSignal } from '../helpers/sendMacroUpdateSignal.js'
+import { MacroScheme } from '../../types/index.js'
 
 export async function handle(name: string, scheme: MacroScheme) {
   return setMacro(name, scheme)

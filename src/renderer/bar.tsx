@@ -1,15 +1,11 @@
 import { css } from '@emotion/react'
-import AppBar from '@mui/material/AppBar'
-import Toolbar from '@mui/material/Toolbar'
-import HomeButton from './components/HomeButton'
-import AboutButton from './components/AboutButton'
-import MacroButton from './components/MacroButton'
-import IconButton from '@mui/material/IconButton'
-import Minimize from '@mui/icons-material/Minimize'
-import Button from '@mui/material/Button'
-import Close from '@mui/icons-material/Close'
+import { AppBar, Button, Toolbar, IconButton } from '@mui/material'
+import { Minimize, Close } from '@mui/icons-material'
+import HomeButton from './components/HomeButton.js'
+import AboutButton from './components/AboutButton.js'
+import MacroButton from './components/MacroButton.js'
 
-import { ipc } from './ipc'
+import { ipc } from './ipc.js'
 import LogoImage from './assets/img/logo.png'
 
 export default function Titlebar() {

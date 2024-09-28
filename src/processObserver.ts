@@ -25,7 +25,7 @@ export function init() {
   ActiveWindow.initialize()
 }
 
-export function subscribe(
+function subscribe(
   ...callback: Parameters<SubScribeFn>
 ): ReturnType<SubScribeFn> {
   checkInit()
@@ -34,7 +34,7 @@ export function subscribe(
   return watchId
 }
 
-export function unsubscribe(id: number) {
+function unsubscribe(id: number) {
   checkInit()
   ActiveWindow.unsubscribe(id)
 }
@@ -48,8 +48,9 @@ export function getActivateWindow() {
   return ActiveWindow.getActiveWindow()
 }
 
-export function createHook(pid: number) {
+function createHook(pid: number) {
   const hooker = useHookallSync<SubscribeHook>({})
+  let activated = ActiveWindow.getActiveWindow().pid === pid
 
   const onActivate = (callback: SubscribeCallback) => {
     hooker.onBefore('activate', callback)
@@ -63,12 +64,15 @@ export function createHook(pid: number) {
   const emitDeactivate = () => {
     hooker.trigger('deactivate', undefined, () => {})
   }
+  const getActivate = () => activated
 
   const hook = (win: WindowInfo) => {
     if (win.pid === pid) {
+      activated = true
       hooker.trigger('activate', undefined, () => {})
     }
     else {
+      activated = false
       hooker.trigger('deactivate', undefined, () => {})
     }
   }
@@ -80,5 +84,49 @@ export function createHook(pid: number) {
     onDeactivate,
     emitActivate,
     emitDeactivate,
+    getActivate,
   }
+}
+
+class Subscriber {
+  readonly pid: number
+  protected readonly hook: ReturnType<typeof createHook>
+  protected readonly subscribeId: number
+
+  constructor(pid: number) {
+    const hook = createHook(pid)
+    this.pid = pid
+    this.hook = hook
+    this.subscribeId = subscribe(hook.hook)
+  }
+
+  get windowActivated(): boolean {
+    return this.hook.getActivate()
+  }
+
+  onActivate(...callback: Parameters<typeof this.hook.onActivate>) {
+    return this.hook.onActivate(...callback)
+  }
+  
+  onDeactivate(...callback: Parameters<typeof this.hook.onDeactivate>) {
+    return this.hook.onDeactivate(...callback)
+  }
+  
+  emitActivate() {
+    return this.hook.emitActivate()
+  }
+  
+  emitDeactivate() {
+    return this.hook.emitDeactivate()
+  }
+
+  destroy() {
+    this.hook.hooker.offBefore('activate')
+    this.hook.hooker.offBefore('deactivate')
+    unsubscribe(this.subscribeId)
+  }
+}
+
+export function createSubscriber(pid: number) {
+  return new Subscriber(pid)
 }

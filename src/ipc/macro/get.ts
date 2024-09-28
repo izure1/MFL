@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import { getMacroScheme } from '../../db/macro'
+import { getMacroScheme } from '../../db/macro.js'
 
 export async function handle(name: string) {
   return getMacroScheme(name)

@@ -1,6 +1,6 @@
-import type { MacroSchemeMap } from '../../types'
+import type { MacroSchemeMap } from '../../types/index.js'
 import { createContext, useEffect, useState } from 'react'
-import { ipc } from '../ipc'
+import { ipc } from '../ipc.js'
 
 export const SchemeMapContext = createContext<MacroSchemeMap>({})
 

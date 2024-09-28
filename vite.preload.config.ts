@@ -1,6 +1,6 @@
 import type { ConfigEnv, UserConfig } from 'vite';
 import { defineConfig, mergeConfig } from 'vite';
-import { getBuildConfig, external, pluginHotRestart } from './vite.base.config';
+import { getBuildConfig, external, pluginHotRestart } from './vite.base.config.js';
 
 // https://vitejs.dev/config
 export default defineConfig((env) => {
@@ -16,8 +16,8 @@ export default defineConfig((env) => {
           format: 'cjs',
           // It should not be split chunks.
           inlineDynamicImports: true,
-          entryFileNames: '[name].js',
-          chunkFileNames: '[name].js',
+          entryFileNames: '[name].cjs',
+          chunkFileNames: '[name].cjs',
           assetFileNames: '[name].[ext]',
         },
       },

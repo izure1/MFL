@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
-import { setConfig } from '../../db/config'
-import { ConfigScheme } from '../../types'
+import { setConfig } from '../../db/config.js'
+import { ConfigScheme } from '../../types/index.js'
 
 export async function handle(config: Partial<ConfigScheme>) {
   setConfig(config)

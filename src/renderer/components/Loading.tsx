@@ -1,6 +1,5 @@
 import { css } from '@emotion/react'
-import CircularProgress from '@mui/material/CircularProgress'
-import Typography from '@mui/material/Typography'
+import { CircularProgress, Typography } from '@mui/material'
 
 export default function Loading() {
   return (

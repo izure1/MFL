@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
-import { IOEvent } from '../../types'
-import { createSubscriber } from '../../ioObserver'
-import { sendIOSignal } from '../helpers/sendIOSignal'
+import { IOEvent } from '../../types/index.js'
+import { createSubscriber } from '../../ioObserver.js'
+import { sendIOSignal } from '../helpers/sendIOSignal.js'
 
 let listening = false
 let destroy: ReturnType<typeof createSubscriber>['unsubscribe']|null = null

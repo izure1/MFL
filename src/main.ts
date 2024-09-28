@@ -1,54 +1,60 @@
 
 import path from 'node:path'
 import { app, BrowserWindow, Menu, Tray, dialog, nativeImage } from 'electron'
-import { updateElectronApp } from 'update-electron-app'
+import 'update-electron-app'
 
-import type { IOEvent } from './types'
-import { handle as checkPermission } from './ipc/hardware/checkPermission'
-import { handle as limit } from './ipc/app/limit'
-import { createSubscriber } from './ioObserver'
-import { stop as stopMacroRunner } from './macroRunner'
-import { sendIOSignal } from './ipc/helpers/sendIOSignal'
+import type { IOEvent } from './types/index.js'
+import { handle as checkPermission } from './ipc/hardware/checkPermission.js'
+import { handle as limit } from './ipc/app/limit.js'
+import { createSubscriber } from './ioObserver.js'
+import { stop as stopMacroRunner } from './macroRunner.js'
+import { stop as stopLogger } from './logger.js'
+import { sendIOSignal } from './ipc/helpers/sendIOSignal.js'
 import {
   init as processObserverInit,
   unsubscribeAll
-} from './processObserver'
+} from './processObserver.js'
 
 import _iconImage from '../resources/img/icon.png?asset'
 
 const iconImage = nativeImage.createFromDataURL(_iconImage)
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) {
-  unsubscribeAll()
-  limit(false).then(() => app.quit())
+if ((await import('electron-squirrel-startup')).default) {
+  app.quit()
 }
 
 function *generateIpc() {
-  yield import('./ipc/hardware/resume')
-  yield import('./ipc/hardware/suspend')
-  yield import('./ipc/hardware/mabinogi')
-  yield import('./ipc/hardware/checkPermission')
+  yield import('./ipc/hardware/resume.js')
+  yield import('./ipc/hardware/suspend.js')
+  yield import('./ipc/hardware/mabinogi.js')
+  yield import('./ipc/hardware/checkPermission.js')
 
-  yield import('./ipc/app/close')
-  yield import('./ipc/app/minimize')
-  yield import('./ipc/app/limit')
-  yield import('./ipc/app/devtool')
-  yield import('./ipc/app/log')
-  yield import('./ipc/app/directoryOpen')
+  yield import('./ipc/app/close.js')
+  yield import('./ipc/app/minimize.js')
+  yield import('./ipc/app/limit.js')
+  yield import('./ipc/app/devtool.js')
+  yield import('./ipc/app/log.js')
+  yield import('./ipc/app/logging.js')
+  yield import('./ipc/app/directoryOpen.js')
   
-  yield import('./ipc/config/get')
-  yield import('./ipc/config/set')
+  yield import('./ipc/config/get.js')
+  yield import('./ipc/config/set.js')
 
-  yield import('./ipc/macro/getMap')
-  yield import('./ipc/macro/get')
-  yield import('./ipc/macro/set')
-  yield import('./ipc/macro/remove')
+  yield import('./ipc/macro/getMap.js')
+  yield import('./ipc/macro/get.js')
+  yield import('./ipc/macro/set.js')
+  yield import('./ipc/macro/remove.js')
 
-  yield import('./ipc/io/listen')
+  yield import('./ipc/io/listen.js')
 
-  yield import('./ipc/external/open')
-  yield import('./ipc/external/showItem')
+  yield import('./ipc/external/open.js')
+  yield import('./ipc/external/showItem.js')
+
+  yield import('./ipc/fs/showOpenDialog.js')
+  yield import('./ipc/fs/getItemSize.js')
+  yield import('./ipc/fs/glob.js')
+  yield import('./ipc/fs/remove.js')
 }
 
 let mainWindow: BrowserWindow|null
@@ -68,6 +74,8 @@ function createTray() {
       async click() {
         unsubscribeAll()
         await limit(false)
+        await stopMacroRunner()
+        await stopLogger()
         app.quit()
       }
     }
@@ -135,8 +143,8 @@ async function createWindow() {
     maximizable: false,
     fullscreenable: false,
     webPreferences: {
-      sandbox: false,
-      preload: path.join(__dirname, 'preload.js'),
+      sandbox: true,
+      preload: path.join(import.meta.dirname, 'preload.cjs'),
     },
   })
 
@@ -146,7 +154,7 @@ async function createWindow() {
     // Open the DevTools.
     mainWindow.webContents.openDevTools()
   } else {
-    mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`))
+    mainWindow.loadFile(path.join(import.meta.dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`))
   }
 
   mainWindow.on('minimize', (e: Event) => {
@@ -163,13 +171,12 @@ async function createWindow() {
   })
 
   listenIO()
-  updateElectronApp()
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', async () => {
+app.whenReady().then(async () => {
   if (await isElevated()) {
     processObserverInit()
     createWindow()
@@ -183,7 +190,10 @@ app.on('window-all-closed', async () => {
   if (process.platform !== 'darwin') {
     unsubscribeAll()
     stopMacroRunner()
+    stopLogger()
     await limit(false)
+    await stopMacroRunner()
+    await stopLogger()
     app.quit()
     if (tray) {
       tray.destroy()

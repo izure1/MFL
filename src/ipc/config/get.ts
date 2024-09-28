@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import { getConfig } from '../../db/config'
+import { getConfig } from '../../db/config.js'
 
 export async function handle() {
   return getConfig()

@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { css } from '@emotion/react'
-import { HoveringContext } from './MacroEditor'
+import { HoveringContext } from './MacroEditor.js'
 
 export default function MacroUnitRawButton({
   context,

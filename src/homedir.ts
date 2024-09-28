@@ -1,11 +1,12 @@
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import { mkdirSync } from 'node:fs'
+import normalize from 'normalize-path'
 
 const DIRECTORY_NAME = 'MFL'
 
 export function getHomeDir(): string {
-  return join(homedir(), DIRECTORY_NAME)
+  return normalize(join(homedir(), DIRECTORY_NAME))
 }
 
 export function ensureHomeDir(relativePath = ''): string {
@@ -15,5 +16,5 @@ export function ensureHomeDir(relativePath = ''): string {
 }
 
 export function getFilePathFromHomeDir(path: string): string {
-  return join(getHomeDir(), path)
+  return normalize(join(getHomeDir(), path))
 }

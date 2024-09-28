@@ -2,21 +2,32 @@ export async function delay(t: number) {
   return new Promise((resolve) => setTimeout(resolve, t))
 }
 
-export function createThrottling() {
-  let job: NodeJS.Timeout|number|null = null
+type TaskRunner = (handler: TimerHandler, interval: number) => NodeJS.Timeout|number|null
+type TaskCleaner<T extends TaskRunner> = (id: ReturnType<T>) => void
+
+function createTask(handler: TaskRunner, cleaner: TaskCleaner<typeof handler>) {
+  let id: ReturnType<TaskRunner> = null
 
   function cancel() {
-    if (job) {
-      clearTimeout(job)
-      job = null
+    if (id) {
+      cleaner(id)
+      id = null
     }
   }
 
-  function throttling(callback: Function, interval: number) {
+  function wrapper(callback: Function, interval: number) {
     cancel()
-    job = setTimeout(callback, interval)
+    id = handler(callback, interval)
     return cancel
   }
 
-  return throttling
+  return wrapper
+}
+
+export function createThrottling() {
+  return createTask(setTimeout, clearTimeout)
+}
+
+export function createRepeat() {
+  return createTask(setInterval, clearInterval)
 }

@@ -1,5 +1,5 @@
-import Button from '@mui/material/Button'
-import { ipc } from '../ipc'
+import { Button } from '@mui/material'
+import { ipc } from '../ipc.js'
 
 export default function HomeButton() {
   function handle() {

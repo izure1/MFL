@@ -1,11 +1,8 @@
-import type { MacroScheme } from '../../types'
+import type { MacroScheme } from '../../types/index.js'
 import { useContext } from 'react'
-import FormControl from '@mui/material/FormControl'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import RadioGroup from '@mui/material/RadioGroup'
-import Radio from '@mui/material/Radio'
-import { SchemeContext } from './MacroEditor'
-import { ipc } from '../ipc'
+import { FormControl, FormControlLabel, RadioGroup, Radio } from '@mui/material'
+import { SchemeContext } from './MacroEditor.js'
+import { ipc } from '../ipc.js'
 
 export default function MacroType() {
   const scheme = useContext(SchemeContext)

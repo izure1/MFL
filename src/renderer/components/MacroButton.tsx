@@ -1,12 +1,9 @@
 import { useContext, useState } from 'react'
 import { css } from '@emotion/react'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogContent from '@mui/material/DialogContent'
-import DialogTitle from '@mui/material/DialogTitle'
-import { SchemeMapContext } from './MacroProvider'
-import MacroList from './MacroList'
-import { ipc } from '../ipc'
+import { Button, Dialog, DialogContent, DialogTitle } from '@mui/material'
+import { SchemeMapContext } from './MacroProvider.js'
+import MacroList from './MacroList.js'
+import { ipc } from '../ipc.js'
 
 export default function MacroButton() {
   const [open, setOpen] = useState(false)

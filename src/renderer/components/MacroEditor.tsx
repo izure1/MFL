@@ -1,21 +1,22 @@
-import type { MacroScheme, MacroUnit } from '../../types'
+import type { MacroScheme, MacroUnit } from '../../types/index.js'
 import { css } from '@emotion/react'
 import { createContext, Dispatch, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
-import DialogActions from '@mui/material/DialogActions'
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
-import MacroUnitButton from './MacroUnitButton'
-import MacroModeManager from './MacroModeManager'
-import MacroTrigger from './MacroTrigger'
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Typography
+} from '@mui/material'
 import { ReactSortable } from 'react-sortablejs'
-import { SchemeMapContext } from './MacroProvider'
-import { ipc } from '../ipc'
-import MacroType from './MacroType'
+import MacroUnitButton from './MacroUnitButton.js'
+import MacroModeManager from './MacroModeManager.js'
+import MacroTrigger from './MacroTrigger.js'
+import { SchemeMapContext } from './MacroProvider.js'
+import { ipc } from '../ipc.js'
+import MacroType from './MacroType.js'
 
 export const SchemeContext = createContext<MacroScheme|null>({
   name: 'Unknown',

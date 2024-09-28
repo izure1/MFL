@@ -1,16 +1,16 @@
 import type { UiohookKeyboardEvent, UiohookMouseEvent } from 'uiohook-napi'
-import type { IOEvent, MacroDelayUnit, MacroIOUnit, MacroScheme } from '../../types'
+import type { IOEvent, MacroDelayUnit, MacroIOUnit, MacroScheme } from '../../types/index.js'
 import { useContext, useEffect, useState } from 'react'
 import { css } from '@emotion/react'
-import List from '@mui/material/List'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItem from '@mui/material/ListItem'
-import AddIcon from '@mui/icons-material/Add'
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
-import { HoveringContext, RecordingContext, SchemeContext } from './MacroEditor'
-import MacroUnitRawButton from './MacroUnitRawButton'
-import { createDelayUnit, createKeyboardUnit, createMouseUnit } from './MacroUnitButton'
-import { ipc } from '../ipc'
+import { List, ListItemButton, ListItem } from '@mui/material'
+import {
+  Add as AddIcon,
+  FiberManualRecord as FiberManualRecordIcon
+} from '@mui/icons-material'
+import { HoveringContext, RecordingContext, SchemeContext } from './MacroEditor.js'
+import MacroUnitRawButton from './MacroUnitRawButton.js'
+import { createDelayUnit, createKeyboardUnit, createMouseUnit } from './MacroUnitButton.js'
+import { ipc } from '../ipc.js'
 
 export default function MacroModeManager() {
   const scheme = useContext(SchemeContext)

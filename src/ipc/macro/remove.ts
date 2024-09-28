@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
-import { removeMacro } from '../../db/macro'
-import { sendMacroUpdateSignal } from '../helpers/sendMacroUpdateSignal'
+import { removeMacro } from '../../db/macro.js'
+import { sendMacroUpdateSignal } from '../helpers/sendMacroUpdateSignal.js'
 
 export async function handle(name: string) {
   return removeMacro(name)

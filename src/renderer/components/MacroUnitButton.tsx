@@ -1,21 +1,24 @@
 import type { UiohookKeyboardEvent, UiohookMouseEvent } from 'uiohook-napi'
-import type { IOEvent, MacroDelayUnit, MacroIOUnit, MacroScheme, MacroUnit } from '../../types'
+import type { IOEvent, MacroDelayUnit, MacroIOUnit, MacroScheme, MacroUnit } from '../../types/index.js'
 import { useState } from 'react'
 import { css } from '@emotion/react'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import FormControl from '@mui/material/FormControl'
-import RadioGroup from '@mui/material/RadioGroup'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Radio from '@mui/material/Radio'
-import Typography from '@mui/material/Typography'
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
-import { Unstable_NumberInput as NumberInput } from '@mui/base/Unstable_NumberInput'
-import MacroUnitRawButton from './MacroUnitRawButton'
-import { fromLinuxKeycode } from '../../utils/keycode'
-import { createUUIDV4 } from '../../utils/id'
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  FormControl,
+  FormControlLabel,
+  RadioGroup,
+  Radio,
+  Typography
+} from '@mui/material'
+import {
+  ArrowDropDown as ArrowDropDownIcon,
+  ArrowDropUp as ArrowDropUpIcon
+} from '@mui/icons-material'
+import MacroUnitRawButton from './MacroUnitRawButton.js'
+import { fromLinuxKeycode } from '../../utils/keycode.js'
+import { createUUIDV4 } from '../../utils/id.js'
 
 export function createMacroIconData(unit: MacroUnit) {
   let text: string
@@ -215,14 +218,10 @@ export default function MacroUnitButton({
             <DialogTitle>값 입력</DialogTitle>
             <DialogContent>
               <div>
-                <NumberInput
+                <input type='number'
                   placeholder='숫자를 입력하세요'
                   value={unit.duration}
-                  onInputChange={handleDelayInputChange}
-                  slots={{
-                    'incrementButton': 'div',
-                    'decrementButton': 'div',
-                  }}
+                  onChange={handleDelayInputChange}
                 />
               </div>
             </DialogContent>

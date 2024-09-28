@@ -1,3 +1,5 @@
+export type { OpenDialogOptions, OpenDialogReturnValue } from 'electron'
+export type { Options as GlobOptions } from 'fast-glob'
 import { UiohookKeyboardEvent, UiohookMouseEvent, UiohookWheelEvent } from 'uiohook-napi'
 
 export interface IProcess {
@@ -9,6 +11,9 @@ export interface IProcess {
 export interface ConfigScheme {
   limit: number
   running: boolean
+  logging: boolean
+  loggingInterval: number
+  loggingDirectory: string
 }
 
 export interface MacroUnitScheme extends Record<string, string|number> {

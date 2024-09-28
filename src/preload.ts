@@ -3,7 +3,7 @@
 
 import { contextBridge, ipcRenderer } from 'electron'
 import { IpcRendererEvent } from 'electron/renderer'
-import { ConfigScheme, IProcess, MacroScheme, MacroSchemeMap, IOEvent } from './types'
+import { ConfigScheme, IProcess, MacroScheme, MacroSchemeMap, IOEvent, OpenDialogOptions, OpenDialogReturnValue, GlobOptions } from './types/index.js'
 
 export const context = {
   process: {
@@ -16,12 +16,17 @@ export const context = {
     minimize: (): Promise<void> => ipcRenderer.invoke('app-minimize'),
     close: (): Promise<void> => ipcRenderer.invoke('app-close'),
     limit: (): Promise<boolean> => ipcRenderer.invoke('app-limit'),
+    logging: (): Promise<boolean> => ipcRenderer.invoke('app-logging'),
     devtool: (): Promise<void> => ipcRenderer.invoke('app-devtool'),
     directoryOpen: (): Promise<void> => ipcRenderer.invoke('app-directory-open'),
   },
   config: {
     get: (): Promise<ConfigScheme> => ipcRenderer.invoke('config-get'),
     set: (config: Partial<ConfigScheme>): Promise<void> => ipcRenderer.invoke('config-set', config),
+    onUpdate: (callback: (config: ConfigScheme) => void) => ipcRenderer.on('config-on-update', (
+      _e,
+      config: ConfigScheme
+    ) => callback(config)),
   },
   macro: {
     getMap: (): Promise<MacroSchemeMap> => ipcRenderer.invoke('macro-get-map'),
@@ -46,6 +51,12 @@ export const context = {
   external: {
     open: (url: string): Promise<void> => ipcRenderer.invoke('external-open', url),
     showItem: (fullPath: string): Promise<void> => ipcRenderer.invoke('external-show-item', fullPath),
+  },
+  fs: {
+    showOpenDialog: (option: OpenDialogOptions): Promise<OpenDialogReturnValue> => ipcRenderer.invoke('fs-show-open-dialog', option),
+    getItemSize: (fullPaths: string|string[], loose = false): Promise<bigint> => ipcRenderer.invoke('fs-get-item-size', fullPaths, loose),
+    glob: (pattern: string, glob: GlobOptions): Promise<string[]> => ipcRenderer.invoke('fs-glob', pattern, glob),
+    remove: (patterns: string|string[]): Promise<string[]> => ipcRenderer.invoke('fs-remove', patterns),
   }
 }
 
