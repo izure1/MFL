@@ -4,24 +4,16 @@ import sharp from 'sharp'
 import normalize from 'normalize-path'
 import { Window as NodeWindow } from 'node-screenshots'
 import { handle as getMabinogiProcess } from './ipc/hardware/mabinogi.js'
-import { createSubscriber as createProcessSubscriber, getActivateWindow } from './processObserver.js'
 import { getConfig } from './db/config.js'
 import { createThrottling } from './utils/timer.js'
 import { getLoggingDistDirectory } from './helpers/logger.js'
 
 let cancelCapture: ReturnType<ReturnType<typeof createThrottling>> = null
-let processSubscriber: ReturnType<typeof createProcessSubscriber> = null
-let eventAttached = false
 let running = false
 
 const CAPTURE_MIN_WIDTH = 1024
 const CAPTURE_MAX_WIDTH = 1280
 const CAPTURE_QUALITY = 20
-
-async function checkMabinogiTerminated() {
-  const process = await getMabinogiProcess()
-  return !process
-}
 
 function getScreenshotWidth(width: number, minWidth: number, maxWidth: number): number {
   return Math.min(
@@ -94,8 +86,6 @@ async function loop() {
       const win = NodeWindow.all().find(getMabinogiWindow)
       if (!win) return
       if (!running) return
-      if (!processSubscriber) return
-      if (!processSubscriber.windowActivated) return
       await capture({
         win,
         directory: getLoggingDistDirectory(loggingDirectory),
@@ -114,36 +104,8 @@ export async function start() {
     console.log('cannot found')
     return
   }
-  const { pid } = mabinogiProcess
-  processSubscriber = createProcessSubscriber(pid)
   running = true
-
   loop()
-
-  if (!eventAttached) {
-    const throttling = createThrottling()
-    eventAttached = true
-    processSubscriber.onDeactivate(() => {
-      throttling(() => {
-        if (processSubscriber.windowActivated || !eventAttached) {
-          return
-        }
-        checkMabinogiTerminated().then((terminated: boolean) => {
-          if (terminated) {
-            stop()
-          }
-        })
-      }, 10000)
-    })
-  }
-
-  const activeWindow = getActivateWindow()
-  if (activeWindow.pid === pid) {
-    processSubscriber.emitActivate()
-  }
-  else {
-    processSubscriber.emitDeactivate()
-  }
 }
 
 export async function stop() {
@@ -152,9 +114,4 @@ export async function stop() {
     cancelCapture()
     cancelCapture = null
   }
-  if (processSubscriber) {
-    processSubscriber.destroy()
-    processSubscriber = null
-  }
-  eventAttached = false
 }
