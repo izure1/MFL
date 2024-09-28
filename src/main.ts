@@ -1,7 +1,7 @@
 
 import path from 'node:path'
 import { app, BrowserWindow, Menu, Tray, dialog, nativeImage } from 'electron'
-import 'update-electron-app'
+import { updateElectronApp } from 'update-electron-app'
 
 import type { IOEvent } from './types/index.js'
 import { handle as checkPermission } from './ipc/hardware/checkPermission.js'
@@ -10,8 +10,8 @@ import { createSubscriber } from './ioObserver.js'
 import { stop as stopMacroRunner } from './macroRunner.js'
 import { stop as stopLogger } from './logger.js'
 import { sendIOSignal } from './ipc/helpers/sendIOSignal.js'
+import { handle as mainToRenderer } from './ipc/helpers/mainToRenderer.js'
 import {
-  init as processObserverInit,
   unsubscribeAll
 } from './processObserver.js'
 
@@ -23,6 +23,8 @@ const iconImage = nativeImage.createFromDataURL(_iconImage)
 if ((await import('electron-squirrel-startup')).default) {
   app.quit()
 }
+
+updateElectronApp()
 
 function *generateIpc() {
   yield import('./ipc/hardware/resume.js')
@@ -178,7 +180,6 @@ async function createWindow() {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
   if (await isElevated()) {
-    processObserverInit()
     createWindow()
   }
 })
@@ -209,6 +210,10 @@ app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow()
   }
+})
+
+process.on('uncaughtException', (err) => {
+  mainToRenderer(err.message, err.stack, err.cause)
 })
 
 // In this file you can include the rest of your app's specific main process

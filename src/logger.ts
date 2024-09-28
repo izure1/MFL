@@ -2,7 +2,7 @@ import { mkdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import sharp from 'sharp'
 import normalize from 'normalize-path'
-import screenshot from 'screenshot-desktop'
+import { Window as NodeWindow } from 'node-screenshots'
 import { handle as getMabinogiProcess } from './ipc/hardware/mabinogi.js'
 import { createSubscriber as createProcessSubscriber, getActivateWindow } from './processObserver.js'
 import { getConfig } from './db/config.js'
@@ -36,25 +36,28 @@ function getScreenshotName(date: Date): string {
   return `${timestamp}_${name}`
 }
 
+function getMabinogiWindow(win: NodeWindow) {
+  return win.appName === 'Mabinogi'
+}
+
 async function capture({
+  win,
   directory,
   minWidth = 1024,
   maxWidth = 1280,
   quality = 20,
 }: {
+  win: NodeWindow,
   directory: string
   minWidth?: number
   maxWidth?: number
   quality?: number
 }) {
-  if (!running) return
-  if (!processSubscriber) return
-  if (!processSubscriber.windowActivated) return
-
-  const image = await screenshot({ 'format': 'png' })
-  const now   = new Date()
-  const name  = getScreenshotName(now)
-  const width = getScreenshotWidth(1280, minWidth, maxWidth)
+  const now       = new Date()
+  const image     = win.captureImageSync()
+  const imageData = image.toRawSync(false)
+  const name      = getScreenshotName(now)
+  const width     = getScreenshotWidth(1280, minWidth, maxWidth)
   
   directory = normalize(join(
     directory,
@@ -64,17 +67,16 @@ async function capture({
   ))
 
   await mkdir(directory, { recursive: true })
-  await sharp(image)
-    .resize({
-      width,
-      fit: 'inside',
-      kernel: sharp.kernel.lanczos3,
-    })
+  await sharp(imageData, {
+    raw: {
+      width: image.width,
+      height: image.height,
+      channels: 4
+    }
+  })
+    .resize({ width, fit: 'inside', kernel: sharp.kernel.lanczos3 })
     .toColorspace('b-w')
-    .webp({
-      quality,
-      effort: 0,
-    })
+    .webp({ quality, effort: 0 })
     .toFile(`${join(directory, name)}.webp`)
 }
 
@@ -86,17 +88,22 @@ async function loop() {
   const { loggingInterval } = getConfig()
   const throttling = createThrottling()
   cancelCapture = throttling(async () => {
+    loop()
     const { logging, loggingDirectory } = getConfig()
     if (logging) {
+      const win = NodeWindow.all().find(getMabinogiWindow)
+      if (!win) return
+      if (!running) return
+      if (!processSubscriber) return
+      if (!processSubscriber.windowActivated) return
       await capture({
+        win,
         directory: getLoggingDistDirectory(loggingDirectory),
         minWidth: CAPTURE_MIN_WIDTH,
         maxWidth: CAPTURE_MAX_WIDTH,
         quality: CAPTURE_QUALITY,
       })
     }
-    cancelCapture = null
-    loop()
   }, loggingInterval * 1000)
 }
 

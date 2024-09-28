@@ -9,38 +9,22 @@ type SubscribeHook = {
 }
 
 const watchIds: number[] = []
-let ready = false
 
-export function checkInit() {
-  if (!ready) {
-    throw new Error('You must init first.')
-  }
-}
-
-export function init() {
-  if (ready) {
-    throw new Error('Already init.')
-  }
-  ready = true
-  ActiveWindow.initialize()
-}
+ActiveWindow.initialize()
 
 function subscribe(
   ...callback: Parameters<SubScribeFn>
 ): ReturnType<SubScribeFn> {
-  checkInit()
   const watchId = ActiveWindow.subscribe(...callback)
   watchIds.push(watchId)
   return watchId
 }
 
 function unsubscribe(id: number) {
-  checkInit()
   ActiveWindow.unsubscribe(id)
 }
 
 export function unsubscribeAll() {
-  checkInit()
   watchIds.forEach((id) => ActiveWindow.unsubscribe(id))
 }
 

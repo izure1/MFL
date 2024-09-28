@@ -15,6 +15,8 @@ const config: ForgeConfig = {
       unpack: [
         '**/@img/**/*',
         '**/sharp/**/*',
+        '**/node-screenshots/**/*',
+        '**/node-screenshots-win32-x64-msvc/**/*'
       ].join(',')
     },
     afterCopy: [
@@ -22,15 +24,17 @@ const config: ForgeConfig = {
         // Copy optional dependencies
         const optionalDependencies = [
           '@img',
+          'node-screenshots-win32-x64-msvc'
         ]
-        for (const moduleName of optionalDependencies) {
+        const tasks = optionalDependencies.map((moduleName) => {
           const modulePath = `node_modules/${moduleName}`
-          await NodeFSExtra.copy(
+          return NodeFSExtra.copy(
             modulePath,
             join(buildPath, modulePath),
           )
-        }
-        callback()
+        })
+        Promise.all(tasks)
+          .then(() => callback())
       }
     ],
     icon: 'resources/img/icon.png',
