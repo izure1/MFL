@@ -1,5 +1,5 @@
 import type { ConfigScheme } from '../../types/index.js'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, ListItem, ListItemText } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, ListItem, ListItemText, Typography } from '@mui/material'
 import { DeleteForeverOutlined } from '@mui/icons-material'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { basename } from 'path-browserify'
@@ -46,25 +46,29 @@ export default function LoggingConfigManager({
 }: {
   config: ConfigScheme
 }) {
+  const pattern = '**/*.webp'
+  const updateInterval = 1000 * 60 * 10 // 10m
+  const bundles = [
+    { week: 0, label: '전체' },
+    { week: 1, label: '1주일 전' },
+    { week: 2, label: '2주일 전' },
+    { week: 3, label: '3주일 전' },
+    { week: 4, label: '한 달 전' },
+  ]
+
   const [configOpen, setConfigOpen] = useState(false)
   const [updatedAt, setUpdatedAt] = useState(Date.now())
   const distDirectory = useMemo(() => getLoggingDistDirectory(config.loggingDirectory), [config.loggingDirectory])
 
-  const pattern = '**/*.webp'
-  const updateInterval = 1000 * 60 * 10 // 10m
+  const [confirmBundleIndex, setConfirmBundleIndex] = useState(-1)
+
+  const confirmOpen   = useMemo(() => confirmBundleIndex !== -1, [confirmBundleIndex])
+  const confirmTarget = useMemo(() => bundles[confirmBundleIndex], [confirmBundleIndex])
 
   const noneFilter = useCallback(() => true, [distDirectory])
 
-  function handleConfigOpen() {
-    setConfigOpen(true)
-  }
-
-  function handleConfigClose() {
-    setConfigOpen(false)
-  }
-
   function getTimestamp(lastWeek: number) {
-    return Date.now()-(lastWeek*1000*3600*24*7)
+    return updatedAt-(lastWeek*1000*3600*24*7)
   }
 
   async function handleRemoveSnapshots(lastTimestamp: number) {
@@ -83,8 +87,37 @@ export default function LoggingConfigManager({
   return (
     <>
       <Dialog
+        open={confirmOpen}
+        onClose={() => setConfirmBundleIndex(-1)}
+      >
+        {
+          confirmTarget && (
+            <>
+              <DialogTitle>{confirmTarget.label} 삭제</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  정말로 {confirmTarget.label} 기록을 삭제하시겠습니까?
+                  <br />
+                  이 작업은 되돌릴 수 없습니다.
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button
+                  color='warning'
+                  onClick={() => {
+                    handleRemoveSnapshots(getTimestamp(confirmTarget.week))
+                    setConfirmBundleIndex(-1)
+                  }}
+                >삭제하기</Button>
+                <Button onClick={() => setConfirmBundleIndex(-1)}>취소</Button>
+              </DialogActions>
+            </>
+          )
+        }
+      </Dialog>
+      <Dialog
         open={configOpen}
-        onClose={handleConfigClose}
+        onClose={() => setConfigOpen(false)}
       >
         <DialogTitle>저장된 데이터 목록 관리</DialogTitle>
         <DialogContent>
@@ -100,19 +133,13 @@ export default function LoggingConfigManager({
             sx={{ width: '100%', maxWidth: 300 }}
           >
             {
-              [
-                { week: 0, label: '전체' },
-                { week: 1, label: '1주일 전' },
-                { week: 2, label: '2주일 전' },
-                { week: 3, label: '3주일 전' },
-                { week: 4, label: '한 달 전' },
-              ].map((t) => (
+              bundles.map((t, i) => (
                 <ListItem
                   key={t.label}
                   secondaryAction={(
                     <IconButton
                       size='small'
-                      onClick={() => handleRemoveSnapshots(getTimestamp(t.week))}
+                      onClick={() => setConfirmBundleIndex(i)}
                     >
                       <DeleteForeverOutlined />
                     </IconButton>
@@ -136,7 +163,7 @@ export default function LoggingConfigManager({
       </Dialog>
       <Button
         size='small'
-        onClick={handleConfigOpen}
+        onClick={() => setConfigOpen(true)}
       >사용량: {(<FileSizeSuspense
           pattern={pattern}
           option={{ cwd: distDirectory }}

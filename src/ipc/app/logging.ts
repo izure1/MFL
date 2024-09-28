@@ -25,7 +25,7 @@ function getScreenshotWidth(width: number, minWidth: number, maxWidth: number): 
 
 function getScreenshotName(date: Date): string {
   const timestamp = date.getTime()
-  const name = date.toISOString().split('T')[1].replace(/\:/g, '').split('.')[0]
+  const name = date.toTimeString().split(' ')[0].replace(/\:/g, '').split('.')[0]
   return `${timestamp}_${name}`
 }
 
