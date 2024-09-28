@@ -6,12 +6,13 @@ import { getMacroMap } from './db/macro.js'
 import { getConfig } from './db/config.js'
 import { handle as findMabinogi } from './ipc/hardware/mabinogi.js'
 import { fromLinuxKeycode } from './utils/keycode.js'
+import { createThrottling } from './utils/timer.js'
 
 let processSubscriber: ReturnType<typeof createProcessSubscriber> = null
 let IOSubscriber: ReturnType<typeof createIOSubscriber> = null
 let bindingLifeCycles: MacroLifecycle[] = []
 
-let running = false
+let macroRunning = false
 let standardDelay = 50
 
 class MacroLifecycle {
@@ -91,7 +92,7 @@ class MacroLifecycle {
   }
 
   async run(): Promise<void> {
-    running = true
+    macroRunning = true
     let escaped = false
     for (const unit of this.units) {
       if (this._destroyed) {
@@ -102,13 +103,13 @@ class MacroLifecycle {
         escaped = true
         break
       }
-      if (!processSubscriber.windowActivated) {
+      if (!processSubscriber?.windowActivated) {
         escaped = true
         break
       }
       await this._runUnit(unit)
     }
-    running = false
+    macroRunning = false
     if (escaped) {
       this.keeping = false
     }
@@ -136,10 +137,10 @@ function getLifecycleKeeping(lifecycle: MacroLifecycle, toggle: 'down'|'up'): bo
 
 function bindKeyboard(lifecycle: MacroLifecycle) {
   IOSubscriber.onKeydown((e) => {
-    if (!processSubscriber.windowActivated) {
+    if (!processSubscriber?.windowActivated) {
       return e
     }
-    if (running) {
+    if (macroRunning) {
       return e
     }
     if (e.original.keycode !== lifecycle.trigger.button) {
@@ -150,7 +151,7 @@ function bindKeyboard(lifecycle: MacroLifecycle) {
     return e
   })
   IOSubscriber.onKeyup((e) => {
-    if (!processSubscriber.windowActivated) {
+    if (!processSubscriber?.windowActivated) {
       return e
     }
     if (e.original.keycode !== lifecycle.trigger.button) {
@@ -163,10 +164,10 @@ function bindKeyboard(lifecycle: MacroLifecycle) {
 
 function bindMouse(lifecycle: MacroLifecycle) {
   IOSubscriber.onMousedown((e) => {
-    if (!processSubscriber.windowActivated) {
+    if (!processSubscriber?.windowActivated) {
       return e
     }
-    if (running) {
+    if (macroRunning) {
       return e
     }
     if (e.original.button !== lifecycle.trigger.button) {
@@ -177,7 +178,7 @@ function bindMouse(lifecycle: MacroLifecycle) {
     return e
   })
   IOSubscriber.onMouseup((e) => {
-    if (!processSubscriber.windowActivated) {
+    if (!processSubscriber?.windowActivated) {
       return e
     }
     if (e.original.button !== lifecycle.trigger.button) {
@@ -206,6 +207,11 @@ function unbindLifeCycles() {
   bindingLifeCycles.length = 0
 }
 
+async function checkMabinogiTerminated() {
+  const process = await findMabinogi()
+  return !!process
+}
+
 export async function start() {
   await stop()
   const mabinogiProcess = await findMabinogi()
@@ -225,6 +231,25 @@ export async function start() {
     const lifecycle = createLifeCycle(scheme)
     bindLifecycle(lifecycle)
   }
+
+  let cancelCheckTerminated: Function = null
+  processSubscriber.onActivate(() => {
+    if (cancelCheckTerminated) {
+      cancelCheckTerminated()
+      cancelCheckTerminated = null
+    }
+  })
+  processSubscriber.onDeactivate(() => {
+    const throttling = createThrottling()
+    cancelCheckTerminated = throttling(() => {
+      checkMabinogiTerminated().then((terminated) => {
+        if (terminated) {
+          cancelCheckTerminated = null
+          stop()
+        }
+      })
+    }, 10000)
+  })
 }
 
 export async function stop() {
@@ -232,10 +257,9 @@ export async function stop() {
     processSubscriber.destroy()
     processSubscriber = null
   }
-  if (!IOSubscriber) {
-    return
+  if (IOSubscriber) {
+    IOSubscriber.unsubscribe()
+    IOSubscriber = null
   }
   unbindLifeCycles()
-  IOSubscriber.unsubscribe()
-  IOSubscriber = null
 }

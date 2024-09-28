@@ -8,7 +8,7 @@ import { handle as checkPermission } from './ipc/hardware/checkPermission.js'
 import { handle as limit } from './ipc/app/limit.js'
 import { createSubscriber } from './ioObserver.js'
 import { stop as stopMacroRunner } from './macroRunner.js'
-import { stop as stopLogger } from './logger.js'
+import { stop as stopLogger } from './ipc/app/logging.js'
 import { sendIOSignal } from './ipc/helpers/sendIOSignal.js'
 import { handle as mainToRenderer } from './ipc/helpers/mainToRenderer.js'
 import {
@@ -38,6 +38,7 @@ function *generateIpc() {
   yield import('./ipc/app/devtool.js')
   yield import('./ipc/app/log.js')
   yield import('./ipc/app/logging.js')
+  yield import('./ipc/app/version.js')
   yield import('./ipc/app/directoryOpen.js')
   
   yield import('./ipc/config/get.js')

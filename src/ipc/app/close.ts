@@ -2,7 +2,7 @@ import { ipcMain, BrowserWindow } from 'electron'
 import { handle as limit } from './limit.js'
 import { unsubscribeAll } from '../../processObserver.js'
 import { stop as stopMacroRunner } from '../../macroRunner.js'
-import { stop as stopLogger } from '../../logger.js'
+import { stop as stopLogger } from '../app/logging.js'
 
 let closing = false
 

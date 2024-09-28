@@ -17,6 +17,7 @@ export const context = {
     close: (): Promise<void> => ipcRenderer.invoke('app-close'),
     limit: (): Promise<boolean> => ipcRenderer.invoke('app-limit'),
     logging: (): Promise<boolean> => ipcRenderer.invoke('app-logging'),
+    version: (): Promise<string> => ipcRenderer.invoke('app-version'),
     devtool: (): Promise<void> => ipcRenderer.invoke('app-devtool'),
     directoryOpen: (): Promise<void> => ipcRenderer.invoke('app-directory-open'),
   },

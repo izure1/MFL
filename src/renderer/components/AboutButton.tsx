@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Button, Dialog, DialogContent, DialogContentText,  DialogTitle } from '@mui/material'
@@ -19,6 +19,7 @@ interface UserBoard {
 export default function AboutButton() {
   const [open, setOpen] = useState(false)
   const [count, setCount] = useState(0)
+  const [version, setVersion] = useState('')
 
   function handle() {
     setOpen(true)
@@ -37,6 +38,15 @@ export default function AboutButton() {
       setCount(0)
     }
   }
+
+  async function fetchVersion() {
+    const version = await ipc.app.version()
+    setVersion(`v${version}`)
+  }
+
+  useEffect(() => {
+    fetchVersion()
+  }, [])
 
   const boards: UserBoard[][] = [
     [
@@ -82,7 +92,7 @@ export default function AboutButton() {
           }
         }}
       >
-        <DialogTitle sx={{ pb: 1 }}>류트 41채 카브 항구 연합 길드 제공</DialogTitle>
+        <DialogTitle sx={{ pb: 1 }}>{version} 류트 41채 카브 항구 연합 길드 제공</DialogTitle>
         <DialogContent>
           <DialogContentText>
             <hr css={css`
