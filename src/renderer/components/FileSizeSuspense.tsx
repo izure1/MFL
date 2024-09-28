@@ -9,11 +9,13 @@ export default function SizeSuspense({
   pattern,
   option,
   filter = () => true,
+  fallback = '읽어오는 중...',
   updatedAt = 0
 }: {
   pattern: string
   option: GlobOptions
   filter?: (itemPath: string) => boolean
+  fallback?: React.ReactNode
   updatedAt?: number
 }) {
   const [calculated, setCalculated] = useState(false)
@@ -50,7 +52,7 @@ export default function SizeSuspense({
 
   return (
     <>
-      { calculated ? humanReadableSize : '읽어오는 중...' }
+      { calculated ? humanReadableSize : fallback }
     </>
   )
 }

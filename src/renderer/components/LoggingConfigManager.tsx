@@ -4,9 +4,9 @@ import { DeleteForeverOutlined } from '@mui/icons-material'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { basename } from 'path-browserify'
 import { getLoggingDistDirectory } from '../../helpers/logger.js'
-import { createRepeat } from '../../utils/timer.js'
+import { createThrottling } from '../../utils/timer.js'
 import { ipc } from '../ipc.js'
-import SizeSuspense from './SizeSuspense.js'
+import FileSizeSuspense from './FileSizeSuspense.js'
 
 function fileOlderThan(itemPath: string, olderThan: number) {
   const name = basename(itemPath, '.webp')
@@ -18,7 +18,7 @@ function fileOlderThan(itemPath: string, olderThan: number) {
   return timestamp < olderThan
 }
 
-function SizeOlderThan({
+function FileSizeOlderThan({
   cwd,
   olderThan,
   updatedAt
@@ -32,7 +32,7 @@ function SizeOlderThan({
   }, [cwd, olderThan])
 
   return (
-    <SizeSuspense
+    <FileSizeSuspense
       pattern='**/*.webp'
       option={{ cwd, onlyFiles: true }}
       filter={olderThanFilter}
@@ -49,7 +49,9 @@ export default function LoggingConfigManager({
   const [configOpen, setConfigOpen] = useState(false)
   const [updatedAt, setUpdatedAt] = useState(Date.now())
   const distDirectory = useMemo(() => getLoggingDistDirectory(config.loggingDirectory), [config.loggingDirectory])
+
   const pattern = '**/*.webp'
+  const updateInterval = 1000 * 60 * 10 // 10m
 
   const noneFilter = useCallback(() => true, [distDirectory])
 
@@ -73,14 +75,10 @@ export default function LoggingConfigManager({
   }
 
   useEffect(() => {
-    setUpdatedAt(Date.now())
-  }, [configOpen, distDirectory])
-
-  useEffect(() => {
-    const repeat = createRepeat()
-    const cancel = repeat(() => setUpdatedAt(Date.now()), 1000 * 60 * 10)
+    const throttling = createThrottling()
+    const cancel = throttling(() => setUpdatedAt(Date.now()), updateInterval)
     return cancel
-  }, [updatedAt])
+  }, [distDirectory, updatedAt])
 
   return (
     <>
@@ -123,7 +121,7 @@ export default function LoggingConfigManager({
                   <ListItemText
                     primary={t.label}
                     secondary={(
-                      <SizeOlderThan
+                      <FileSizeOlderThan
                         cwd={distDirectory}
                         olderThan={getTimestamp(t.week)}
                         updatedAt={updatedAt}
@@ -139,7 +137,7 @@ export default function LoggingConfigManager({
       <Button
         size='small'
         onClick={handleConfigOpen}
-      >사용량: {(<SizeSuspense
+      >사용량: {(<FileSizeSuspense
           pattern={pattern}
           option={{ cwd: distDirectory }}
           filter={noneFilter}
