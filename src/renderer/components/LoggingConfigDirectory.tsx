@@ -50,8 +50,8 @@ export default function LoggingConfigDirectory({
           <div>
             {
               [
-                '스냅샷이 저장될 위치입니다.',
-                '저장 용량이 충분한 드라이브 내 위치를 선택해주세요.'
+                '스냅샷이 보관될 위치입니다.',
+                '남은 용량이 충분한 저장공간 내 위치를 선택해주세요.'
               ].map((text) => (
                 <Typography key={text} fontSize={16}>{text}</Typography>
               ))
