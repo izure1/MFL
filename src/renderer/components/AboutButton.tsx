@@ -69,11 +69,11 @@ export default function AboutButton() {
       },
       {
         title: '테스터',
-        users: ['궐련설화', '지금형이간다']
+        users: ['권련설화', '지금형이간다']
       },
       {
         title: '제작 중 염탐한 사람',
-        users: ['궐련설화']
+        users: ['권련설화']
       }
     ],
     [
