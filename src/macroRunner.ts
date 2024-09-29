@@ -209,7 +209,7 @@ function unbindLifeCycles() {
 
 async function checkMabinogiTerminated() {
   const process = await findMabinogi()
-  return !!process
+  return !process
 }
 
 export async function start() {
