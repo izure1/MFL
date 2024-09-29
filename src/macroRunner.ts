@@ -240,6 +240,9 @@ export async function start() {
     }
   })
   processSubscriber.onDeactivate(() => {
+    if (cancelCheckTerminated) {
+      return
+    }
     const throttling = createThrottling()
     cancelCheckTerminated = throttling(() => {
       checkMabinogiTerminated().then((terminated) => {
