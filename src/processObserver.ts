@@ -51,11 +51,11 @@ function createHook(pid: number) {
   const getActivate = () => activated
 
   const hook = (win: WindowInfo) => {
-    if (win.pid === pid) {
+    if (win.pid === pid && !activated) {
       activated = true
       hooker.trigger('activate', undefined, () => {})
     }
-    else {
+    else if (activated) {
       activated = false
       hooker.trigger('deactivate', undefined, () => {})
     }
