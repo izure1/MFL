@@ -33,3 +33,7 @@ body {
   font-weight: normal !important;
   text-shadow: 0 0 1px black;
 }
+
+button.MuiButton-text {
+  font-family: 'Mabinogi';
+}

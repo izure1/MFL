@@ -12,9 +12,6 @@ export default function HomeButton() {
       size='large'
       disableElevation
       onClick={handle}
-      sx={{
-        fontFamily: 'Mabinogi'
-      }}
     >폴더</Button>
   )
 }

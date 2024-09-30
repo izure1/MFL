@@ -105,9 +105,6 @@ export default function AboutButton() {
         size='large'
         disableElevation
         onClick={handle}
-        sx={{
-          fontFamily: 'Mabinogi'
-        }}
       >정보</Button>
 
       <Dialog
