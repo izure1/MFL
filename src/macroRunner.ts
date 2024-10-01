@@ -241,7 +241,7 @@ export async function start() {
   })
   processSubscriber.onDeactivate(() => {
     if (cancelCheckTerminated) {
-      return
+      cancelCheckTerminated()
     }
     const throttling = createThrottling()
     cancelCheckTerminated = throttling(() => {

@@ -75,12 +75,12 @@ async function capture({
 
 async function loop() {
   if (cancelCapture) {
-    cancelCapture()
-    cancelCapture = null
+    return
   }
   const { loggingInterval } = getConfig()
   const throttling = createThrottling()
   cancelCapture = throttling(async () => {
+    cancelCapture = null
     loop()
     const { logging, loggingDirectory } = getConfig()
     if (logging) {

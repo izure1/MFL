@@ -63,6 +63,19 @@ function *generateIpc() {
 let mainWindow: BrowserWindow|null
 let tray: Tray|null
 
+async function quitApp() {
+  unsubscribeAll()
+  await stopMacroRunner()
+  await stopLogger()
+  await limit(false)
+  if (tray) {
+    tray.destroy()
+    tray = null
+  }
+  mainWindow = null
+  app.quit()
+}
+
 function createTray() {
   const appIcon = new Tray(iconImage)
   const contextMenu = Menu.buildFromTemplate([
@@ -75,11 +88,7 @@ function createTray() {
     {
       label: 'Exit',
       async click() {
-        unsubscribeAll()
-        await limit(false)
-        await stopMacroRunner()
-        await stopLogger()
-        app.quit()
+        await quitApp()
       }
     }
   ])
@@ -190,18 +199,7 @@ app.whenReady().then(async () => {
 // explicitly with Cmd + Q.
 app.on('window-all-closed', async () => {
   if (process.platform !== 'darwin') {
-    unsubscribeAll()
-    stopMacroRunner()
-    stopLogger()
-    await limit(false)
-    await stopMacroRunner()
-    await stopLogger()
-    app.quit()
-    if (tray) {
-      tray.destroy()
-      tray = null
-    }
-    mainWindow = null
+    await quitApp()
   }
 })
 
