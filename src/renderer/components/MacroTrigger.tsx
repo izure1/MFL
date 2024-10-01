@@ -1,22 +1,20 @@
-import type { IOEvent, IOKeyboardEvent, IOMouseEvent, MacroIOUnit, MacroScheme, MacroUnit } from '../../types/index.js'
+import type { IOEvent, IOKeyboardEvent, IOMouseEvent, MacroScheme } from '../../types/index.js'
 import { useContext, useEffect } from 'react'
 import {
   Add as AddIcon,
   FiberManualRecord as FiberManualRecordIcon
 } from '@mui/icons-material'
-import { HoveringContext, RecordingContext, SchemeContext, TriggerRecordingContext } from './MacroEditor.js'
-import MacroUnitButton, { createKeyboardUnit, createMacroIcon, createMacroIconData, createMouseUnit } from './MacroUnitButton.js'
+import { HoveringContext, SchemeContext, TriggerRecordingContext } from './MacroEditor.js'
+import { createKeyboardUnit, createMacroIcon, createMacroIconData, createMouseUnit } from './MacroUnitButton.js'
 import MacroUnitRawButton from './MacroUnitRawButton.js'
 import { ipc } from '../ipc.js'
 
 export default function MacroTrigger() {
   const scheme = useContext(SchemeContext)
-  const [hovering, setHovering] = useContext(HoveringContext)
-  const [unitRecording, setUnitRecording] = useContext(RecordingContext)
+  const [hovering] = useContext(HoveringContext)
   const [triggerRecording, setTriggerRecording] = useContext(TriggerRecordingContext)
 
   function handleRecord() {
-    setUnitRecording(false)
     setTriggerRecording(true)
   }
 

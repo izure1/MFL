@@ -1,5 +1,5 @@
 import type { UiohookKeyboardEvent, UiohookMouseEvent } from 'uiohook-napi'
-import type { IOEvent, MacroDelayUnit, MacroIOUnit, MacroScheme } from '../../types/index.js'
+import type { IOEvent, MacroScheme } from '../../types/index.js'
 import { useContext, useEffect, useState } from 'react'
 import { css } from '@emotion/react'
 import { List, ListItemButton, ListItem } from '@mui/material'

@@ -3,10 +3,13 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { DeleteForeverOutlined } from '@mui/icons-material'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { basename } from 'path-browserify'
+import _byteSize from 'byte-size'
 import { getLoggingDistDirectory } from '../../helpers/logger.js'
 import { createThrottling } from '../../utils/timer.js'
 import { ipc } from '../ipc.js'
-import FileSizeSuspense from './FileSizeSuspense.js'
+
+
+const byteSize = _byteSize as unknown as typeof _byteSize['default']
 
 function fileOlderThan(itemPath: string, olderThan: number) {
   const name = basename(itemPath, '.webp')
@@ -19,25 +22,28 @@ function fileOlderThan(itemPath: string, olderThan: number) {
 }
 
 function FileSizeOlderThan({
-  cwd,
+  allFiles,
   olderThan,
-  updatedAt
+  totalSize
 }: {
-  cwd: string
+  allFiles: string[]
   olderThan: number
-  updatedAt: number
+  totalSize: number
 }) {
-  const olderThanFilter = useCallback((itemPath: string) => {
-    return fileOlderThan(itemPath, olderThan)
-  }, [cwd, olderThan])
+  const filteredFiles = useMemo(() => {
+    return allFiles.filter((t) => fileOlderThan(t, olderThan))
+  }, [allFiles])
+
+  const filteredSize = useMemo(() => {
+    const percentage = filteredFiles.length / allFiles.length
+    const size = Math.ceil(totalSize * percentage)
+    return byteSize(size).toString()
+  }, [filteredFiles])
 
   return (
-    <FileSizeSuspense
-      pattern='**/*.webp'
-      option={{ cwd, onlyFiles: true }}
-      filter={olderThanFilter}
-      updatedAt={updatedAt}
-    />
+    <span>
+      <Typography component='span'>{filteredSize}</Typography>
+    </span>
   )
 }
 
@@ -58,10 +64,11 @@ export default function LoggingConfigManager({
 
   const [configOpen, setConfigOpen] = useState(false)
   const [updatedAt, setUpdatedAt] = useState(Date.now())
+  const [allFiles, setAllFiles] = useState([])
+  const [totalSize, setTotalSize] = useState(0)
   const distDirectory = useMemo(() => getLoggingDistDirectory(config.loggingDirectory), [config.loggingDirectory])
 
   const [confirmBundleIndex, setConfirmBundleIndex] = useState(-1)
-
   const confirmOpen   = useMemo(() => confirmBundleIndex !== -1, [confirmBundleIndex])
   const confirmTarget = useMemo(() => bundles[confirmBundleIndex], [confirmBundleIndex])
 
@@ -71,12 +78,22 @@ export default function LoggingConfigManager({
     return updatedAt-(lastWeek*1000*3600*24*7)
   }
 
+  async function fetchAllFiles() {
+    const files = await ipc.fs.glob(pattern, { cwd: distDirectory, absolute: true })
+    const size = await ipc.fs.getItemSize(files, true)
+    setAllFiles(files)
+    setTotalSize(Number(size))
+  }
+
   async function handleRemoveSnapshots(lastTimestamp: number) {
-    const list = await ipc.fs.glob(pattern, { cwd: distDirectory, absolute: true })
-    const filtered = list.filter((itemPath) => fileOlderThan(itemPath, lastTimestamp))
+    const filtered = allFiles.filter((t) => fileOlderThan(t, lastTimestamp))
     await ipc.fs.remove(filtered)
     setUpdatedAt(Date.now())
   }
+
+  useEffect(() => {
+    fetchAllFiles()
+  }, [distDirectory])
 
   useEffect(() => {
     const throttling = createThrottling()
@@ -149,9 +166,9 @@ export default function LoggingConfigManager({
                     primary={t.label}
                     secondary={(
                       <FileSizeOlderThan
-                        cwd={distDirectory}
+                        allFiles={allFiles}
+                        totalSize={totalSize}
                         olderThan={getTimestamp(t.week)}
-                        updatedAt={updatedAt}
                       />
                     )}
                   />
@@ -164,13 +181,7 @@ export default function LoggingConfigManager({
       <Button
         size='small'
         onClick={() => setConfigOpen(true)}
-      >사용량: {(<FileSizeSuspense
-          pattern={pattern}
-          option={{ cwd: distDirectory }}
-          filter={noneFilter}
-          updatedAt={updatedAt}
-        />
-      )}</Button>
+      >사용량: {byteSize(totalSize).toString()}</Button>
     </>
   )
 }
