@@ -63,7 +63,7 @@ function *generateIpc() {
 let mainWindow: BrowserWindow|null
 let tray: Tray|null
 
-async function quitApp() {
+async function clearApp() {
   unsubscribeAll()
   await stopMacroRunner()
   await stopLogger()
@@ -73,7 +73,6 @@ async function quitApp() {
     tray = null
   }
   mainWindow = null
-  app.quit()
 }
 
 function createTray() {
@@ -87,8 +86,8 @@ function createTray() {
     },
     {
       label: 'Exit',
-      async click() {
-        await quitApp()
+      click() {
+        app.quit()
       }
     }
   ])
@@ -194,12 +193,17 @@ app.whenReady().then(async () => {
   }
 })
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', async () => {
-  if (process.platform !== 'darwin') {
-    await quitApp()
+app.on('window-all-closed', () => {
+  app.quit()
+})
+
+let allowCloseApp = false
+app.on('before-quit', async (e) => {
+  if (!allowCloseApp) {
+    e.preventDefault()
+    await clearApp()
+    allowCloseApp = true
+    app.quit()
   }
 })
 

@@ -1,4 +1,5 @@
 import { css } from '@emotion/react'
+import { useState } from 'react'
 import { AppBar, Button, Toolbar, IconButton } from '@mui/material'
 import { Minimize, Close } from '@mui/icons-material'
 import HomeButton from './components/HomeButton.js'
@@ -9,12 +10,18 @@ import { ipc } from './ipc.js'
 import LogoImage from './assets/img/logo.png'
 
 export default function Titlebar() {
+  const [closing, setClosing] = useState(false)
+
   function handleMinimize() {
     ipc.app.minimize()
   }
 
   function handleClose() {
+    if (closing) {
+      return
+    }
     ipc.app.close()
+    setClosing(true)
   }
 
   async function openExternal(url: string) {
@@ -58,7 +65,7 @@ export default function Titlebar() {
             <IconButton size='medium' onClick={handleMinimize}>
               <Minimize />
             </IconButton>
-            <IconButton size='medium' onClick={handleClose}>
+            <IconButton size='medium' onClick={handleClose} disabled={closing}>
               <Close />
             </IconButton>
           </div>

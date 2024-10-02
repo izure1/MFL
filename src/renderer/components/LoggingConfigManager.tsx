@@ -1,7 +1,6 @@
 import type { ConfigScheme } from '../../types/index.js'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, ListItem, ListItemText, Typography } from '@mui/material'
-import { DeleteForeverOutlined } from '@mui/icons-material'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material'
 import { basename } from 'path-browserify'
 import _byteSize from 'byte-size'
 import { getLoggingDistDirectory } from '../../helpers/logger.js'
@@ -34,16 +33,21 @@ function FileSizeOlderThan({
     return allFiles.filter((t) => fileOlderThan(t, olderThan))
   }, [allFiles])
 
+  const rate = useMemo(() => filteredFiles.length / allFiles.length, [filteredFiles])
+
   const filteredSize = useMemo(() => {
-    const percentage = filteredFiles.length / allFiles.length
-    const size = Math.ceil(totalSize * percentage)
+    if (Number.isNaN(rate)) {
+      return '읽어오는 중...'
+    }
+    const size = Math.ceil(totalSize * rate)
     return byteSize(size).toString()
-  }, [filteredFiles])
+  }, [rate])
 
   return (
-    <span>
-      <Typography component='span'>{filteredSize}</Typography>
-    </span>
+    <Typography
+      color='gray'
+      fontSize={13}
+    >{filteredSize}</Typography>
   )
 }
 
@@ -52,18 +56,29 @@ export default function LoggingConfigManager({
 }: {
   config: ConfigScheme
 }) {
+  const [updatedAt, setUpdatedAt] = useState(Date.now())
+  const getTimestampFromDay = useCallback((lastDay: number) => {
+    return updatedAt-(lastDay*1000*3600*24)
+  }, [updatedAt])
+
+  const getTimestampFromWeek = useCallback((lastWeek: number) => {
+    return updatedAt-(lastWeek*1000*3600*24*7)
+  }, [updatedAt])
+
   const pattern = '**/*.webp'
   const updateInterval = 1000 * 60 * 10 // 10m
   const bundles = [
-    { week: 0, label: '전체' },
-    { week: 1, label: '1주일 전' },
-    { week: 2, label: '2주일 전' },
-    { week: 3, label: '3주일 전' },
-    { week: 4, label: '한 달 전' },
+    { olderThan: getTimestampFromDay(0), label: '전체' },
+    { olderThan: getTimestampFromDay(1), label: '1일 전' },
+    { olderThan: getTimestampFromDay(2), label: '2일 전' },
+    { olderThan: getTimestampFromDay(3), label: '3일 전' },
+    { olderThan: getTimestampFromWeek(1), label: '1주일 전' },
+    { olderThan: getTimestampFromWeek(2), label: '2주일 전' },
+    { olderThan: getTimestampFromWeek(3), label: '3주일 전' },
+    { olderThan: getTimestampFromWeek(4), label: '한 달 전' },
   ]
 
   const [configOpen, setConfigOpen] = useState(false)
-  const [updatedAt, setUpdatedAt] = useState(Date.now())
   const [allFiles, setAllFiles] = useState([])
   const [totalSize, setTotalSize] = useState(0)
   const distDirectory = useMemo(() => getLoggingDistDirectory(config.loggingDirectory), [config.loggingDirectory])
@@ -71,12 +86,6 @@ export default function LoggingConfigManager({
   const [confirmBundleIndex, setConfirmBundleIndex] = useState(-1)
   const confirmOpen   = useMemo(() => confirmBundleIndex !== -1, [confirmBundleIndex])
   const confirmTarget = useMemo(() => bundles[confirmBundleIndex], [confirmBundleIndex])
-
-  const noneFilter = useCallback(() => true, [distDirectory])
-
-  function getTimestamp(lastWeek: number) {
-    return updatedAt-(lastWeek*1000*3600*24*7)
-  }
 
   async function fetchAllFiles() {
     const files = await ipc.fs.glob(pattern, { cwd: distDirectory, absolute: true })
@@ -93,9 +102,6 @@ export default function LoggingConfigManager({
 
   useEffect(() => {
     fetchAllFiles()
-  }, [distDirectory])
-
-  useEffect(() => {
     const throttling = createThrottling()
     const cancel = throttling(() => setUpdatedAt(Date.now()), updateInterval)
     return cancel
@@ -122,7 +128,7 @@ export default function LoggingConfigManager({
                 <Button
                   color='warning'
                   onClick={() => {
-                    handleRemoveSnapshots(getTimestamp(confirmTarget.week))
+                    handleRemoveSnapshots(confirmTarget.olderThan)
                     setConfirmBundleIndex(-1)
                   }}
                 >삭제하기</Button>
@@ -143,40 +149,32 @@ export default function LoggingConfigManager({
             <br />
             이 작업은 되돌릴 수 없습니다.
           </DialogContentText>
-        </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center' }}>
-          <List
-            dense
-            sx={{ width: '100%', maxWidth: 300 }}
-          >
-            {
-              bundles.map((t, i) => (
-                <ListItem
-                  key={t.label}
-                  secondaryAction={(
-                    <IconButton
-                      size='small'
-                      onClick={() => setConfirmBundleIndex(i)}
-                    >
-                      <DeleteForeverOutlined />
-                    </IconButton>
-                  )}
-                >
-                  <ListItemText
-                    primary={t.label}
-                    secondary={(
+          <FormControl fullWidth sx={{ mt: 3 }}>
+            <InputLabel id="demo-simple-select-label">삭제 범위 선택</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={confirmBundleIndex}
+              label="삭제 범위 선택"
+              onChange={(e) => setConfirmBundleIndex(e.target.value as number)}
+            >
+              {
+                bundles.map((t, i) => (
+                  <MenuItem key={t.label} value={i}>
+                    <div>
+                      <Typography>{t.label}</Typography>
                       <FileSizeOlderThan
                         allFiles={allFiles}
                         totalSize={totalSize}
-                        olderThan={getTimestamp(t.week)}
+                        olderThan={t.olderThan}
                       />
-                    )}
-                  />
-                </ListItem>
-              ))
-            }
-          </List>
-        </DialogActions>
+                    </div>
+                  </MenuItem>
+                ))
+              }
+            </Select>
+          </FormControl>
+        </DialogContent>
       </Dialog>
       <Button
         size='small'

@@ -1,6 +1,6 @@
 import type { ConfigScheme } from '../../types/index.js'
 import { css } from '@emotion/react'
-import { Slider, Typography, Switch, Button } from '@mui/material'
+import { Slider, Typography, Switch } from '@mui/material'
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { delay } from '../../utils/timer.js'
 import { ipc } from '../ipc.js'

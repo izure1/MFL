@@ -1,6 +1,6 @@
 import type { ConfigScheme } from '../../types/index.js'
 import { useState } from 'react'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material'
 import { getLoggingDistDirectory } from '../../helpers/logger.js'
 import { ipc } from '../ipc.js'
 

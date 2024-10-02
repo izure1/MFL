@@ -37,3 +37,18 @@ body {
 button.MuiButton-text {
   font-family: 'Mabinogi';
 }
+
+*::-webkit-scrollbar {
+  width: 7px;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 7px;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+}
