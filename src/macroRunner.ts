@@ -253,6 +253,12 @@ export async function start() {
       })
     }, 10000)
   })
+  if (processSubscriber.windowActivated) {
+    processSubscriber.emitActivate()
+  }
+  else {
+    processSubscriber.emitDeactivate()
+  }
 }
 
 export async function stop() {
