@@ -12,9 +12,6 @@ let processSubscriber: ReturnType<typeof createProcessSubscriber> = null
 let IOSubscriber: ReturnType<typeof createIOSubscriber> = null
 let bindingLifeCycles: MacroLifecycle[] = []
 
-let macroRunning = false
-let standardDelay = 50
-
 class MacroLifecycle {
   readonly name: string
   readonly type: MacroScheme['type']
@@ -28,6 +25,9 @@ class MacroLifecycle {
     '2': 'right',
     '3': 'middle',
   } as const
+
+  static Running = false
+  static readonly StandardDelay = 50
 
   constructor(scheme: MacroScheme) {
     const { name, type, trigger, units } = scheme
@@ -79,7 +79,7 @@ class MacroLifecycle {
       return
     }
     const isDown = unit.toggle === 'down'
-    await hardware.keyboard.toggleKey(key, isDown, standardDelay)
+    await hardware.keyboard.toggleKey(key, isDown, MacroLifecycle.StandardDelay)
   }
   
   private async _mouseToggle(unit: MacroIOUnit): Promise<void> {
@@ -87,12 +87,12 @@ class MacroLifecycle {
     await hardware.mouse.toggle(
       this._getMouseButton(unit.button),
       isDown,
-      standardDelay
+      MacroLifecycle.StandardDelay
     )
   }
 
   async run(): Promise<void> {
-    macroRunning = true
+    MacroLifecycle.Running = true
     let escaped = false
     for (const unit of this.units) {
       if (this._destroyed) {
@@ -109,7 +109,7 @@ class MacroLifecycle {
       }
       await this._runUnit(unit)
     }
-    macroRunning = false
+    MacroLifecycle.Running = false
     if (escaped) {
       this.keeping = false
     }
@@ -140,7 +140,7 @@ function bindKeyboard(lifecycle: MacroLifecycle) {
     if (!processSubscriber?.windowActivated) {
       return e
     }
-    if (macroRunning) {
+    if (MacroLifecycle.Running) {
       return e
     }
     if (e.original.keycode !== lifecycle.trigger.button) {
@@ -167,7 +167,7 @@ function bindMouse(lifecycle: MacroLifecycle) {
     if (!processSubscriber?.windowActivated) {
       return e
     }
-    if (macroRunning) {
+    if (MacroLifecycle.Running) {
       return e
     }
     if (e.original.button !== lifecycle.trigger.button) {
