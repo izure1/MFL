@@ -9,18 +9,25 @@ export default function MabinogiDetector({
 }: {
   children: React.ReactNode
 }) {
+  const [finding, setFinding] = useState(false)
   const [process, setProcess] = useState<IProcess|null>(null)
 
   async function findProcess() {
+    if (finding) {
+      return
+    }
+    setFinding(true)
     const guess = await ipc.process.mabinogi()
     setProcess(guess)
+    setFinding(false)
   }
 
   useEffect(() => {
-    findProcess()
-    const id = setInterval(findProcess, 10000)
+    const timeoutId = setTimeout(findProcess, 1000)
+    const intervalId = setInterval(findProcess, 15000)
     return () => {
-      clearInterval(id)
+      clearTimeout(timeoutId)
+      clearInterval(intervalId)
     }
   }, [])
 

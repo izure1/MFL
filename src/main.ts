@@ -1,9 +1,9 @@
+import type { IOEvent } from './types/index.js'
 
 import path from 'node:path'
 import { app, BrowserWindow, Menu, Tray, dialog, nativeImage } from 'electron'
 import { updateElectronApp } from 'update-electron-app'
 
-import type { IOEvent } from './types/index.js'
 import { handle as checkPermission } from './ipc/hardware/checkPermission.js'
 import { handle as limit } from './ipc/app/limit.js'
 import { createSubscriber } from './ioObserver.js'
@@ -15,7 +15,8 @@ import {
   unsubscribeAll
 } from './processObserver.js'
 
-import _iconImage from '../resources/img/icon.png?asset'
+import _iconImage from './renderer/assets/img/icon.png?asset'
+
 
 const iconImage = nativeImage.createFromDataURL(_iconImage)
 
@@ -93,7 +94,7 @@ function createTray() {
   ])
 
   appIcon.on('double-click', (e) => mainWindow.show())
-  appIcon.setToolTip('Mabinogi foreground limiter')
+  appIcon.setToolTip('MFL')
   appIcon.setContextMenu(contextMenu)
   return appIcon
 }

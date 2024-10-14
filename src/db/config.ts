@@ -1,6 +1,6 @@
 import type { ConfigScheme } from '../types/index.js'
-import { TissueRollDocument } from 'tissue-roll'
-import { FileSystemEngine } from 'tissue-roll/engine/FileSystem'
+import { KlafDocument } from 'klaf.js'
+import { FileSystemEngine } from 'klaf.js/engine/FileSystem'
 import { getHomeDir, getFilePathFromHomeDir } from '../homedir.js'
 import { sendConfigUpdateSignal } from '../ipc/helpers/sendConfigUpdateSignal.js'
 
@@ -13,7 +13,7 @@ const DEFAULT_CONFIG: ConfigScheme = {
   loggingDirectory: getHomeDir()
 }
 
-const db = await TissueRollDocument.Open({
+const db = await KlafDocument.Open({
   path: CONFIG_PATH,
   engine: new FileSystemEngine(),
   version: 1,

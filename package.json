@@ -70,6 +70,7 @@
     "@mui/material": "^5.16.1",
     "@paymoapp/active-window": "^2.1.1",
     "byte-size": "^9.0.0",
+    "electron-is-dev": "^3.0.1",
     "electron-squirrel-startup": "^1.0.1",
     "fast-glob": "^3.3.2",
     "find-process": "^1.4.7",
@@ -77,6 +78,7 @@
     "hookall": "^2.1.0",
     "is-elevated": "^4.0.0",
     "keysender": "^2.3.0",
+    "klaf.js": "^1.0.1",
     "node-screenshots": "^0.2.1",
     "normalize-path": "^3.0.0",
     "ntsuspend": "^1.0.2",
@@ -87,7 +89,6 @@
     "rimraf": "^6.0.1",
     "sharp": "^0.33.5",
     "sortablejs": "^1.15.2",
-    "tissue-roll": "^6.0.1",
     "uiohook-napi": "^1.5.4",
     "update-electron-app": "^3.0.0"
   }

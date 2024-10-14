@@ -16,7 +16,7 @@ const config: ForgeConfig = {
         '**/@img/**/*',
         '**/sharp/**/*',
         '**/node-screenshots/**/*',
-        '**/node-screenshots-win32-x64-msvc/**/*'
+        '**/node-screenshots-win32-x64-msvc/**/*',
       ].join(',')
     },
     afterCopy: [
@@ -24,7 +24,7 @@ const config: ForgeConfig = {
         // Copy optional dependencies
         const optionalDependencies = [
           '@img',
-          'node-screenshots-win32-x64-msvc'
+          'node-screenshots-win32-x64-msvc',
         ]
         const tasks = optionalDependencies.map((moduleName) => {
           const modulePath = `node_modules/${moduleName}`
@@ -37,10 +37,13 @@ const config: ForgeConfig = {
           .then(() => callback())
       }
     ],
-    icon: 'resources/img/icon.png',
+    icon: 'src/renderer/assets/img/icon.png',
     win32metadata: {
       "requested-execution-level": 'requireAdministrator'
     },
+    extraResource: [
+      './resources/bin'
+    ]
   },
   rebuildConfig: {},
   hooks: {},

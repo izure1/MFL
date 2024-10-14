@@ -4,7 +4,6 @@ import { UiohookKeyboardEvent, UiohookMouseEvent, UiohookWheelEvent } from 'uioh
 
 export interface IProcess {
   pid: number
-  cmd: string
   name: string
 }
 

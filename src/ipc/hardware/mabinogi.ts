@@ -1,9 +1,8 @@
 import { ipcMain } from 'electron'
-import find from 'find-process'
+import { getTasklist } from '../../utils/tasklist.js'
 
 export async function handle() {
-  const list = await find('name', 'Client', true)
-  return list.pop() ?? null
+  return (await getTasklist()).find((p) => p.name === 'Client.exe') ?? null
 }
 
 export function ipc() {

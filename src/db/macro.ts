@@ -1,11 +1,11 @@
 import type { MacroScheme, MacroSchemeMap, MacroUnit, MacroIOUnit } from '../types/index.js'
-import { TissueRollDocument } from 'tissue-roll'
-import { FileSystemEngine } from 'tissue-roll/engine/FileSystem'
+import { KlafDocument } from 'klaf.js'
+import { FileSystemEngine } from 'klaf.js/engine/FileSystem'
 import { getFilePathFromHomeDir } from '../homedir.js'
 
 const CONFIG_PATH = getFilePathFromHomeDir('./Data/macro.db')
 
-const db = await TissueRollDocument.Open({
+const db = await KlafDocument.Open({
   path: CONFIG_PATH,
   engine: new FileSystemEngine(),
   version: 0,
