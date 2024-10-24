@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react'
 import { css } from '@emotion/react'
-import { Button, Dialog, DialogContent, DialogTitle } from '@mui/material'
+import { Box, Button, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import { SchemeMapContext } from './MacroProvider.js'
 import MacroList from './MacroList.js'
 import { ipc } from '../ipc.js'
@@ -52,18 +52,16 @@ export default function MacroButton() {
         }}
       >
         <DialogTitle sx={{ pb: 1 }}>
-          <div css={css`
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-          `}>
+          <Box
+            display='flex'
+            flexDirection='row'
+            alignItems='center'
+          >
             <div>매크로 관리</div>
-            <div css={css`
-              margin-left: 10px;
-            `}>
+            <Box marginLeft={1}>
               <Button size='small' onClick={handleAdd}>추가</Button>
-            </div>
-          </div>
+            </Box>
+          </Box>
         </DialogTitle>
         <DialogContent sx={{ py: 1 }}>
           <hr css={css`

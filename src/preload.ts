@@ -3,7 +3,20 @@
 
 import { contextBridge, ipcRenderer } from 'electron'
 import { IpcRendererEvent } from 'electron/renderer'
-import { ConfigScheme, IProcess, MacroScheme, MacroSchemeMap, IOEvent, OpenDialogOptions, OpenDialogReturnValue, GlobOptions } from './types/index.js'
+import {
+  ConfigScheme,
+  IProcess,
+  MacroScheme,
+  MacroSchemeMap,
+  IOEvent,
+  OpenDialogOptions,
+  OpenDialogReturnValue,
+  GlobOptions,
+  AuctionItemScheme,
+  AuctionResponse,
+  AuctionItemWatchScheme,
+  AuctionWantedItemScheme
+} from './types/index.js'
 
 export const context = {
   process: {
@@ -58,11 +71,35 @@ export const context = {
     getItemSize: (fullPaths: string|string[], loose = false): Promise<bigint> => ipcRenderer.invoke('fs-get-item-size', fullPaths, loose),
     glob: (pattern: string, glob: GlobOptions): Promise<string[]> => ipcRenderer.invoke('fs-glob', pattern, glob),
     remove: (patterns: string|string[]): Promise<string[]> => ipcRenderer.invoke('fs-remove', patterns),
+  },
+  auction: {
+    fetch: (category: string): Promise<AuctionResponse> => ipcRenderer.invoke('auction-fetch', category),
+    watchGetFromCategory: (category?: string): Promise<AuctionItemWatchScheme[]> => ipcRenderer.invoke('auction-watch-get-category', category),
+    watchSet: (watchData: AuctionItemWatchScheme): Promise<void> => ipcRenderer.invoke('auction-watch-set', watchData),
+    watchRemove: (watchData: AuctionItemWatchScheme): Promise<void> => ipcRenderer.invoke('auction-watch-remove', watchData),
+    inspect: (watchData: AuctionItemWatchScheme): Promise<void> => ipcRenderer.invoke('auction-inspect', watchData),
+    getNonInspected: (): Promise<AuctionWantedItemScheme[]> => ipcRenderer.invoke('auction-get-nonInspected'),
+    requestFetchWanted: (): Promise<AuctionWantedItemScheme[]> => ipcRenderer.invoke('auction-request-fetch-wanted'),
+    onUpdate: (callback: (category: string, items: AuctionItemScheme[]) => void) => ipcRenderer.on('auction-on-update', (
+      _e,
+      category: string,
+      items: AuctionItemScheme[]
+    ) => callback(category, items)),
+    onNonInspectUpdate: (callback: (nonInspectedItems: AuctionWantedItemScheme[]) => void) => ipcRenderer.on('auction-non-inspected-on-update', (
+      _e,
+      nonInspectedItems: AuctionWantedItemScheme[]
+    ) => callback(nonInspectedItems)),
   }
 }
 
 contextBridge.exposeInMainWorld('ipc', context)
 
-ipcRenderer.on('log', (_e, ...message: any) => {
-  console.log(...message)
-})
+ipcRenderer
+  .on('log', (_e, ...message: any) => {
+    console.log(...message)
+  })
+  .on('sound-play', (_e, path: string) => {
+    const audio = new Audio(path)
+    audio.volume = 0.5
+    audio.play()
+  })

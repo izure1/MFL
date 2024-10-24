@@ -7,6 +7,7 @@ import { updateElectronApp } from 'update-electron-app'
 import { handle as checkPermission } from './ipc/hardware/checkPermission.js'
 import { handle as limit } from './ipc/app/limit.js'
 import { createSubscriber } from './ioObserver.js'
+import { auctionWatcher } from './auctionWatcher.js'
 import { stop as stopMacroRunner } from './macroRunner.js'
 import { stop as stopLogger } from './ipc/app/logging.js'
 import { sendIOSignal } from './ipc/helpers/sendIOSignal.js'
@@ -19,6 +20,8 @@ import _iconImage from './renderer/assets/img/icon.png?asset'
 
 
 const iconImage = nativeImage.createFromDataURL(_iconImage)
+
+app.setAppUserModelId('org.izure.mfl')
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if ((await import('electron-squirrel-startup')).default) {
@@ -59,6 +62,14 @@ function *generateIpc() {
   yield import('./ipc/fs/getItemSize.js')
   yield import('./ipc/fs/glob.js')
   yield import('./ipc/fs/remove.js')
+  
+  yield import('./ipc/auction/fetch.js')
+  yield import('./ipc/auction/watchSet.js')
+  yield import('./ipc/auction/watchRemove.js')
+  yield import('./ipc/auction/watchGetFromCategory.js')
+  yield import('./ipc/auction/inspect.js')
+  yield import('./ipc/auction/getNonInspected.js')
+  yield import('./ipc/auction/requestFetchWanted.js')
 }
 
 let mainWindow: BrowserWindow|null
@@ -141,10 +152,10 @@ async function createWindow() {
   
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 900,
-    height: 550,
-    maxWidth: 900,
-    maxHeight: 550,
+    width: 950,
+    height: 600,
+    maxWidth: 950,
+    maxHeight: 600,
     titleBarStyle: 'hidden',
     titleBarOverlay: false,
     resizable: false,
@@ -155,6 +166,7 @@ async function createWindow() {
     maximizable: false,
     fullscreenable: false,
     webPreferences: {
+      webSecurity: false,
       sandbox: true,
       preload: path.join(import.meta.dirname, 'preload.cjs'),
     },
@@ -182,7 +194,14 @@ async function createWindow() {
     tray = null
   })
 
-  listenIO()
+  setTimeout(() => {
+    listenIO()
+    auctionWatcher.run()
+    auctionWatcher.on('notification-click', (tuples) => {
+      mainWindow.show()
+      mainToRenderer('auction-show-alerted')
+    })
+  }, 1000)
 }
 
 // This method will be called when Electron has finished

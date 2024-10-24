@@ -1,8 +1,8 @@
-import { css } from '@emotion/react'
 import { useContext } from 'react'
 import LimitConfig from './LimitConfig.js'
 import LoggingConfig from './LoggingConfig.js'
 import { ConfigContext } from './ConfigProvider.js'
+import { Box } from '@mui/material'
 
 export default function Config() {
   const config = useContext(ConfigContext)
@@ -10,15 +10,15 @@ export default function Config() {
   return (
     <div>
       { config && (
-        <div css={css`
-          padding: 20px;
-          display: flex;
-          flex-direction: column;
-          gap: 30px;
-        `}>
+        <Box
+          padding={3}
+          display='flex'
+          flexDirection='column'
+          gap={3}
+        >
           <LimitConfig config={config} />
           <LoggingConfig config={config} />
-        </div>
+        </Box>
       ) }
     </div>
   )

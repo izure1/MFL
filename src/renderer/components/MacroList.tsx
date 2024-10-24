@@ -1,7 +1,6 @@
 import { MacroSchemeMap } from '../../types/index.js'
 import { useMemo, useState } from 'react'
-import { css } from '@emotion/react'
-import { Typography, List, ListItem, ListItemButton, ListItemText, IconButton } from '@mui/material'
+import { Typography, List, ListItem, ListItemButton, ListItemText, IconButton, Box } from '@mui/material'
 import { DeleteForeverOutlined } from '@mui/icons-material'
 import MacroDrop from './MacroDrop.js'
 import MacroEditor from './MacroEditor.js'
@@ -42,18 +41,18 @@ export default function MacroList({
             </ListItem>
           ))
         ) : (
-          <div
-            css={css`
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px 0;
-          `}>
+          <Box
+            display='flex'
+            alignItems='center'
+            justifyContent='center'
+            marginY={3}
+            marginX={0}
+          >
             <Typography
               color='grayText'
               fontSize={15}
             >상단에 추가 버튼을 눌러 새로운 매크로를 만드세요</Typography>
-          </div>
+          </Box>
         )}
       </List>
       <MacroDrop target={dropTarget} setTarget={setDropTarget} />

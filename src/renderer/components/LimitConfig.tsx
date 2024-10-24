@@ -1,6 +1,5 @@
 import type { ConfigScheme } from '../../types/index.js'
-import { css } from '@emotion/react'
-import { Slider, Typography, Switch } from '@mui/material'
+import { Slider, Typography, Switch, Box } from '@mui/material'
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { delay } from '../../utils/timer.js'
 import { ipc } from '../ipc.js'
@@ -39,18 +38,18 @@ export default function LimitConfig({
   return (
     <>
       <div>
-        <div css={css`
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-        `}>
+        <Box
+          display='flex'
+          flexDirection='row'
+          alignItems='center'
+        >
           <Typography variant='h5' color={ config.running ? 'rgb(225, 173, 145)' : 'primary.dark' }>시작하기</Typography>
           <Switch
             checked={config.running}
             onChange={handleChangeRunning}
             disabled={pending}
           />
-        </div>
+        </Box>
         <Typography variant='body1' color='rgb(230, 230, 230)'>
           { working ?
           '현재 동작 중입니다!' :

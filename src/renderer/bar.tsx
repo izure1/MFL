@@ -1,10 +1,11 @@
 import { css } from '@emotion/react'
 import { useState } from 'react'
-import { AppBar, Button, Toolbar, IconButton } from '@mui/material'
+import { AppBar, Button, Toolbar, IconButton, Box } from '@mui/material'
 import { Minimize, Close } from '@mui/icons-material'
 import HomeButton from './components/HomeButton.js'
 import AboutButton from './components/AboutButton.js'
 import MacroButton from './components/MacroButton.js'
+import AuctionButton from './components/AuctionButton.js'
 
 import { ipc } from './ipc.js'
 import LogoImage from './assets/img/logo.png'
@@ -35,17 +36,18 @@ export default function Titlebar() {
           pr: 1
         }
       }}>
-        <div css={css`
-          display: flex;
-          flex: 1 1;
-          flex-direction: row;
-          justify-content: space-between;
-          align-items: center;
-        `}>
-          <div css={css`
-            display: flex;
-            align-items: center;
-          `}>
+        <Box
+          display='flex'
+          flexGrow={1}
+          flexShrink={1}
+          flexDirection='row'
+          justifyContent='space-between'
+          alignItems='center'
+        >
+          <Box
+            display='flex'
+            alignItems='center'
+          >
             <Button onClick={async () => openExternal('https://mabinogi.nexon.com/')}>
               <img
                 src={LogoImage}
@@ -56,20 +58,21 @@ export default function Titlebar() {
             </Button>
             <HomeButton />
             <MacroButton />
+            <AuctionButton />
             <AboutButton />
-          </div>
-          <div css={css`
-            display: flex;
-            gap: 5px;
-          `}>
+          </Box>
+          <Box
+            display='flex'
+            gap={1}
+          >
             <IconButton size='medium' onClick={handleMinimize}>
               <Minimize />
             </IconButton>
             <IconButton size='medium' onClick={handleClose} disabled={closing}>
               <Close />
             </IconButton>
-          </div>
-        </div>
+          </Box>
+        </Box>
       </Toolbar>
     </AppBar>
   )

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { Button, Dialog, DialogContent, DialogContentText,  DialogTitle } from '@mui/material'
+import { Box, Button, Dialog, DialogContent, DialogContentText,  DialogTitle } from '@mui/material'
 import { ipc } from '../ipc.js'
 
 
@@ -127,13 +127,8 @@ export default function AboutButton() {
             border: 0;
             background: linear-gradient(90deg, transparent, rgb(225, 173, 145), transparent);
           `} />
-          <div css={css`
-            color: 'white';
-          `}>
-            <div css={css`
-              display: grid;
-              grid-template-columns: repeat(2, 1fr);
-            `}>
+          <Box color='white'>
+            <Box display='grid' gridTemplateColumns='repeat(2, 1fr)'>
               {
                 boards.map((board, i) => (
                   <div key={`board-${i}`}>
@@ -183,8 +178,8 @@ export default function AboutButton() {
                   </div>
                 ))
               }
-            </div>
-          </div>
+            </Box>
+          </Box>
         </DialogContent>
       </Dialog>
     </>

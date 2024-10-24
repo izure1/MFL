@@ -8,7 +8,8 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  Typography
+  Typography,
+  Box
 } from '@mui/material'
 import { ReactSortable } from 'react-sortablejs'
 import MacroUnitButton from './MacroUnitButton.js'
@@ -195,17 +196,19 @@ export default function MacroEditor({
                 >{target}</Button>
               </DialogTitle>
               <DialogContent>
-                <div css={css`
-                  min-height: 100px;
-                  margin-bottom: 10px;
-                  display: grid;
-                  grid-template-columns: repeat(2, 1fr);
-                  & > div {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                  }
-                `}>
+                <Box
+                  minHeight={13}
+                  marginBottom={2}
+                  display='grid'
+                  gridTemplateColumns='repeat(2, 1fr)'
+                  sx={{
+                    '& > div': {
+                      'display': 'flex',
+                      'flex-direction': 'column',
+                      'gap': '10px',
+                    }
+                  }}
+                >
                   <div>
                     <div>
                       <Typography>실행될 조건. 우클릭으로 삭제할 수 있습니다</Typography>
@@ -222,11 +225,9 @@ export default function MacroEditor({
                       <MacroType />
                     </div>
                   </div>
-                </div>
+                </Box>
                 <Typography>실행될 동작. 우클릭으로 삭제할 수 있습니다</Typography>
-                <div css={css`
-                  margin-top: 30px;
-                `}>
+                <Box marginTop={4}>
                   {scheme ? (
                     <ReactSortable
                       list={scheme.units}
@@ -255,7 +256,7 @@ export default function MacroEditor({
                   ) : (
                     <MacroModeManager />
                   )}
-                </div>
+                </Box>
               </DialogContent>
               <DialogActions>
                 <Button onClick={() => setTarget(null)}>돌아가기</Button>

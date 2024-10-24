@@ -3,14 +3,16 @@ import '@fontsource/roboto/400.css'
 import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
 
-import { ThemeProvider, css } from '@emotion/react'
+import { ThemeProvider } from '@emotion/react'
 import { createRoot } from 'react-dom/client'
 import { theme } from './theme.js'
 import AppBar from './bar.js'
 import MabinogiDetectorProvider from './components/DetectorProvider.js'
 import ConfigProvider from './components/ConfigProvider.js'
 import MacroProvider from './components/MacroProvider.js'
+import AuctionWatchProvider from './components/AuctionWatchProvider.js'
 import Main from './components/main.js'
+import { Box } from '@mui/material'
 
 function App() {
   return (
@@ -18,16 +20,19 @@ function App() {
       <ConfigProvider>
         <MacroProvider>
           <ThemeProvider theme={theme}>
-            <div className='wrapper' css={css`
-              width: 100%;
-              height: 100%;
-              display: flex;
-              flex: 1 1;
-              flex-direction: column;
-            `}>
-              <AppBar />
-              <Main />
-            </div>
+            <AuctionWatchProvider>
+              <Box
+                width='100%'
+                height='100%'
+                display='flex'
+                flexGrow={1}
+                flexShrink={1}
+                flexDirection='column'
+              >
+                <AppBar />
+                <Main />
+              </Box>
+            </AuctionWatchProvider>
           </ThemeProvider>
         </MacroProvider>
       </ConfigProvider>

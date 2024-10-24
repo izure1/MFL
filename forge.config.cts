@@ -39,10 +39,13 @@ const config: ForgeConfig = {
     ],
     icon: 'src/renderer/assets/img/icon.png',
     win32metadata: {
-      "requested-execution-level": 'requireAdministrator'
+      'CompanyName': 'org.izure',
+      'ProductName': 'mfl',
+      'requested-execution-level': 'requireAdministrator'
     },
     extraResource: [
-      './resources/bin'
+      './resources/bin',
+      './resources/audio',
     ]
   },
   rebuildConfig: {},

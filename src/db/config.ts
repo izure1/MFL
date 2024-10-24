@@ -10,13 +10,15 @@ const DEFAULT_CONFIG: ConfigScheme = {
   running: false,
   logging: false,
   loggingInterval: 7,
-  loggingDirectory: getHomeDir()
+  loggingDirectory: getHomeDir(),
+  apiKey: '',
+  auctionWatching: true,
 }
 
 const db = await KlafDocument.Open({
   path: CONFIG_PATH,
   engine: new FileSystemEngine(),
-  version: 1,
+  version: 3,
   scheme: {
     limit: {
       default: (): number => 50,
@@ -37,6 +39,14 @@ const db = await KlafDocument.Open({
     loggingDirectory: {
       default: (): string => getHomeDir(),
       validate: (v) => typeof v === 'string'
+    },
+    apiKey: {
+      default: (): string => '',
+      validate: (v) => typeof v === 'string'
+    },
+    auctionWatching: {
+      default: (): boolean => true,
+      validate: (v) => typeof v === 'boolean'
     }
   }
 })

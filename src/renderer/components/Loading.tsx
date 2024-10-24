@@ -1,24 +1,21 @@
-import { css } from '@emotion/react'
-import { CircularProgress, Typography } from '@mui/material'
+import { Box, CircularProgress, Typography } from '@mui/material'
 
 export default function Loading() {
   return (
-    <div css={css`
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    `}>
+    <Box
+      height='100%'
+      display='flex'
+      flexDirection='column'
+      justifyContent='center'
+      alignItems='center'
+    >
       <div>
         <CircularProgress size={80} thickness={2} />
       </div>
-      <div css={css`
-        margin-top: 50px;
-      `}>
+      <Box marginTop={6}>
         <Typography variant='h5' align='center' color='primary.light'>마비노기를 찾고 있습니다.</Typography>
         <Typography variant='h6' align='center' color='primary.light'>게임을 켜주세요.</Typography>
-      </div>
-    </div>
+      </Box>
+    </Box>
   )
 }

@@ -1,0 +1,6 @@
+{
+  "domain": "https://open.api.nexon.com",
+  "auction_path": "/mabinogi/v1/auction/list",
+  "register_url": "https://openapi.nexon.com/ko/my-application/create-app/",
+  "description_url": "https://github.com/izure1/MFL/blob/master/docs/auction/api.md"
+}

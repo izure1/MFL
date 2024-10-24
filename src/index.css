@@ -29,26 +29,39 @@ body {
 }
 
 .MuiTypography-root {
-  font-family: 'Mabinogi' !important;
   font-weight: normal !important;
   text-shadow: 0 0 1px black;
 }
 
-button.MuiButton-text {
-  font-family: 'Mabinogi';
+fieldset,
+legend,
+.MuiButton-root,
+.MuiInputBase-input,
+.MuiTypography-root {
+  font-family: 'Mabinogi' !important;
+}
+
+fieldset {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+legend {
+  color: rgb(185, 160, 130);
 }
 
 *::-webkit-scrollbar {
   width: 7px;
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-  }
+}
+
+*::-webkit-scrollbar:hover {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 *::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.15);
   border-radius: 7px;
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.3);
-  }
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
 }

@@ -1,3 +1,3 @@
 export function createUUIDV4(): string {
-  return self.crypto.randomUUID()
+  return globalThis.crypto.randomUUID()
 }

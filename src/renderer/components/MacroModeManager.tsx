@@ -1,8 +1,7 @@
 import type { UiohookKeyboardEvent, UiohookMouseEvent } from 'uiohook-napi'
 import type { IOEvent, MacroScheme } from '../../types/index.js'
 import { useContext, useEffect, useState } from 'react'
-import { css } from '@emotion/react'
-import { List, ListItemButton, ListItem } from '@mui/material'
+import { List, ListItemButton, ListItem, Box } from '@mui/material'
 import {
   Add as AddIcon,
   FiberManualRecord as FiberManualRecordIcon
@@ -119,9 +118,7 @@ export default function MacroModeManager() {
       }
     ]
     return (
-      <div css={css`
-        border: 1px solid gray;
-      `}>
+      <Box border='1px solid gray'>
         <List dense>
           {
             jobs.map((job) => (
@@ -131,7 +128,7 @@ export default function MacroModeManager() {
             ))
           }
         </List>
-      </div>
+      </Box>
     )
   }
 }

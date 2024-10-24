@@ -15,8 +15,11 @@ function createTask(handler: TaskRunner, cleaner: TaskCleaner<typeof handler>) {
     }
   }
 
-  function wrapper(callback: Function, interval: number) {
+  function wrapper(callback: Function, interval: number, immediate = false) {
     cancel()
+    if (immediate) {
+      callback()
+    }
     id = handler(callback, interval)
     return cancel
   }

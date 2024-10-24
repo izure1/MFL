@@ -10,7 +10,8 @@ import {
   FormControlLabel,
   RadioGroup,
   Radio,
-  Typography
+  Typography,
+  Box
 } from '@mui/material'
 import {
   ArrowDropDown as ArrowDropDownIcon,
@@ -69,11 +70,11 @@ export function createMacroIcon({
   text: string
 }): React.ReactNode {
   return (
-    <div css={css`
-      width: 100%;
-      height: 100%;
-      position: relative;
-    `}>
+    <Box
+      width='100%'
+      height='100%'
+      position='relative'
+    >
       <div css={css`
         width: 100%;
         color: orange;
@@ -103,7 +104,7 @@ export function createMacroIcon({
           lineHeight={1}
         >{text}</Typography>
       </div>
-    </div>
+    </Box>
   )
 }
 
