@@ -411,12 +411,19 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       ...MabinogiCategory['액세서리'],
       ...MabinogiCategory['특수 장비'],
     ],
-    generator: (keyword: string, value: string) => (item: AuctionItem) => {
+    generator: (keyword: string, rawMin: string, rawMax: string) => (item: AuctionItem) => {
       const options = findMatched(item, '세공 옵션', undefined)
+      const min = parseFloat(rawMin)
+      const max = parseFloat(rawMax)
+      const reg = new RegExp(`.*${keyword}.*\\((\\d+)레벨:.*\\)$`, 'g')
       return options.some((option) => {
-        const v = option.option_value
-        const [description = '', level = ''] = v.split('(')
-        return description.includes(keyword) && level.includes(`${value}레벨:`)
+        const raw = option.option_value
+        const matched = reg.exec(raw)
+        if (!matched) {
+          return false
+        }
+        const v = Number(matched[1])
+        return v >= min && v <= max
       })
     }
   },
@@ -1568,6 +1575,86 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       if (option) {
         v = parseFloat(option.option_value)
       }
+      return v >= min && v <= max
+    }
+  },
+  {
+    id: '3fccd331-bdaa-47b1-a253-dfc4d415090c',
+    type: 'range',
+    defaultValue: [0, 30],
+    name: '에코스톤 등급',
+    category: [
+      '에코스톤',
+    ],
+    generator: (min = 0, max = 30) => (item: AuctionItem) => {
+      const options = findMatched(item, '에코스톤 등급', null)
+      const option = options[0]
+      let v = 0
+      if (option) {
+        v = Number(option.option_value)
+      }
+      return v >= min && v <= max
+    }
+  },
+  {
+    id: 'ad928c28-cbd9-49f7-8570-3f5c20e8dd62',
+    type: 'text',
+    defaultValue: '생명력',
+    name: '에코스톤 고유 능력',
+    category: [
+      '에코스톤',
+    ],
+    generator: (keyword: string) => (item: AuctionItem) => {
+      const options = findMatched(item, '에코스톤 고유 능력', undefined)
+      const option = options[0]
+      if (!option) {
+        return false
+      }
+      return option.option_sub_type.includes(keyword)
+    }
+  },
+  {
+    id: '5650c70d-fd7f-4cef-984a-51ec70391a40',
+    type: 'range',
+    defaultValue: [0, MAX_NUMBER],
+    name: '에코스톤 고유 능력 수치',
+    category: [
+      '에코스톤',
+    ],
+    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+      const options = findMatched(item, '에코스톤 고유 능력', undefined)
+      const option = options[0]
+      let v = 0
+      if (option) {
+        v = Number(option.option_value)
+      }
+      return v >= min && v <= max
+    }
+  },
+  {
+    id: 'b78a00f9-e706-41f3-893a-63e6f371d322',
+    type: 'multiple',
+    defaultValue: ['', '0', '20'],
+    placeholders: ['명칭', '최소', '최대'],
+    name: '에코스톤 각성 능력',
+    category: [
+      '에코스톤',
+    ],
+    generator: (keyword: string, rawMin: string, rawMax: string) => (item: AuctionItem) => {
+      const options = findMatched(item, '에코스톤 각성 능력', undefined)
+      const option = options[0]
+      if (!option) {
+        return false
+      }
+      const min = parseFloat(rawMin)
+      const max = parseFloat(rawMax)
+      const reg = new RegExp(`.*${keyword}.* (\\d+) 레벨$`, 'g')
+      const raw = option.option_value
+      const matched = reg.exec(raw)
+      if (!matched) {
+        return false
+      }
+      const v = Number(matched[1])
       return v >= min && v <= max
     }
   },
