@@ -525,6 +525,44 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     }
   },
   {
+    id: '88f6c57d-6834-431a-be45-b71b6945b3a8',
+    type: 'multiple',
+    defaultValue: ['', '', '0', MAX_NUMBER.toString()],
+    placeholders: ['인챈트 명칭', '옵션 명칭', '최소', '최대'],
+    name: '인챈트 상세 옵션',
+    category: [
+      ...MabinogiCategory['근거리 장비'],
+      ...MabinogiCategory['원거리 장비'],
+      ...MabinogiCategory['마법 장비'],
+      ...MabinogiCategory['갑옷 장비'],
+      ...MabinogiCategory['방어 장비'],
+      ...MabinogiCategory['액세서리'],
+      ...MabinogiCategory['특수 장비'],
+    ],
+    generator: (
+      enchantKeyword: string,
+      optionKeyword: string,
+      rawMin: string,
+      rawMax: string
+    ) => (item: AuctionItem) => {
+      const options = findMatched(item, '인챈트', undefined)
+      const min = parseFloat(rawMin)
+      const max = parseFloat(rawMax)
+      const reg = new RegExp(`.*${optionKeyword}.* (\\d+).*? `)
+      return options.some((option) => {
+        if (!option.option_value.includes(enchantKeyword)) {
+          return false
+        }
+        const matched = reg.exec(option.option_desc)
+        if (!matched) {
+          return false
+        }
+        const v = Number(matched[1])
+        return v >= min && v <= max
+      })
+    }
+  },
+  {
     id: '557b7022-9250-4e78-a7b3-c0f761421fd5',
     type: 'range',
     defaultValue: [0, 50],
