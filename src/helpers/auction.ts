@@ -12,7 +12,9 @@ export function getFilteredAuctionItems(
 ): AuctionItemScheme[] {
   const category = watchData.itemCategory
   const sameCategoryItems = list.filter((item) => item.item_category === category)
-  const validates = watchData.itemOptions.map((option) => {
+  const validates = watchData.itemOptions.filter((option) => {
+    return optionResolvers.has(option.resolver_id)
+  }).map((option) => {
     const resolver = optionResolvers.get(option.resolver_id)
     const params = Array.isArray(option.value) ? option.value : [option.value]
     const validate = (resolver.generator as any)(...params)
@@ -21,6 +23,9 @@ export function getFilteredAuctionItems(
   return sameCategoryItems.filter((item) => {
     for (let i = 0, len = watchData.itemOptions.length; i < len; i++) {
       const validate = validates[i]
+      if (!validate) {
+        return true
+      }
       if (!validate(item)) {
         return false
       }

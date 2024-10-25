@@ -62,6 +62,10 @@ export default function AuctionWatchSubscribe() {
     setWatches(watches)
   }
 
+  function existsOption(itemOption: AuctionItemWatchScheme['itemOptions'][0]) {
+    return optionResolvers.has(itemOption.resolver_id)
+  }
+
   function createOptionReadable(itemOption: AuctionItemWatchScheme['itemOptions'][0]) {
     const guess = optionResolvers.get(itemOption.resolver_id)
     return `${guess.name}: ${JSON.stringify(itemOption.value)}`
@@ -109,6 +113,7 @@ export default function AuctionWatchSubscribe() {
                         {
                           watchData
                             .itemOptions
+                            .filter(existsOption)
                             .map(createOptionReadable)
                             .join(', ')
                         }

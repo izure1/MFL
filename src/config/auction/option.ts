@@ -28,7 +28,7 @@ function normalizeTotemStats(item: AuctionItem, subType: string|string[]) {
   }
   return options.reduce((acc, option) => {
     if (subType.includes(option.option_sub_type)) {
-      const v = Number(option.option_value)
+      const v = parseFloat(option.option_value)
       acc += v
     }
     return acc
@@ -64,7 +64,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     defaultValue: [0, MAX_NUMBER],
     name: '아이템 개당 가격',
     category: '*',
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = item.auction_price_per_unit
       return v >= min && v <= max
     }
@@ -75,7 +75,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     defaultValue: [0, MAX_NUMBER],
     name: '아이템 갯수',
     category: '*',
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = item.item_count
       return v >= min && v <= max
     }
@@ -95,14 +95,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       ...MabinogiCategory['액세서리'],
       ...MabinogiCategory['설치물'],
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '내구력', null)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        v = Number(option.option_value2)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value2)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -115,14 +113,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       '도면',
       '옷본',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '남은 사용 횟수', null)
-      const option = options[0]
-      let v = MAX_NUMBER
-      if (option) {
-        v = Number(option.option_value)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -136,14 +132,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       ...MabinogiCategory['마법 장비'],
       ...MabinogiCategory['특수 장비'],
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '공격', null)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        v = Number(option.option_value2)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value2)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -157,14 +151,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       ...MabinogiCategory['마법 장비'],
       ...MabinogiCategory['특수 장비'],
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '부상률', null)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        v = parseFloat(option.option_value2)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value2)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -178,14 +170,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       ...MabinogiCategory['마법 장비'],
       ...MabinogiCategory['특수 장비'],
     ],
-    generator: (min = 0, max = 100) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '밸런스', null)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        v = parseFloat(option.option_value)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -200,14 +190,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       ...MabinogiCategory['갑옷 장비'],
       ...MabinogiCategory['특수 장비'],
     ],
-    generator: (min = 0, max = 100) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '숙련', null)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        v = Number(option.option_value)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -221,14 +209,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       ...MabinogiCategory['마법 장비'],
       ...MabinogiCategory['특수 장비'],
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '크리티컬', null)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        v = parseFloat(option.option_value)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -244,14 +230,40 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       ...MabinogiCategory['액세서리'],
       ...MabinogiCategory['특수 장비'],
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '남은 전용 해제 가능 횟수', null)
-      const option = options[0]
-      let v = 7
-      if (option) {
-        v = Number(option.option_value)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
+    }
+  },
+  {
+    id: 'c9bd2372-6a07-4a79-8e49-33b9fb9ff417',
+    type: 'multiple',
+    defaultValue: ['', '0', '10'],
+    placeholders: ['명칭', '최소', '최대'],
+    name: '세트 효과',
+    category: [
+      ...MabinogiCategory['근거리 장비'],
+      ...MabinogiCategory['원거리 장비'],
+      ...MabinogiCategory['마법 장비'],
+      ...MabinogiCategory['갑옷 장비'],
+      ...MabinogiCategory['방어 장비'],
+      ...MabinogiCategory['액세서리'],
+      ...MabinogiCategory['특수 장비'],
+    ],
+    generator: (keyword: string, rawMin: string, rawMax: string) => (item: AuctionItem) => {
+      const options = findMatched(item, '세트 효과', undefined)
+      const min = parseFloat(rawMin)
+      const max = parseFloat(rawMax)
+      return options.some((option) => {
+        if (!option.option_value.includes(keyword)) {
+          return false
+        }
+        const v = parseFloat(option.option_value2)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -264,16 +276,14 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       ...MabinogiCategory['원거리 장비'],
       ...MabinogiCategory['마법 장비'],
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '피어싱 레벨', null)
-      const option = options[0]
-      let v = 0                                 
-      if (option) {
-        const v1 = Number(option.option_value)
-        const v2 = Number(option.option_value2)
-        v = v1 + v2
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v1 = parseFloat(option.option_value)
+        const v2 = parseFloat(option.option_value2)
+        const v = v1 + v2
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -286,14 +296,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       '마도서',
       '액세서리'
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '방어력', null)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        v = Number(option.option_value)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -307,14 +315,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       '액세서리',
       '오브'
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '보호', null)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        v = Number(option.option_value)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -351,12 +357,10 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     ],
     generator: (value: number) => (item: AuctionItem) => {
       const options = findMatched(item, '세공 랭크', null)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        v = Number(option.option_value)
-      }
-      return value === v
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return value === v
+      })
     }
   },
   {
@@ -422,7 +426,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
         if (!matched) {
           return false
         }
-        const v = Number(matched[1])
+        const v = parseFloat(matched[1])
         return v >= min && v <= max
       })
     }
@@ -437,14 +441,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       ...MabinogiCategory['원거리 장비'],
       ...MabinogiCategory['마법 장비'],
     ],
-    generator: (min = 0, max = 7) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '특별 개조', undefined)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        v = Number(option.option_value)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -469,11 +471,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     ],
     generator: (type: 'S'|'R') => (item: AuctionItem) => {
       const options = findMatched(item, '특별 개조', type)
-      const option = options[0]
-      if (!option) {
-        return false
-      }
-      return true
+      return !!options.length
     }
   },
   {
@@ -492,12 +490,10 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     ],
     generator: (keyword: string) => (item: AuctionItem) => {
       const options = findMatched(item, '인챈트', '접두')
-      const option = options[0]
-      if (!option) {
-        return false
-      }
-      const v = option.option_value
-      return v.includes(keyword)
+      return options.some((option) => {
+        const v = option.option_value
+        return v.includes(keyword)
+      })
     }
   },
   {
@@ -516,12 +512,10 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     ],
     generator: (keyword: string) => (item: AuctionItem) => {
       const options = findMatched(item, '인챈트', '접미')
-      const option = options[0]
-      if (!option) {
-        return false
-      }
-      const v = option.option_value
-      return v.includes(keyword)
+      return options.some((option) => {
+        const v = option.option_value
+        return v.includes(keyword)
+      })
     }
   },
   {
@@ -557,7 +551,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
         if (!matched) {
           return false
         }
-        const v = Number(matched[1])
+        const v = parseFloat(matched[1])
         return v >= min && v <= max
       })
     }
@@ -572,14 +566,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       ...MabinogiCategory['원거리 장비'],
       ...MabinogiCategory['마법 장비'],
     ],
-    generator: (min = 0, max = 50) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '에르그', undefined)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        v = Number(option.option_value)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -608,11 +600,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     ],
     generator: (type: 'S'|'A'|'B') => (item: AuctionItem) => {
       const options = findMatched(item, '에르그', type)
-      const option = options[0]
-      if (!option) {
-        return false
-      }
-      return true
+      return !!options.length
     }
   },
   {
@@ -641,12 +629,10 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     ],
     generator: (able: number) => (item: AuctionItem) => {
       const options = findMatched(item, '인챈트 불가능', null)
-      const option = options[0]
-      let v = 'false'
-      if (option) {
-        v = option.option_value
-      }
-      return Boolean(able).toString() !== v
+      return options.some((option) => {
+        const v = option.option_value
+        return Boolean(able).toString() !== v
+      })
     }
   },
   {
@@ -657,14 +643,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '분양 메달',
     ],
-    generator: (min = 0, max = 5) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '펫 정보', '남은 분양 횟수')
-      const option = options[0]
-      let v = 5
-      if (option) {
-        v = Number(option.option_value)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -677,12 +661,10 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     ],
     generator: (keyword: string) => (item: AuctionItem) => {
       const options = findMatched(item, '인챈트', '종족명')
-      const option = options[0]
-      if (!option) {
-        return false
-      }
-      const v = option.option_value
-      return v.includes(keyword)
+      return options.some((option) => {
+        const v = option.option_value
+        return v.includes(keyword)
+      })
     }
   },
   {
@@ -693,14 +675,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '분양 메달',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '펫 정보', '누적 레벨')
-      const option = options[0]
-      let v = 0
-      if (option) {
-        v = Number(option.option_value)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -711,14 +691,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '분양 메달',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '펫 정보', '펫 포인트')
-      const option = options[0]
-      let v = 0
-      if (option) {
-        v = Number(option.option_value)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -729,7 +707,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '최대 마나')
       return v >= min && v <= max
     }
@@ -742,7 +720,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '밸런스')
       return v >= min && v <= max
     }
@@ -755,7 +733,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '크리티컬')
       return v >= min && v <= max
     }
@@ -768,7 +746,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, ['최대 대미지', '최대대미지'])
       return v >= min && v <= max
     }
@@ -781,7 +759,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, ['최대 생명력', '최대생명력'])
       return v >= min && v <= max
     }
@@ -794,7 +772,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, ['최대 스태미나', '최대스태미나'])
       return v >= min && v <= max
     }
@@ -807,7 +785,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '체력')
       return v >= min && v <= max
     }
@@ -820,7 +798,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '솜씨')
       return v >= min && v <= max
     }
@@ -833,7 +811,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '의지')
       return v >= min && v <= max
     }
@@ -846,7 +824,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '행운')
       return v >= min && v <= max
     }
@@ -859,7 +837,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '보호')
       return v >= min && v <= max
     }
@@ -872,7 +850,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '방어')
       return v >= min && v <= max
     }
@@ -885,7 +863,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, ['마법 방어', '마법 방어력'])
       return v >= min && v <= max
     }
@@ -898,7 +876,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, ['마법 보호', '마법 보호력']) // 혹시 모름
       return v >= min && v <= max
     }
@@ -911,7 +889,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, ['마법 공격', '마법 공격력']) // 혹시 모름
       return v >= min && v <= max
     }
@@ -924,7 +902,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '지력')
       return v >= min && v <= max
     }
@@ -937,7 +915,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, ['최소 대미지', '최소대미지'])
       return v >= min && v <= max
     }
@@ -950,7 +928,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '물 속성 연금술 대미지')
       return v >= min && v <= max
     }
@@ -963,7 +941,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '불 속성 연금술 대미지')
       return v >= min && v <= max
     }
@@ -976,7 +954,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '바람 속성 연금술 대미지')
       return v >= min && v <= max
     }
@@ -989,7 +967,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '흙 속성 연금술 대미지')
       return v >= min && v <= max
     }
@@ -1002,7 +980,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '마리오네트 보호')
       return v >= min && v <= max
     }
@@ -1015,7 +993,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '마리오네트 방어')
       return v >= min && v <= max
     }
@@ -1028,7 +1006,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '마리오네트 최대 대미지')
       return v >= min && v <= max
     }
@@ -1041,7 +1019,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '마리오네트 최소 대미지')
       return v >= min && v <= max
     }
@@ -1054,7 +1032,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '듀얼건 최대 대미지')
       return v >= min && v <= max
     }
@@ -1067,7 +1045,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '듀얼건 최소 대미지')
       return v >= min && v <= max
     }
@@ -1080,7 +1058,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '최대 부상률')
       return v >= min && v <= max
     }
@@ -1093,7 +1071,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '최소 부상률')
       return v >= min && v <= max
     }
@@ -1106,7 +1084,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '음악 버프 스킬 지속시간')
       return v >= min && v <= max
     }
@@ -1119,7 +1097,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '수리검 최대 대미지')
       return v >= min && v <= max
     }
@@ -1132,7 +1110,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '수리검 최소 대미지')
       return v >= min && v <= max
     }
@@ -1145,7 +1123,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '체인 블레이드 최대 대미지')
       return v >= min && v <= max
     }
@@ -1158,7 +1136,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '체인 블레이드 최소 대미지')
       return v >= min && v <= max
     }
@@ -1171,7 +1149,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '너클 최대 대미지')
       return v >= min && v <= max
     }
@@ -1184,7 +1162,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '너클 최소 대미지')
       return v >= min && v <= max
     }
@@ -1197,7 +1175,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '근접 재능 무기 최대 대미지')
       return v >= min && v <= max
     }
@@ -1210,7 +1188,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '근접 재능 무기 최소 대미지')
       return v >= min && v <= max
     }
@@ -1223,7 +1201,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '궁술 재능 무기 최대 대미지')
       return v >= min && v <= max
     }
@@ -1236,291 +1214,34 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '토템',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const v = normalizeTotemStats(item, '궁술 재능 무기 최소 대미지')
       return v >= min && v <= max
     }
   },
   {
     id: '3c48230f-f170-4ad1-bd44-8a55ad2d6dbe',
-    type: 'range',
-    defaultValue: [0, MAX_NUMBER],
-    name: '최대 공격력',
+    type: 'multiple',
+    defaultValue: ['', '0', MAX_NUMBER.toString()],
+    placeholders: ['명칭', '최소', '최대'],
+    name: '음식 옵션',
     category: [
       '음식',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (keyword: string, rawMin: string, rawMax: string) => (item: AuctionItem) => {
       const options = findMatched(item, '사용 효과', undefined)
-      const option = options[0]
-      let v = 0
-      if (option) {
+      return options.some((option) => {
+        const min = parseFloat(rawMin)
+        const max = parseFloat(rawMax)
+        const reg = new RegExp(`.*${keyword}.* (\\d+) `, 'g')
         const raw = option.option_value
-        if (!raw.startsWith('최대대미지 ')) {
+        const matched = reg.exec(raw)
+        if (!matched) {
           return false
         }
-        v = Number(raw.split(' ')[1])
-      }
-      return v >= min && v <= max
-    }
-  },
-  {
-    id: '12a3aae8-37f9-463a-8410-fc3c46227212',
-    type: 'range',
-    defaultValue: [0, MAX_NUMBER],
-    name: '최대 마나',
-    category: [
-      '음식',
-    ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
-      const options = findMatched(item, '사용 효과', undefined)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        const raw = option.option_value
-        if (!raw.startsWith('최대마나 ')) {
-          return false
-        }
-        v = Number(raw.split(' ')[1])
-      }
-      return v >= min && v <= max
-    }
-  },
-  {
-    id: '39ba9b0d-2de5-4cca-afcb-e77767bf30de',
-    type: 'range',
-    defaultValue: [0, MAX_NUMBER],
-    name: '최대 생명력',
-    category: [
-      '음식',
-    ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
-      const options = findMatched(item, '사용 효과', undefined)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        const raw = option.option_value
-        if (!raw.startsWith('최대생명력 ')) {
-          return false
-        }
-        v = Number(raw.split(' ')[1])
-      }
-      return v >= min && v <= max
-    }
-  },
-  {
-    id: 'e52df41d-ca38-460c-acd2-d8ec3a5309e1',
-    type: 'range',
-    defaultValue: [0, MAX_NUMBER],
-    name: '최대 스태미나',
-    category: [
-      '음식',
-    ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
-      const options = findMatched(item, '사용 효과', undefined)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        const raw = option.option_value
-        if (!raw.startsWith('최대스태미나 ')) {
-          return false
-        }
-        v = Number(raw.split(' ')[1])
-      }
-      return v >= min && v <= max
-    }
-  },
-  {
-    id: 'cfe1a1e1-5a66-4cea-891e-67e7f27cec9e',
-    type: 'range',
-    defaultValue: [0, MAX_NUMBER],
-    name: '체력',
-    category: [
-      '음식',
-    ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
-      const options = findMatched(item, '사용 효과', undefined)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        const raw = option.option_value
-        if (!raw.startsWith('체력 ')) {
-          return false
-        }
-        v = Number(raw.split(' ')[1])
-      }
-      return v >= min && v <= max
-    }
-  },
-  {
-    id: '748858e1-b6c6-44d5-839c-21117b44b4c6',
-    type: 'range',
-    defaultValue: [0, MAX_NUMBER],
-    name: '솜씨',
-    category: [
-      '음식',
-    ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
-      const options = findMatched(item, '사용 효과', undefined)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        const raw = option.option_value
-        if (!raw.startsWith('솜씨 ')) {
-          return false
-        }
-        v = Number(raw.split(' ')[1])
-      }
-      return v >= min && v <= max
-    }
-  },
-  {
-    id: 'b9648c8a-9726-4370-ac25-8e1617060e10',
-    type: 'range',
-    defaultValue: [0, MAX_NUMBER],
-    name: '의지',
-    category: [
-      '음식',
-    ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
-      const options = findMatched(item, '사용 효과', undefined)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        const raw = option.option_value
-        if (!raw.startsWith('의지 ')) {
-          return false
-        }
-        v = Number(raw.split(' ')[1])
-      }
-      return v >= min && v <= max
-    }
-  },
-  {
-    id: '45a29c11-d5b1-4b7a-b708-bd382adadf85',
-    type: 'range',
-    defaultValue: [0, MAX_NUMBER],
-    name: '보호',
-    category: [
-      '음식',
-    ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
-      const options = findMatched(item, '사용 효과', undefined)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        const raw = option.option_value
-        if (!raw.startsWith('보호 ')) {
-          return false
-        }
-        v = Number(raw.split(' ')[1])
-      }
-      return v >= min && v <= max
-    }
-  },
-  {
-    id: '0e132556-c043-4b52-8d3d-0c13528d6130',
-    type: 'range',
-    defaultValue: [0, MAX_NUMBER],
-    name: '방어',
-    category: [
-      '음식',
-    ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
-      const options = findMatched(item, '사용 효과', undefined)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        const raw = option.option_value
-        if (!raw.startsWith('방어 ')) {
-          return false
-        }
-        v = Number(raw.split(' ')[1])
-      }
-      return v >= min && v <= max
-    }
-  },
-  {
-    id: '9f504d76-1ab9-4b9f-ae09-505c5aeb1ddc',
-    type: 'range',
-    defaultValue: [0, MAX_NUMBER],
-    name: '마법 방어',
-    category: [
-      '음식',
-    ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
-      const options = findMatched(item, '사용 효과', undefined)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        const raw = option.option_value
-        if (!raw.startsWith('마법 방어 ')) {
-          return false
-        }
-        v = Number(raw.split(' ')[1])
-      }
-      return v >= min && v <= max
-    }
-  },
-  {
-    id: '01651e1a-fb50-4055-84a5-53454bdc892d',
-    type: 'range',
-    defaultValue: [0, MAX_NUMBER],
-    name: '마법 보호',
-    category: [
-      '음식',
-    ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
-      const options = findMatched(item, '사용 효과', undefined)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        const raw = option.option_value
-        if (!raw.startsWith('마법 보호 ')) {
-          return false
-        }
-        v = Number(raw.split(' ')[1])
-      }
-      return v >= min && v <= max
-    }
-  },
-  {
-    id: 'f7b7f725-65da-4186-a89c-ccd5769efadf',
-    type: 'range',
-    defaultValue: [0, MAX_NUMBER],
-    name: '마법 공격력',
-    category: [
-      '음식',
-    ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
-      const options = findMatched(item, '사용 효과', undefined)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        const raw = option.option_value
-        if (!raw.startsWith('마법 공격력 ')) {
-          return false
-        }
-        v = Number(raw.split(' ')[1])
-      }
-      return v >= min && v <= max
-    }
-  },
-  {
-    id: '7f2efe6b-90a6-451c-b2ed-fe0814247596',
-    type: 'range',
-    defaultValue: [0, MAX_NUMBER],
-    name: '품질',
-    category: [
-      '음식',
-    ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
-      const options = findMatched(item, '품질', undefined)
-      const option = options[0]
-      if (!option) {
-        return false
-      }
-      const v = Number(option.option_value)
-      return v >= min && v <= max
+        const v = parseFloat(matched[1])
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -1531,14 +1252,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '보석',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '크기', null)
-      const option = options[0]
-      if (!option) {
-        return false
-      }
-      const v = parseFloat(option.option_value)
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -1549,15 +1268,13 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '염색 앰플',
     ],
-    generator: (min = 0, max = 255) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '색상', null)
-      const option = options[0]
-      if (!option) {
-        return false
-      }
-      let v: string|number = option.option_value.split(',')[0]
-      v = Number(v)
-      return v >= min && v <= max
+      return options.some((option) => {
+        const [r, g, b] = option.option_value.split(',')[0]
+        const v = parseFloat(r)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -1568,15 +1285,13 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '염색 앰플',
     ],
-    generator: (min = 0, max = 255) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '색상', null)
-      const option = options[0]
-      if (!option) {
-        return false
-      }
-      let v: string|number = option.option_value.split(',')[1]
-      v = Number(v)
-      return v >= min && v <= max
+      return options.some((option) => {
+        const [r, g, b] = option.option_value.split(',')[0]
+        const v = parseFloat(g)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -1587,15 +1302,13 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '염색 앰플',
     ],
-    generator: (min = 0, max = 255) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '색상', null)
-      const option = options[0]
-      if (!option) {
-        return false
-      }
-      let v: string|number = option.option_value.split(',')[2]
-      v = Number(v)
-      return v >= min && v <= max
+      return options.some((option) => {
+        const [r, g, b] = option.option_value.split(',')[0]
+        const v = parseFloat(b)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -1606,14 +1319,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '인챈트 스크롤',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '내구도', null)
-      const option = options[0]
-      let v = MAX_NUMBER
-      if (option) {
-        v = parseFloat(option.option_value)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -1624,14 +1335,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '에코스톤',
     ],
-    generator: (min = 0, max = 30) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '에코스톤 등급', null)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        v = Number(option.option_value)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -1644,11 +1353,9 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     ],
     generator: (keyword: string) => (item: AuctionItem) => {
       const options = findMatched(item, '에코스톤 고유 능력', undefined)
-      const option = options[0]
-      if (!option) {
-        return false
-      }
-      return option.option_sub_type.includes(keyword)
+      return options.some((option) => {
+        return option.option_sub_type.includes(keyword)
+      })
     }
   },
   {
@@ -1659,14 +1366,12 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     category: [
       '에코스톤',
     ],
-    generator: (min = 0, max = MAX_NUMBER) => (item: AuctionItem) => {
+    generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '에코스톤 고유 능력', undefined)
-      const option = options[0]
-      let v = 0
-      if (option) {
-        v = Number(option.option_value)
-      }
-      return v >= min && v <= max
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
     }
   },
   {
@@ -1680,20 +1385,18 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     ],
     generator: (keyword: string, rawMin: string, rawMax: string) => (item: AuctionItem) => {
       const options = findMatched(item, '에코스톤 각성 능력', undefined)
-      const option = options[0]
-      if (!option) {
-        return false
-      }
       const min = parseFloat(rawMin)
       const max = parseFloat(rawMax)
       const reg = new RegExp(`.*${keyword}.* (\\d+) 레벨$`, 'g')
-      const raw = option.option_value
-      const matched = reg.exec(raw)
-      if (!matched) {
-        return false
-      }
-      const v = Number(matched[1])
-      return v >= min && v <= max
+      return options.some((option) => {
+        const raw = option.option_value
+        const matched = reg.exec(raw)
+        if (!matched) {
+          return false
+        }
+        const v = parseFloat(matched[1])
+        return v >= min && v <= max
+      })
     }
   },
 ]

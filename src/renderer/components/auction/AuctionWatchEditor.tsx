@@ -297,6 +297,10 @@ export default function AuctionWatchEditor({
   const [clone, setClone] = useState(structuredClone(data))
   const { setCategory, setWatchData, setWatchEditorOpen } = useContext(AuctionWatchContext)
 
+  function existsOption(option: AuctionItemWatchScheme['itemOptions'][0]) {
+    return optionResolvers.has(option.resolver_id)
+  }
+
   function handleDone() {
     setWatchData(clone)
     setWatchEditorOpen(false)
@@ -351,7 +355,7 @@ export default function AuctionWatchEditor({
       <DialogContent>
         <DialogContentText>상세 검색 옵션을 입력하세요. 모든 조건이 일치한 매물이 검색됩니다.</DialogContentText>
         {
-          clone && clone.itemOptions.map((itemOption, i) => (
+          clone && clone.itemOptions.filter(existsOption).map((itemOption, i) => (
             <AuctionItemOptionSelector
               key={itemOption.id}
               item={clone}
