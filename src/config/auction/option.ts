@@ -542,17 +542,20 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       const options = findMatched(item, '인챈트', undefined)
       const min = parseFloat(rawMin)
       const max = parseFloat(rawMax)
-      const reg = new RegExp(`.*${optionKeyword}.* (\\d+).*? `)
+      const reg = new RegExp(`.*${optionKeyword}.* (\\d+) (증가|감소).*?`)
       return options.some((option) => {
         if (!option.option_value.includes(enchantKeyword)) {
           return false
         }
-        const matched = reg.exec(option.option_desc)
-        if (!matched) {
-          return false
-        }
-        const v = parseFloat(matched[1])
-        return v >= min && v <= max
+        const descriptions = (option.option_desc ?? '').split(',')
+        return descriptions.some((description) => {
+          const matched = reg.exec(description)
+          if (!matched) {
+            return false
+          }
+          const v = parseFloat(matched[1])
+          return v >= min && v <= max
+        })
       })
     }
   },
@@ -629,6 +632,9 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     ],
     generator: (able: number) => (item: AuctionItem) => {
       const options = findMatched(item, '인챈트 불가능', null)
+      if (!options.length) {
+        return able === 1
+      }
       return options.some((option) => {
         const v = option.option_value
         return Boolean(able).toString() !== v
