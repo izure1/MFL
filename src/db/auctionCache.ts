@@ -51,7 +51,7 @@ export function getItems(category: string): AuctionItemScheme[] {
     db.set(category, new Map())
   }
   return [...db.get(category).values()].toSorted((a, b) => {
-    return a.auction_price_per_unit - b.auction_price_per_unit
+    return b.auction_price_per_unit - a.auction_price_per_unit
   })
 }
 

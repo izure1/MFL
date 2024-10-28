@@ -5,28 +5,34 @@ import { getFromCategory as getWatchesFromCategory } from './db/auctionWatch.js'
 import { getItems } from './db/auctionCache.js'
 import { addInspectQueue, changeItemInspectStage } from './db/auctionSubscribe.js'
 import { handle as fetchAuctionItems } from './ipc/auction/fetch.js'
-import { createRepeat } from './utils/timer.js'
+import { createRepeat, delay } from './utils/timer.js'
 import { createXMLString } from './utils/xml.js'
 import { getFilteredAuctionItems } from './helpers/auction.js'
 import { handle as mainToRenderer } from './ipc/helpers/mainToRenderer.js'
 import { AuctionWantedItemInspectStage, AuctionWantedItemTuple } from './types/index.js'
 
 const FETCH_INTERVAL = 1000 * 60 * 3 // 3minutes
+const PARSING_DELAY = 50
+const PARSING_DELAY_PER_EA = 2000
 
 interface AuctionWatcherEvents {
   'notification-click': [AuctionWantedItemTuple[]]
 }
 
 class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
-  private _interval: number
+  private readonly _interval: number
+  private readonly _parsingDelay: number
+  private readonly _parsingDelayPerEA: number 
   private _running: boolean
   private _repeat: ReturnType<typeof createRepeat>
   private _cancelRepeat: (() => void)|null
   private _notification: Notification
 
-  constructor(interval: number) {
+  constructor(interval: number, parsingDelay: number, parsingDelayPerEA: number) {
     super()
     this._interval = interval
+    this._parsingDelay = parsingDelay
+    this._parsingDelayPerEA = parsingDelayPerEA
     this._running = false
     this._repeat = createRepeat()
     this._cancelRepeat = null
@@ -41,8 +47,12 @@ class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
     return this._interval
   }
 
-  set interval(v) {
-    this._interval = v
+  get parsingDelay() {
+    return this._parsingDelay
+  }
+
+  get parsingDelayPerEA() {
+    return this._parsingDelayPerEA
   }
 
   private _createToastString({ title, body, actions }: {
@@ -91,8 +101,16 @@ class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
     for (const watchData of watches) {
       await fetchAuctionItems(watchData.itemCategory)
       const categoryItems = getItems(watchData.itemCategory)
-      const filteredItems = getFilteredAuctionItems(categoryItems, watchData)
-      const pending = addInspectQueue(watchData, filteredItems)
+      let beforeIndex = categoryItems.length
+      const queue = []
+      while (categoryItems.length) {
+        beforeIndex -= this._parsingDelayPerEA
+        const buffer = categoryItems.splice(beforeIndex, this._parsingDelayPerEA)
+        const filteredItems = getFilteredAuctionItems(buffer, watchData)
+        queue.push(...filteredItems)
+        await delay(this._parsingDelay)
+      }
+      const pending = addInspectQueue(watchData, queue)
       if (pending.length) {
         newAdded.push([watchData, pending])
       }
@@ -166,4 +184,8 @@ class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
   }
 }
 
-export const auctionWatcher = new AuctionWatcher(FETCH_INTERVAL)
+export const auctionWatcher = new AuctionWatcher(
+  FETCH_INTERVAL,
+  PARSING_DELAY,
+  PARSING_DELAY_PER_EA
+)
