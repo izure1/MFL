@@ -1,14 +1,14 @@
 import { ipcMain } from 'electron'
+import { AuctionWatcher } from '../../auctionWatcher.js'
 import { getItems, setItems } from '../../db/auctionCache.js'
 import { AuctionResponse } from '../../types/index.js'
 import { auction_path, domain } from '../../config/auction/api.json'
 import { getConfig } from '../../db/config.js'
 
-const EXPIRED_TIMESTAMP = 1000 * 60 * 1 // 1 minutes
 const updatedAt = new Map<string, number>()
 
 function isExpired(now: number, timestamp: number) {
-  return now - timestamp > EXPIRED_TIMESTAMP
+  return now - timestamp > AuctionWatcher.FetchInterval
 }
 
 export async function handle(category: string): Promise<AuctionResponse> {

@@ -11,15 +11,15 @@ import { getFilteredAuctionItems } from './helpers/auction.js'
 import { handle as mainToRenderer } from './ipc/helpers/mainToRenderer.js'
 import { AuctionWantedItemInspectStage, AuctionWantedItemTuple } from './types/index.js'
 
-const FETCH_INTERVAL = 1000 * 60 * 3 // 3minutes
-const PARSING_DELAY = 50
-const PARSING_DELAY_PER_EA = 2000
-
 interface AuctionWatcherEvents {
   'notification-click': [AuctionWantedItemTuple[]]
 }
 
-class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
+export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
+  static readonly FetchInterval = 1000 * 60 * 3 // 3minutes
+  static readonly ParsingDelay = 50
+  static readonly ParsingDelayPerEA = 1500
+
   private readonly _interval: number
   private readonly _parsingDelay: number
   private readonly _parsingDelayPerEA: number 
@@ -185,7 +185,7 @@ class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
 }
 
 export const auctionWatcher = new AuctionWatcher(
-  FETCH_INTERVAL,
-  PARSING_DELAY,
-  PARSING_DELAY_PER_EA
+  AuctionWatcher.FetchInterval,
+  AuctionWatcher.ParsingDelay,
+  AuctionWatcher.ParsingDelayPerEA
 )
