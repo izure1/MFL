@@ -16,7 +16,7 @@ import {
   unsubscribeAll
 } from './processObserver.js'
 
-import _iconImage from './renderer/assets/img/icon.png?asset'
+import _iconImage from './renderer/assets/img/icon.png?url'
 
 
 const iconImage = nativeImage.createFromDataURL(_iconImage)

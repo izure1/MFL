@@ -77,6 +77,18 @@ const config: ForgeConfig = {
           entry: 'src/preload.ts',
           config: 'vite.preload.config.ts',
         },
+        {
+          entry: 'src/worker/auctionFetch.worker.ts',
+          config: 'vite.worker.config.ts'
+        },
+        {
+          entry: 'src/worker/auctionFilter.worker.ts',
+          config: 'vite.worker.config.ts'
+        },
+        {
+          entry: 'src/worker/loggingCapture.worker.ts',
+          config: 'vite.worker.config.ts'
+        },
       ],
       renderer: [
         {

@@ -1,15 +1,19 @@
-import { join } from 'path'
+import type { WorkerParameter as FilterWorkerParameter } from './worker/auctionFilter.worker.js'
 import { Notification } from 'electron'
+import { join } from 'node:path'
 import { EventEmitter } from 'node:events'
+import { Worker } from 'node:worker_threads'
 import { getFromCategory as getWatchesFromCategory } from './db/auctionWatch.js'
 import { getItems } from './db/auctionCache.js'
 import { addInspectQueue, changeItemInspectStage } from './db/auctionSubscribe.js'
 import { handle as fetchAuctionItems } from './ipc/auction/fetch.js'
+import { spawnWorker } from './utils/worker.js'
 import { createRepeat, delay } from './utils/timer.js'
 import { createXMLString } from './utils/xml.js'
 import { getFilteredAuctionItems } from './helpers/auction.js'
 import { handle as mainToRenderer } from './ipc/helpers/mainToRenderer.js'
-import { AuctionWantedItemInspectStage, AuctionWantedItemTuple } from './types/index.js'
+import { AuctionItemScheme, AuctionWantedItemInspectStage, AuctionWantedItemTuple } from './types/index.js'
+import { catchError } from './utils/error.js'
 
 interface AuctionWatcherEvents {
   'notification-click': [AuctionWantedItemTuple[]]
@@ -100,17 +104,20 @@ export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
     const newAdded: AuctionWantedItemTuple[] = []
     for (const watchData of watches) {
       await fetchAuctionItems(watchData.itemCategory)
-      const categoryItems = getItems(watchData.itemCategory)
-      let beforeIndex = categoryItems.length
-      const queue = []
-      while (categoryItems.length) {
-        beforeIndex -= this._parsingDelayPerEA
-        const buffer = categoryItems.splice(beforeIndex, this._parsingDelayPerEA)
-        const filteredItems = getFilteredAuctionItems(buffer, watchData)
-        queue.push(...filteredItems)
-        await delay(this._parsingDelay)
+      const auctionItems = getItems(watchData.itemCategory)
+      const workerPath = join(import.meta.dirname, './worker/auctionFilter.worker.js')
+      const filteringTask = spawnWorker<FilterWorkerParameter, AuctionItemScheme[]>(
+        new Worker(workerPath),
+        {
+          auctionItems,
+          watchData
+        }
+      )
+      const [err, filteredItems] = await catchError(filteringTask)
+      if (err) {
+        throw err
       }
-      const pending = addInspectQueue(watchData, queue)
+      const pending = addInspectQueue(watchData, filteredItems)
       if (pending.length) {
         newAdded.push([watchData, pending])
       }

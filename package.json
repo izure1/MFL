@@ -81,7 +81,7 @@
     "hookall": "^2.1.0",
     "is-elevated": "^4.0.0",
     "keysender": "^2.3.0",
-    "klaf.js": "^1.0.5",
+    "klaf.js": "^1.0.6",
     "node-screenshots": "^0.2.1",
     "normalize-path": "^3.0.0",
     "ntsuspend": "^1.0.2",

@@ -13,7 +13,7 @@ export default defineConfig((env) => {
       target: 'esnext',
       lib: {
         entry: forgeConfigSelf.entry!,
-        fileName: () => '[name].js',
+        fileName: () => 'worker/[name].js',
         formats: ['es'],
       },
       rollupOptions: {

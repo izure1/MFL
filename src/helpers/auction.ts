@@ -1,4 +1,4 @@
-import { AuctionItemOptionResolver, AuctionItemScheme, AuctionItemWatchScheme } from '../types/index.js'
+import { AuctionItemOptionResolver, AuctionItemScheme, AuctionItemWatchScheme, AuctionResponse } from '../types/index.js'
 import { AuctionItemOptionResolvers } from '../config/auction/option.js'
 
 export const optionResolvers = new Map<string, AuctionItemOptionResolver>()
@@ -34,3 +34,37 @@ export function getFilteredAuctionItems(
   })
 }
 
+export async function fetchItems(
+  auctionPath: string,
+  domain: string,
+  apiKey: string,
+  category: string
+): Promise<AuctionResponse> {
+  const url = new URL(auctionPath, domain)
+  url.searchParams.append('auction_item_category', category)
+
+  let next_cursor = ''
+  const auction_item = []
+  do {
+    if (next_cursor) {
+      url.searchParams.delete('cursor')
+      url.searchParams.append('cursor', next_cursor)
+    }
+    const res = await fetch(url.toString(), {
+      headers: {
+        'x-nxopen-api-key': apiKey
+      }
+    })
+    const data = await res.json() as AuctionResponse
+    if (data.error) {
+      return data
+    }
+    auction_item.push(...data.auction_item)
+    next_cursor = data.next_cursor
+  } while (!!next_cursor)
+
+  return {
+    auction_item,
+    next_cursor: ''
+  }
+}
