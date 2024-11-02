@@ -1,3 +1,3 @@
-import { Hardware } from 'keysender'
+import { Hardware } from '@io-utils/keysender'
 
 export const hardware = new Hardware()

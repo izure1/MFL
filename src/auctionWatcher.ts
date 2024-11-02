@@ -10,7 +10,6 @@ import { handle as fetchAuctionItems } from './ipc/auction/fetch.js'
 import { spawnWorker } from './utils/worker.js'
 import { createRepeat, delay } from './utils/timer.js'
 import { createXMLString } from './utils/xml.js'
-import { getFilteredAuctionItems } from './helpers/auction.js'
 import { handle as mainToRenderer } from './ipc/helpers/mainToRenderer.js'
 import { AuctionItemScheme, AuctionWantedItemInspectStage, AuctionWantedItemTuple } from './types/index.js'
 import { catchError } from './utils/error.js'
@@ -22,7 +21,7 @@ interface AuctionWatcherEvents {
 export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
   static readonly FetchInterval = 1000 * 60 * 3 // 3minutes
   static readonly ParsingDelay = 50
-  static readonly ParsingDelayPerEA = 1500
+  static readonly ParsingDelayPerEA = 2500
 
   private readonly _interval: number
   private readonly _parsingDelay: number
@@ -106,18 +105,26 @@ export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
       await fetchAuctionItems(watchData.itemCategory)
       const auctionItems = getItems(watchData.itemCategory)
       const workerPath = join(import.meta.dirname, './worker/auctionFilter.worker.js')
-      const filteringTask = spawnWorker<FilterWorkerParameter, AuctionItemScheme[]>(
-        new Worker(workerPath),
-        {
-          auctionItems,
-          watchData
+      const queue = []
+      let beforeIndex = auctionItems.length
+      while (auctionItems.length) {
+        beforeIndex -= this._parsingDelayPerEA
+        const buffer = auctionItems.splice(beforeIndex, this._parsingDelayPerEA)
+        const filteringTask = spawnWorker<FilterWorkerParameter, AuctionItemScheme[]>(
+          new Worker(workerPath),
+          {
+            auctionItems: buffer,
+            watchData
+          }
+        )
+        const [err, filteredItems] = await catchError(filteringTask)
+        if (err) {
+          throw err
         }
-      )
-      const [err, filteredItems] = await catchError(filteringTask)
-      if (err) {
-        throw err
+        queue.push(...filteredItems)
+        await delay(this._parsingDelay)
       }
-      const pending = addInspectQueue(watchData, filteredItems)
+      const pending = addInspectQueue(watchData, queue)
       if (pending.length) {
         newAdded.push([watchData, pending])
       }

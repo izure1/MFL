@@ -1,4 +1,4 @@
-import { KeyboardRegularButton, KeyboardSpecButton } from 'keysender'
+import { KeyboardRegularButton, KeyboardSpecButton } from '@io-utils/keysender'
 
 type Keys = KeyboardRegularButton|KeyboardSpecButton
 
