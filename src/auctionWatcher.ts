@@ -19,7 +19,7 @@ interface AuctionWatcherEvents {
 }
 
 export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
-  static readonly FetchInterval = 1000 * 60 * 3 // 3minutes
+  static readonly FetchInterval = 1000 * 60 * 10 // 10minutes
   static readonly ParsingDelay = 50
   static readonly ParsingDelayPerEA = 2500
 
