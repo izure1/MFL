@@ -39,9 +39,9 @@ export async function handle(category: string): Promise<AuctionResponse> {
         category,
       }
     )
-    const [err, res] = await catchError(fetchingTask)
-    if (err) {
-      throw err
+    const res = await fetchingTask
+    if (res.error) {
+      return res
     }
     updatedAt.set(category, now)
     setItems(category, res.auction_item)
