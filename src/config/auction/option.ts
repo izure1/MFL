@@ -1273,6 +1273,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     name: '색상 코드(R)',
     category: [
       '염색 앰플',
+      '포션',
     ],
     generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '색상', null)
@@ -1290,6 +1291,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     name: '색상 코드(G)',
     category: [
       '염색 앰플',
+      '포션',
     ],
     generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '색상', null)
@@ -1307,6 +1309,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     name: '색상 코드(B)',
     category: [
       '염색 앰플',
+      '포션',
     ],
     generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '색상', null)

@@ -7,7 +7,6 @@ import { getItems, setItems } from '../../db/auctionCache.js'
 import { AuctionResponse } from '../../types/index.js'
 import { auction_path, domain } from '../../config/auction/api.json'
 import { getConfig } from '../../db/config.js'
-import { catchError } from '../../utils/error.js'
 import { spawnWorker } from '../../utils/worker.js'
 
 const updatedAt = new Map<string, number>()

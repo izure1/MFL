@@ -3,7 +3,6 @@ import { css } from '@emotion/react'
 import { createContext, Dispatch, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Button,
-  Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
@@ -18,6 +17,7 @@ import MacroTrigger from './MacroTrigger.js'
 import { SchemeMapContext } from './MacroProvider.js'
 import { ipc } from '../ipc.js'
 import MacroType from './MacroType.js'
+import GlassDialog from './advanced/GlassDialog.js'
 
 export const SchemeContext = createContext<MacroScheme|null>({
   name: 'Unknown',
@@ -154,7 +154,7 @@ export default function MacroEditor({
           <HoveringContext.Provider value={hoveringContext}>
             {
               scheme && (
-                <Dialog
+                <GlassDialog
                   open={nameInputOpen}
                   onClose={() => setNameInputOpen(false)}
                   maxWidth='xl'
@@ -180,10 +180,10 @@ export default function MacroEditor({
                       fullWidth
                     >저장</Button>
                   </DialogActions>
-                </Dialog>
+                </GlassDialog>
               )
             }
-            <Dialog
+            <GlassDialog
               open={editing}
               onClose={() => setTarget(null)}
               fullScreen
@@ -261,7 +261,7 @@ export default function MacroEditor({
               <DialogActions>
                 <Button onClick={() => setTarget(null)}>돌아가기</Button>
               </DialogActions>
-            </Dialog>
+            </GlassDialog>
           </HoveringContext.Provider>
         </RecordingContext.Provider>
       </TriggerRecordingContext.Provider>

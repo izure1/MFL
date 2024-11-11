@@ -1,8 +1,9 @@
 import { useContext, useMemo, useState } from 'react'
-import { Badge, Box, Button, Dialog, DialogContent,  DialogTitle, IconButton } from '@mui/material'
+import { Badge, Box, Button, DialogContent,  DialogTitle, IconButton, ButtonProps } from '@mui/material'
 import { CloseRounded } from '@mui/icons-material'
 import Auction from './auction/Auction.js'
 import { AuctionWatchContext } from './AuctionWatchProvider.js'
+import GlassDialog from './advanced/GlassDialog.js'
 
 export default function AboutButton() {
   const [open, setOpen] = useState(false)
@@ -32,7 +33,7 @@ export default function AboutButton() {
         >경매장</Button>
       </Badge>
 
-      <Dialog
+      <GlassDialog
         open={open}
         onClose={() => setOpen(false)}
         fullScreen
@@ -58,7 +59,7 @@ export default function AboutButton() {
             <Auction />
           </Box>
         </DialogContent>
-      </Dialog>
+      </GlassDialog>
     </>
   )
 }

@@ -5,6 +5,7 @@ import { Minimize, Close } from '@mui/icons-material'
 import HomeButton from './components/HomeButton.js'
 import AboutButton from './components/AboutButton.js'
 import MacroButton from './components/MacroButton.js'
+import CronJobButton from './components/CronJobButton.js'
 import AuctionButton from './components/AuctionButton.js'
 
 import { ipc } from './ipc.js'
@@ -58,6 +59,7 @@ export default function Titlebar() {
             </Button>
             <HomeButton />
             <MacroButton />
+            {/* <CronJobButton /> */}
             <AuctionButton />
             <AboutButton />
           </Box>
