@@ -1278,7 +1278,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '색상', null)
       return options.some((option) => {
-        const [r, g, b] = option.option_value.split(',')[0]
+        const [r, g, b] = option.option_value.split(',')
         const v = parseFloat(r)
         return v >= min && v <= max
       })
@@ -1296,7 +1296,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '색상', null)
       return options.some((option) => {
-        const [r, g, b] = option.option_value.split(',')[0]
+        const [r, g, b] = option.option_value.split(',')
         const v = parseFloat(g)
         return v >= min && v <= max
       })
@@ -1314,7 +1314,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '색상', null)
       return options.some((option) => {
-        const [r, g, b] = option.option_value.split(',')[0]
+        const [r, g, b] = option.option_value.split(',')
         const v = parseFloat(b)
         return v >= min && v <= max
       })
