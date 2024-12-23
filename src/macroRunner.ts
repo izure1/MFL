@@ -38,8 +38,8 @@ class MacroLifecycle {
     this._destroyed = false
   }
 
-  private get _config() {
-    return getConfig()
+  private async _config() {
+    return await getConfig()
   }
 
   get keeping() {
@@ -99,7 +99,7 @@ class MacroLifecycle {
         escaped = true
         break
       }
-      if (!this._config.running) {
+      if (!(await this._config()).running) {
         escaped = true
         break
       }
@@ -114,7 +114,7 @@ class MacroLifecycle {
       this.keeping = false
     }
     if (this.keeping) {
-      this.run()
+      await this.run()
     }
   }
 
@@ -222,7 +222,7 @@ export async function start() {
   processSubscriber = createProcessSubscriber(pid)
   IOSubscriber = createIOSubscriber()
 
-  const macroSchemeMap = getMacroMap()
+  const macroSchemeMap = await getMacroMap()
   for (const key in macroSchemeMap) {
     const scheme = macroSchemeMap[key]
     if (!scheme.trigger) {

@@ -3,6 +3,7 @@ import { Notification } from 'electron'
 import { join } from 'node:path'
 import { EventEmitter } from 'node:events'
 import { Worker } from 'node:worker_threads'
+import { getConfig } from './db/config.js'
 import { getFromCategory as getWatchesFromCategory } from './db/auctionWatch.js'
 import { getItems } from './db/auctionCache.js'
 import { addInspectQueue, changeItemInspectStage } from './db/auctionSubscribe.js'
@@ -99,7 +100,7 @@ export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
   }
 
   async requestFindWantedItems(): Promise<AuctionWantedItemTuple[]> {
-    const watches = getWatchesFromCategory()
+    const watches = await getWatchesFromCategory()
     const newAdded: AuctionWantedItemTuple[] = []
     for (const watchData of watches) {
       await fetchAuctionItems(watchData.itemCategory)
@@ -124,7 +125,7 @@ export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
         queue.push(...filteredItems)
         await delay(this._parsingDelay)
       }
-      const pending = addInspectQueue(watchData, queue)
+      const pending = await addInspectQueue(watchData, queue)
       if (pending.length) {
         newAdded.push([watchData, pending])
       }
@@ -153,7 +154,7 @@ export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
     }
     let count = 0
     for (const [watchData] of tuples) {
-      count += changeItemInspectStage(
+      count += await changeItemInspectStage(
         watchData,
         AuctionWantedItemInspectStage.Alerted
       )
@@ -184,8 +185,12 @@ export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
     this.clear()
     this._running = true
     this._cancelRepeat = this._repeat(async () => {
+      const { auctionWatching } = await getConfig()
+      if (!auctionWatching) {
+        return
+      }
       const newAddedTuples = await this.requestFindWantedItems()
-      this.alert(newAddedTuples)
+      await this.alert(newAddedTuples)
     }, this._interval, true)
   }
 

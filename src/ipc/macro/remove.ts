@@ -3,7 +3,7 @@ import { removeMacro } from '../../db/macro.js'
 import { sendMacroUpdateSignal } from '../helpers/sendMacroUpdateSignal.js'
 
 export async function handle(name: string) {
-  return removeMacro(name)
+  return await removeMacro(name)
 }
 
 export function ipc() {

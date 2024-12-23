@@ -3,7 +3,7 @@ import { setConfig } from '../../db/config.js'
 import { ConfigScheme } from '../../types/index.js'
 
 export async function handle(config: Partial<ConfigScheme>) {
-  setConfig(config)
+  await setConfig(config)
 }
 
 export function ipc() {

@@ -2,7 +2,7 @@ import { ipcMain } from 'electron'
 import { getFromCategory } from '../../db/auctionWatch.js'
 
 export async function handle(category?: string) {
-  return getFromCategory(category)
+  return await getFromCategory(category)
 }
 
 export function ipc() {

@@ -1,5 +1,5 @@
 import { AuctionItem, AuctionItemOptionResolver } from '../../types/index.js'
-import MabinogiCategory from './category.json'
+import MabinogiCategory from './category.json' with { type: 'json' }
 
 function findMatched(item: AuctionItem, type: string, subType: string|null|undefined): AuctionItem['item_option'] {
   const options = item.item_option ?? []

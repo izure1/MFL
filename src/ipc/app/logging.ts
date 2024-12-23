@@ -9,7 +9,6 @@ import { createThrottling } from '../../utils/timer.js'
 import { catchError } from '../../utils/error.js'
 import { spawnWorker } from '../../utils/worker.js'
 import { getLoggingDistDirectory } from '../../helpers/logger.js'
-import { handle as mainToRenderer } from '../helpers/mainToRenderer.js'
 
 let cancelCapture: ReturnType<ReturnType<typeof createThrottling>> = null
 let running = false
@@ -26,12 +25,12 @@ async function loop() {
   if (cancelCapture) {
     return
   }
-  const { loggingInterval } = getConfig()
+  const { loggingInterval } = await getConfig()
   const throttling = createThrottling()
   cancelCapture = throttling(async () => {
     cancelCapture = null
-    loop()
-    const { logging, loggingDirectory } = getConfig()
+    await loop()
+    const { logging, loggingDirectory } = await getConfig()
     if (logging) {
       const win = NodeWindow.all().find(getMabinogiWindow)
       if (!win) return

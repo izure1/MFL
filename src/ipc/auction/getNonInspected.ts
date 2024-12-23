@@ -3,7 +3,7 @@ import { getWantedItemsFromStage } from '../../db/auctionSubscribe.js'
 import { AuctionWantedItemInspectStage } from '../../types/index.js'
 
 export async function handle(stage: AuctionWantedItemInspectStage) {
-  return getWantedItemsFromStage(stage)
+  return await getWantedItemsFromStage(stage)
 }
 
 export function ipc() {

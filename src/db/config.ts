@@ -18,47 +18,47 @@ const DEFAULT_CONFIG: ConfigScheme = {
 const db = await KlafDocument.Open({
   path: CONFIG_PATH,
   engine: new FileSystemEngine(),
-  version: 3,
+  version: 4,
   scheme: {
     limit: {
       default: (): number => 50,
-      validate: (v) => typeof v === 'number' && v <= 99 && v >= 0
+      validate: (v) => typeof v === 'number' && v <= 99 && v >= 0,
     },
     running: {
       default: (): boolean => false,
-      validate: (v) => typeof v === 'boolean'
+      validate: (v) => typeof v === 'boolean',
     },
     loggingInterval: {
       default: (): number => 7,
-      validate: (v) => typeof v === 'number' && v >= 5 && v <= 10
+      validate: (v) => typeof v === 'number' && v >= 5 && v <= 10,
     },
     logging: {
       default: (): boolean => false,
-      validate: (v) => typeof v === 'boolean'
+      validate: (v) => typeof v === 'boolean',
     },
     loggingDirectory: {
       default: (): string => getHomeDir(),
-      validate: (v) => typeof v === 'string'
+      validate: (v) => typeof v === 'string',
     },
     apiKey: {
       default: (): string => '',
-      validate: (v) => typeof v === 'string'
+      validate: (v) => typeof v === 'string',
     },
     auctionWatching: {
       default: (): boolean => true,
-      validate: (v) => typeof v === 'boolean'
-    }
+      validate: (v) => typeof v === 'boolean',
+    },
   }
 })
 
-export function getConfig(): ConfigScheme {
+export async function getConfig(): Promise<ConfigScheme> {
   if (!db.metadata.count) {
-    db.put({})
+    await db.put({})
   }
-  return db.pick({}).at(0)
+  return (await db.pick({})).at(0)
 }
 
-export function setConfig(partialConfig: Partial<typeof DEFAULT_CONFIG>) {
-  db.partialUpdate({}, partialConfig)
+export async function setConfig(partialConfig: Partial<typeof DEFAULT_CONFIG>) {
+  await db.partialUpdate({}, partialConfig)
   sendConfigUpdateSignal()
 }

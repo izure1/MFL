@@ -4,7 +4,7 @@ import { sendMacroUpdateSignal } from '../helpers/sendMacroUpdateSignal.js'
 import { MacroScheme } from '../../types/index.js'
 
 export async function handle(name: string, scheme: MacroScheme) {
-  return setMacro(name, scheme)
+  return await setMacro(name, scheme)
 }
 
 export function ipc() {

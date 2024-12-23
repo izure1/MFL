@@ -1,11 +1,11 @@
 import type { WorkerParameter as FetchWorkerParameter } from '../../worker/auctionFetch.worker.js'
+import auctionConfig from '../../config/auction/api.json' with { type: 'json' }
 import { ipcMain } from 'electron'
 import { join } from 'node:path'
 import { Worker } from 'node:worker_threads'
 import { AuctionWatcher } from '../../auctionWatcher.js'
 import { getItems, setItems } from '../../db/auctionCache.js'
 import { AuctionResponse } from '../../types/index.js'
-import { auction_path, domain } from '../../config/auction/api.json'
 import { getConfig } from '../../db/config.js'
 import { spawnWorker } from '../../utils/worker.js'
 
@@ -16,7 +16,7 @@ function isExpired(now: number, timestamp: number) {
 }
 
 export async function handle(category: string): Promise<AuctionResponse> {
-  const { apiKey } = getConfig()
+  const { apiKey } = await getConfig()
   const now = Date.now()
 
   let neededCache = false
@@ -28,6 +28,7 @@ export async function handle(category: string): Promise<AuctionResponse> {
 
   // Update and re-cache data
   if (neededCache) {
+    const { auction_path, domain } = auctionConfig
     const workerPath = join(import.meta.dirname, './worker/auctionFetch.worker.js')
     const fetchingTask = spawnWorker<FetchWorkerParameter, AuctionResponse>(
       new Worker(workerPath),

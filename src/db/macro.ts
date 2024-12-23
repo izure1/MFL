@@ -28,8 +28,8 @@ const db = await KlafDocument.Open({
   }
 })
 
-export function getMacroMap(): MacroSchemeMap {
-  const rows = db.pick({}, { order: 'name' })
+export async function getMacroMap(): Promise<MacroSchemeMap> {
+  const rows = await db.pick({}, { order: 'name' })
   const map: MacroSchemeMap = {}
   for (const row of rows) {
     map[row.name] = row
@@ -37,8 +37,8 @@ export function getMacroMap(): MacroSchemeMap {
   return map
 }
 
-export function getMacroScheme(name: string): MacroScheme|null {
-  return db.pick({ name }).at(0) ?? null
+export async function getMacroScheme(name: string): Promise<MacroScheme | null> {
+  return (await db.pick({ name })).at(0) ?? null
 }
 
 function normalizeUnit<T extends MacroUnit>(unit: T): T {
@@ -59,21 +59,21 @@ function normalizeUnit<T extends MacroUnit>(unit: T): T {
   }
 }
 
-export function setMacro(name: string, scheme: MacroScheme): MacroScheme {
+export async function setMacro(name: string, scheme: MacroScheme): Promise<MacroScheme> {
   const newScheme: MacroScheme = {
     ...scheme,
     trigger: scheme.trigger ? normalizeUnit(scheme.trigger) : null,
     units: scheme.units.map(normalizeUnit)
   }
-  if (!db.pick({ name }).length) {
-    db.put(newScheme)
+  if (!(await db.pick({ name })).length) {
+    await db.put(newScheme)
   }
   else {
-    db.fullUpdate({ name }, newScheme)
+    await db.fullUpdate({ name }, newScheme)
   }
-  return db.pick({ name }).at(0)
+  return (await db.pick({ name })).at(0)
 }
 
-export function removeMacro(name: string): boolean {
-  return !!db.delete({ name })
+export async function removeMacro(name: string): Promise<boolean> {
+  return !!(await db.delete({ name }))
 }

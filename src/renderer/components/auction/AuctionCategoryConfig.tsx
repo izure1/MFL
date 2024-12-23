@@ -1,9 +1,9 @@
 import { useContext, useState } from 'react'
 import { Box, Button, Dialog, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
-import MabinogiCategory from '../../../config/auction/category.json'
 import { AuctionWatchContext } from '../AuctionWatchProvider.js'
 import { AuctionItemWatchScheme } from '../../../types/index.js'
 import { createUUIDV4 } from '../../../utils/id.js'
+import MabinogiCategory from '../../../config/auction/category.json' with { type: 'json' }
 
 const mabinogiCategories = Object
   .keys(MabinogiCategory)

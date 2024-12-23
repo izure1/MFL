@@ -6,6 +6,6 @@ const throttling = createThrottling()
 
 export function sendConfigUpdateSignal() {
   throttling(async () => {
-    mainToRenderer('config-on-update', getConfig())
+    mainToRenderer('config-on-update', await getConfig())
   }, 100)
 }

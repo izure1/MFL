@@ -42,35 +42,35 @@ const db = await KlafDocument.Open({
   }
 })
 
-export function getWantedItemsFromStage(
+export async function getWantedItemsFromStage(
   stage: AuctionWantedItemInspectStage
-): AuctionWantedItemScheme[] {
-  return db.pick({
+): Promise<AuctionWantedItemScheme[]> {
+  return await db.pick({
     inspect: stage
   })
 }
 
-export function isInspectedItem(
+export async function isInspectedItem(
   watchData: AuctionItemWatchScheme,
   item: AuctionWantedItemScheme
-): boolean {
-  const guess = db.pick({ id: item.id, watch_id: watchData.id }).at(0)
+): Promise<boolean> {
+  const guess = (await db.pick({ id: item.id, watch_id: watchData.id })).at(0)
   if (!guess) {
     return false
   }
   return guess.inspect == AuctionWantedItemInspectStage.Inspected
 }
 
-export function addInspectQueue(
+export async function addInspectQueue(
   watchData: AuctionItemWatchScheme,
   item: AuctionItemScheme|AuctionItemScheme[]
-): AuctionWantedItemScheme[] {
+): Promise<AuctionWantedItemScheme[]> {
   if (!Array.isArray(item)) {
     item = [item]
   }
   const appended = []
   for (const t of item) {
-    const has = !!db.count({ id: t.id, watch_id: watchData.id })
+    const has = !!(await db.count({ id: t.id, watch_id: watchData.id }))
     if (has) {
       continue
     }
@@ -79,17 +79,17 @@ export function addInspectQueue(
       watch_id: watchData.id,
       inspect: AuctionWantedItemInspectStage.Pending
     }
-    db.put(doc)
+    await db.put(doc)
     appended.push(doc)
   }
   return appended
 }
 
-export function changeItemInspectStage(
+export async function changeItemInspectStage(
   watchData: AuctionItemWatchScheme,
   stage: AuctionWantedItemInspectStage
-): number {
-  const count = db.partialUpdate({
+): Promise<number> {
+  const count = await db.partialUpdate({
     watch_id: watchData.id,
     inspect: {
       lt: stage

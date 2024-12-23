@@ -7,7 +7,7 @@ const throttling = createThrottling()
 
 export function sendMacroUpdateSignal() {
   throttling(async () => {
-    mainToRenderer('macro-on-update', getMacroMap())
+    mainToRenderer('macro-on-update', await getMacroMap())
     stopMacroRunner().then(startMacroRunner)
   }, 100)
 }

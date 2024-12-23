@@ -8,7 +8,7 @@ const throttling = createThrottling()
 export function sendAuctionNonInspectedUpdateSignal() {
   throttling(async () => {
     mainToRenderer('auction-non-inspected-on-update', 
-      getWantedItemsFromStage(AuctionWantedItemInspectStage.Alerted)
+      await getWantedItemsFromStage(AuctionWantedItemInspectStage.Alerted)
     )
   }, 100)
 }

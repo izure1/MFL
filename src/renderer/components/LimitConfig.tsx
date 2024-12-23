@@ -43,7 +43,7 @@ export default function LimitConfig({
           flexDirection='row'
           alignItems='center'
         >
-          <Typography variant='h5' color={ config.running ? 'rgb(225, 173, 145)' : 'primary.dark' }>시작하기</Typography>
+          <Typography variant='h5' color={ config.running ? 'rgb(225, 173, 145)' : 'primary.dark' }>성능 제한 및 매크로 동작하기</Typography>
           <Switch
             checked={config.running}
             onChange={handleChangeRunning}

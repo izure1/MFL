@@ -2,7 +2,7 @@ import { ipcMain } from 'electron'
 import { getMacroScheme } from '../../db/macro.js'
 
 export async function handle(name: string) {
-  return getMacroScheme(name)
+  return await getMacroScheme(name)
 }
 
 export function ipc() {

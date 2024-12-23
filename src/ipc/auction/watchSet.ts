@@ -3,7 +3,7 @@ import { update } from '../../db/auctionWatch.js'
 import { AuctionItemWatchScheme } from '../../types/index.js'
 
 export async function handle(watchData: AuctionItemWatchScheme) {
-  update(watchData)
+  await update(watchData)
 }
 
 export function ipc() {

@@ -3,7 +3,7 @@ import { remove } from '../../db/auctionWatch.js'
 import { AuctionItemWatchScheme } from '../../types/index.js'
 
 export async function handle(watchData: AuctionItemWatchScheme) {
-  remove(watchData)
+  await remove(watchData)
 }
 
 export function ipc() {

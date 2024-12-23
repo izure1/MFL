@@ -3,7 +3,7 @@ import { KlafDocument } from 'klaf.js'
 import { FileSystemEngine } from 'klaf.js/engine/FileSystem'
 import { getFilePathFromHomeDir } from '../homedir.js'
 import { createUUIDV4 } from '../utils/id.js'
-import MabinogiCategory from '../config/auction/category.json'
+import MabinogiCategory from '../config/auction/category.json' with { type: 'json' }
 
 const CONFIG_PATH = getFilePathFromHomeDir('./Data/auction_watch.db')
 const MabinogiCategories = Object
@@ -31,25 +31,25 @@ const db = await KlafDocument.Open({
   }
 })
 
-export function getFromCategory(category?: string): AuctionItemWatchScheme[] {
+export async function getFromCategory(category?: string): Promise<AuctionItemWatchScheme[]> {
   if (category) {
-    return db.pick({ itemCategory: category }, { desc: true })
+    return await db.pick({ itemCategory: category }, { desc: true })
   }
-  return db.pick({}, { desc: true })
+  return await db.pick({}, { desc: true })
 }
 
-export function add(watch: AuctionItemWatchScheme) {
-  db.put(watch)
+export async function add(watch: AuctionItemWatchScheme): Promise<void> {
+  await db.put(watch)
 }
 
-export function update(watch: AuctionItemWatchScheme) {
-  if (!db.count({ id: watch.id })) {
-    add(watch)
+export async function update(watch: AuctionItemWatchScheme): Promise<void> {
+  if (!(await db.count({ id: watch.id }))) {
+    await add(watch)
     return
   }
-  db.fullUpdate({ id: watch.id }, watch)
+  await db.fullUpdate({ id: watch.id }, watch)
 }
 
-export function remove(watch: AuctionItemWatchScheme) {
-  db.delete({ id: watch.id })
+export async function remove(watch: AuctionItemWatchScheme): Promise<void> {
+  await db.delete({ id: watch.id })
 }

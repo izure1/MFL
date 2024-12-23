@@ -2,7 +2,7 @@ import { ipcMain } from 'electron'
 import { getMacroMap } from '../../db/macro.js'
 
 export async function handle() {
-  return getMacroMap()
+  return await getMacroMap()
 }
 
 export function ipc() {

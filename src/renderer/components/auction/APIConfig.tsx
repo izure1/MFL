@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useState } from 'react'
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material'
-import { register_url, description_url } from '../../../config/auction/api.json'
 import { ipc } from '../../ipc.js'
+import AuctionConfig from '../../../config/auction/api.json' with { type: 'json' }
 
 export default function APIConfig({
   apiKey
@@ -27,6 +27,8 @@ export default function APIConfig({
   useEffect(() => {
     setNewApiKey(apiKey)
   }, [apiKey])
+
+  const { register_url, description_url } = AuctionConfig
 
   return (
     <>

@@ -53,8 +53,8 @@ function sleep(pid: number) {
   sleeping = true
 }
 
-function loop(pid: number) {
-  const { limit, running } = getConfig()
+async function loop(pid: number) {
+  const { limit, running } = await getConfig()
   if (!running) {
     return cleanUp(pid)
   }
