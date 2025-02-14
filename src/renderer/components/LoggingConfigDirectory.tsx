@@ -1,6 +1,6 @@
 import type { ConfigScheme } from '../../types/index.js'
 import { useState } from 'react'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material'
 import { getLoggingDistDirectory } from '../../helpers/logger.js'
 import { ipc } from '../ipc.js'
 
@@ -47,16 +47,11 @@ export default function LoggingConfigDirectory({
       >
         <DialogTitle>{getLoggingDistDirectory(config.loggingDirectory)}</DialogTitle>
         <DialogContent>
-          <div>
-            {
-              [
-                '스냅샷이 보관될 위치입니다.',
-                '남은 용량이 충분한 저장공간 내 위치를 선택해주세요.'
-              ].map((text) => (
-                <Typography key={text} fontSize={16}>{text}</Typography>
-              ))
-            }
-          </div>
+          <DialogContentText>
+            스냅샷이 보관될 위치입니다.
+            <br />
+            남은 용량이 충분한 저장공간 내 위치를 선택해주세요.
+          </DialogContentText>
         </DialogContent>
         <DialogActions sx={{
           justifyContent: 'center'

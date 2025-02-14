@@ -99,7 +99,7 @@ class MacroLifecycle {
         escaped = true
         break
       }
-      if (!(await this._config()).running) {
+      if (!(await this._config()).macroRunning) {
         escaped = true
         break
       }

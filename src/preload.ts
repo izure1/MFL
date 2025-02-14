@@ -17,6 +17,7 @@ import {
   AuctionItemWatchScheme,
   AuctionWantedItemScheme
 } from './types/index.js'
+import _default from '@emotion/styled'
 
 export const context = {
   process: {
@@ -33,6 +34,10 @@ export const context = {
     version: (): Promise<string> => ipcRenderer.invoke('app-version'),
     devtool: (): Promise<void> => ipcRenderer.invoke('app-devtool'),
     directoryOpen: (): Promise<void> => ipcRenderer.invoke('app-directory-open'),
+    onSetHash: (callback: (hash: string) => void) => ipcRenderer.on('set-hash', (
+      _e,
+      hash: string
+    ) => callback(hash))
   },
   config: {
     get: (): Promise<ConfigScheme> => ipcRenderer.invoke('config-get'),

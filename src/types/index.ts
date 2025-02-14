@@ -10,11 +10,16 @@ export interface IProcess {
 export interface ConfigScheme {
   limit: number
   running: boolean
+  macroRunning: boolean
   logging: boolean
   loggingInterval: number
   loggingDirectory: string
   apiKey: string
   auctionWatching: boolean
+  cursorRunning: boolean
+  cursorThickness: number
+  cursorSize: number
+  cursorColor: string
 }
 
 export interface AuctionItem {

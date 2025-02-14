@@ -12,7 +12,7 @@ const watchIds: number[] = []
 
 ActiveWindow.initialize()
 
-function subscribe(
+export function subscribe(
   ...callback: Parameters<SubScribeFn>
 ): ReturnType<SubScribeFn> {
   const watchId = ActiveWindow.subscribe(...callback)
@@ -20,7 +20,7 @@ function subscribe(
   return watchId
 }
 
-function unsubscribe(id: number) {
+export function unsubscribe(id: number) {
   ActiveWindow.unsubscribe(id)
 }
 

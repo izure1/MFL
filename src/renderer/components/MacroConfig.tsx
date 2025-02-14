@@ -3,17 +3,16 @@ import { Typography, Switch, Box } from '@mui/material'
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { delay } from '../../utils/timer.js'
 import { ipc } from '../ipc.js'
-import LimitConfigRate from './LimitConfigRate.js'
 
-export default function LimitConfig({
+export default function MacroConfig({
   config
 }: {
   config: ConfigScheme
 }) {
   const [pending, setPending] = useState(false)
-  const working = useMemo(() => config.running, [config.running])
+  const working = useMemo(() => config.macroRunning, [config.macroRunning])
 
-  async function requestLimit() {
+  async function request() {
     if (pending) {
       return
     }
@@ -23,9 +22,9 @@ export default function LimitConfig({
     setPending(false)
   }
 
-  async function handleChangeRunning(_e: ChangeEvent, running: boolean) {
-    await ipc.config.set({ running })
-    await requestLimit()
+  async function handleChangeRunning(_e: ChangeEvent, macroRunning: boolean) {
+    await ipc.config.set({ macroRunning })
+    await request()
   }
 
   useEffect(() => {
@@ -40,18 +39,17 @@ export default function LimitConfig({
           flexDirection='row'
           alignItems='center'
         >
-          <Typography variant='h5' color={ config.running ? 'rgb(225, 173, 145)' : 'primary.dark' }>게임 성능 제한</Typography>
+          <Typography variant='h5' color={ config.macroRunning ? 'rgb(225, 173, 145)' : 'primary.dark' }>매크로 실행</Typography>
           <Switch
-            checked={config.running}
+            checked={config.macroRunning}
             onChange={handleChangeRunning}
             disabled={pending}
           />
-          <LimitConfigRate config={config} />
         </Box>
         <Typography variant='body1' color='rgb(230, 230, 230)'>
           { working ?
-          '현재 성능 제한 중입니다!' :
-          '활성화 시 게임 중이 아니면 성능을 제한합니다.' }
+          '현재 매크로를 사용 중입니다!' :
+          '활성화 시 게임 내에서 매크로를 사용합니다.' }
         </Typography>
       </div>
     </>

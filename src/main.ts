@@ -1,12 +1,14 @@
-import type { IOEvent } from './types/index.js'
+import type { IOEvent, IProcess } from './types/index.js'
 
 import path from 'node:path'
-import { app, BrowserWindow, Menu, Tray, dialog, nativeImage } from 'electron'
+import { app, BrowserWindow, Menu, Tray, dialog, nativeImage, screen } from 'electron'
 import { updateElectronApp } from 'update-electron-app'
 
 import { handle as checkPermission } from './ipc/hardware/checkPermission.js'
 import { handle as limit } from './ipc/app/limit.js'
-import { createSubscriber } from './ioObserver.js'
+import { handle as findMabinogiProcess } from './ipc/hardware/mabinogi.js'
+import { createSubscriber as createProcessSubscriber } from './processObserver.js'
+import { createSubscriber as createIOSubscriber } from './ioObserver.js'
 import { auctionWatcher } from './auctionWatcher.js'
 import { stop as stopMacroRunner } from './macroRunner.js'
 import { stop as stopLogger } from './ipc/app/logging.js'
@@ -17,6 +19,7 @@ import {
 } from './processObserver.js'
 
 import _iconImage from './renderer/assets/img/icon.png?url'
+import { delay, createRepeat } from './utils/timer.js'
 
 
 const iconImage = nativeImage.createFromDataURL(_iconImage)
@@ -73,18 +76,24 @@ function *generateIpc() {
 }
 
 let mainWindow: BrowserWindow|null
+let overlayWindow: BrowserWindow|null
 let tray: Tray|null
+
+let processSubscriber: ReturnType<typeof createProcessSubscriber>|null = null
 
 async function clearApp() {
   unsubscribeAll()
+
   await stopMacroRunner()
   await stopLogger()
   await limit(false)
-  if (tray) {
-    tray.destroy()
-    tray = null
-  }
+
+  tray?.destroy()
+  tray = null
+
+  BrowserWindow.getAllWindows().forEach((w) => w.close())
   mainWindow = null
+  overlayWindow = null
 }
 
 function createTray() {
@@ -123,7 +132,28 @@ async function isElevated() {
   return true
 }
 
-function listenIO() {
+async function listenProcess() {
+  const repeat = createRepeat()
+  const cancel = repeat(async () => {
+    const process = await findMabinogiProcess()
+    if (!process) {
+      return
+    }
+    cancel()
+    processSubscriber = createProcessSubscriber(process.pid)
+    processSubscriber.onActivate(() => {
+      overlayWindow?.show()
+    })
+    processSubscriber.onDeactivate(() => {
+      overlayWindow?.hide()
+    })
+    if (processSubscriber.windowActivated) {
+      setImmediate(() => overlayWindow?.show())
+    }
+  }, 15000, true)
+}
+
+async function listenIO() {
   const {
     onClick,
     onKeydown,
@@ -131,7 +161,7 @@ function listenIO() {
     onMousedown,
     onMouseup,
     onWheel,
-  } = createSubscriber()
+  } = createIOSubscriber()
   const wrapper = <T extends IOEvent>(e: T) => {
     sendIOSignal(e)
     return e
@@ -145,10 +175,17 @@ function listenIO() {
   onWheel(wrapper)
 }
 
+function setOverlayWindow() {
+  overlayWindow?.setAlwaysOnTop(true, 'screen-saver', 1)
+  overlayWindow?.setIgnoreMouseEvents(true, { forward: true })
+}
+
 async function createWindow() {
   for await (const { ipc } of generateIpc()) {
     ipc()
   }
+
+  const primaryWindowSize = screen.getPrimaryDisplay().size
   
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -172,35 +209,83 @@ async function createWindow() {
     },
   })
 
+  overlayWindow = new BrowserWindow({
+    x: 0,
+    y: 0,
+    parent: mainWindow,
+    width: primaryWindowSize.width,
+    height: primaryWindowSize.height,
+    focusable: false,
+    minimizable: false,
+    titleBarStyle: 'hidden',
+    titleBarOverlay: false,
+    resizable: false,
+    frame: false,
+    transparent: true,
+    hasShadow: false,
+    movable: false,
+    skipTaskbar: true,
+    show: false,
+    fullscreen: true,
+    webPreferences: {
+      webSecurity: false,
+      sandbox: true,
+      preload: path.join(import.meta.dirname, 'preload.cjs'),
+    }
+  })
+
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL)
+    await Promise.all([
+      mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL + '#/main'),
+      overlayWindow.loadURL(OVERLAY_WINDOW_VITE_DEV_SERVER_URL + '#/overlay'),
+    ]).then(() => {
+      mainWindow.webContents.openDevTools()
+      overlayWindow.webContents.openDevTools()
+    })
     // Open the DevTools.
-    mainWindow.webContents.openDevTools()
   } else {
-    mainWindow.loadFile(path.join(import.meta.dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`))
+    await Promise.all([
+      mainWindow.loadFile(path.join(import.meta.dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)),
+      overlayWindow.loadFile(path.join(import.meta.dirname, `../renderer/${OVERLAY_WINDOW_VITE_NAME}/index.html`)),
+    ]).then(() => delay(1000)).then(() => {
+      mainWindow.webContents.send('set-hash', '/main')
+      overlayWindow.webContents.send('set-hash', '/overlay')
+    })
   }
 
   mainWindow.on('minimize', (e: Event) => {
     e.preventDefault()
     mainWindow.setSkipTaskbar(true)
+    setOverlayWindow()
     tray = createTray()
   })
 
   mainWindow.on('restore', () => {
     mainWindow.show()
     mainWindow.setSkipTaskbar(false)
+    setOverlayWindow()
     tray.destroy()
     tray = null
   })
 
-  setTimeout(() => {
-    listenIO()
+  mainWindow.on('closed', () => {
+    app.quit()
+  })
+
+  setTimeout(async () => {
+    await listenProcess()
+    await listenIO()
+
     auctionWatcher.run()
     auctionWatcher.on('notification-click', (tuples) => {
       mainWindow.show()
       mainToRenderer('auction-show-alerted')
     })
+    
+    // Show application to start
+    mainWindow.show()
+    setOverlayWindow()
   }, 1000)
 }
 
@@ -211,10 +296,6 @@ app.whenReady().then(async () => {
   if (await isElevated()) {
     createWindow()
   }
-})
-
-app.on('window-all-closed', () => {
-  app.quit()
 })
 
 let allowCloseApp = false

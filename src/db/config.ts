@@ -8,17 +8,22 @@ const CONFIG_PATH = getFilePathFromHomeDir('./Data/config.db')
 const DEFAULT_CONFIG: ConfigScheme = {
   limit: 50,
   running: false,
+  macroRunning: true,
   logging: false,
   loggingInterval: 7,
   loggingDirectory: getHomeDir(),
   apiKey: '',
   auctionWatching: true,
+  cursorRunning: false,
+  cursorThickness: 3,
+  cursorColor: 'rgb(255, 0, 0)',
+  cursorSize: 32,
 }
 
 const db = await KlafDocument.Open({
   path: CONFIG_PATH,
   engine: new FileSystemEngine(),
-  version: 4,
+  version: 7,
   scheme: {
     limit: {
       default: (): number => 50,
@@ -26,6 +31,10 @@ const db = await KlafDocument.Open({
     },
     running: {
       default: (): boolean => false,
+      validate: (v) => typeof v === 'boolean',
+    },
+    macroRunning: {
+      default: (): boolean => true,
       validate: (v) => typeof v === 'boolean',
     },
     loggingInterval: {
@@ -48,6 +57,22 @@ const db = await KlafDocument.Open({
       default: (): boolean => true,
       validate: (v) => typeof v === 'boolean',
     },
+    cursorRunning: {
+      default: (): boolean => false,
+      validate: (v) => typeof v === 'boolean',
+    },
+    cursorThickness: {
+      default: (): number => 3,
+      validate: (v) => typeof v === 'number',
+    },
+    cursorSize: {
+      default: (): number => 32,
+      validate: (v) => typeof v === 'number',
+    },
+    cursorColor: {
+      default: (): string => 'rgb(255, 0, 0)',
+      validate: (v) => typeof v === 'string',
+    }
   }
 })
 
