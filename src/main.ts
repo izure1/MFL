@@ -1,4 +1,4 @@
-import type { IOEvent, IProcess } from './types/index.js'
+import type { IOEvent } from './types/index.js'
 
 import path from 'node:path'
 import { app, BrowserWindow, Menu, Tray, dialog, nativeImage, screen } from 'electron'
@@ -29,6 +29,7 @@ app.setAppUserModelId('org.izure.mfl')
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if ((await import('electron-squirrel-startup')).default) {
   app.quit()
+  process.exit(0)
 }
 
 updateElectronApp()
@@ -142,6 +143,7 @@ async function listenProcess() {
     cancel()
     processSubscriber = createProcessSubscriber(process.pid)
     processSubscriber.onActivate(() => {
+      setOverlayWindow()
       overlayWindow?.show()
     })
     processSubscriber.onDeactivate(() => {
@@ -176,8 +178,10 @@ async function listenIO() {
 }
 
 function setOverlayWindow() {
+  const { width, height } = screen.getPrimaryDisplay().size
   overlayWindow?.setAlwaysOnTop(true, 'screen-saver', 1)
   overlayWindow?.setIgnoreMouseEvents(true, { forward: true })
+  overlayWindow?.setSize(width, height, false)
 }
 
 async function createWindow() {
@@ -251,6 +255,8 @@ async function createWindow() {
     ]).then(() => delay(1000)).then(() => {
       mainWindow.webContents.send('set-hash', '/main')
       overlayWindow.webContents.send('set-hash', '/overlay')
+      // mainWindow.webContents.openDevTools()
+      // overlayWindow.webContents.openDevTools()
     })
   }
 
