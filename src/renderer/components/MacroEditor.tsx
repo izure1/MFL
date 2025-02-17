@@ -203,9 +203,9 @@ export default function MacroEditor({
                   gridTemplateColumns='repeat(2, 1fr)'
                   sx={{
                     '& > div': {
-                      'display': 'flex',
-                      'flex-direction': 'column',
-                      'gap': '10px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '10px',
                     }
                   }}
                 >

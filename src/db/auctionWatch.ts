@@ -1,7 +1,7 @@
 import type { AuctionItemWatchScheme } from '../types/index.js'
 import { KlafDocument } from 'klaf.js'
 import { FileSystemEngine } from 'klaf.js/engine/FileSystem'
-import { getFilePathFromHomeDir } from '../homedir.js'
+import { getFilePathFromHomeDir } from '../helpers/homedir.js'
 import { createUUIDV4 } from '../utils/id.js'
 import MabinogiCategory from '../config/auction/category.json' with { type: 'json' }
 
@@ -52,4 +52,8 @@ export async function update(watch: AuctionItemWatchScheme): Promise<void> {
 
 export async function remove(watch: AuctionItemWatchScheme): Promise<void> {
   await db.delete({ id: watch.id })
+}
+
+export function close() {
+  return db.close()
 }

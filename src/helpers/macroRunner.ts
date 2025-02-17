@@ -1,12 +1,12 @@
-import type { MacroDelayUnit, MacroIOUnit, MacroScheme, MacroUnit } from './types/index.js'
+import type { MacroDelayUnit, MacroIOUnit, MacroScheme, MacroUnit } from '../types/index.js'
 import { hardware } from './hardware.js'
 import { createSubscriber as createProcessSubscriber } from './processObserver.js'
 import { createSubscriber as createIOSubscriber } from './ioObserver.js'
-import { getMacroMap } from './db/macro.js'
-import { getConfig } from './db/config.js'
-import { handle as findMabinogi } from './ipc/hardware/mabinogi.js'
-import { fromLinuxKeycode } from './utils/keycode.js'
-import { createThrottling } from './utils/timer.js'
+import { getMacroMap } from '../db/macro.js'
+import { getConfig } from '../db/config.js'
+import { handle as findMabinogi } from '../ipc/hardware/mabinogi.js'
+import { fromLinuxKeycode } from '../utils/keycode.js'
+import { createThrottling } from '../utils/timer.js'
 
 let processSubscriber: ReturnType<typeof createProcessSubscriber> = null
 let IOSubscriber: ReturnType<typeof createIOSubscriber> = null

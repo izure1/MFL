@@ -1,11 +1,12 @@
 import type { ConfigScheme } from '../../types/index.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material'
+import { Button, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material'
 import { basename } from 'path-browserify'
 import _byteSize from 'byte-size'
 import { getLoggingDistDirectory } from '../../helpers/logger.js'
 import { createThrottling } from '../../utils/timer.js'
 import { ipc } from '../ipc.js'
+import BlurDialog from './advanced/BlurDialog.js'
 
 
 const byteSize = _byteSize as unknown as typeof _byteSize['default']
@@ -109,7 +110,7 @@ export default function LoggingConfigManager({
 
   return (
     <>
-      <Dialog
+      <BlurDialog
         open={confirmOpen}
         onClose={() => setConfirmBundleIndex(-1)}
       >
@@ -137,8 +138,8 @@ export default function LoggingConfigManager({
             </>
           )
         }
-      </Dialog>
-      <Dialog
+      </BlurDialog>
+      <BlurDialog
         open={configOpen}
         onClose={() => setConfigOpen(false)}
       >
@@ -175,7 +176,7 @@ export default function LoggingConfigManager({
             </Select>
           </FormControl>
         </DialogContent>
-      </Dialog>
+      </BlurDialog>
       <Button
         size='small'
         onClick={() => setConfigOpen(true)}

@@ -3,7 +3,7 @@ import auctionConfig from '../../config/auction/api.json' with { type: 'json' }
 import { ipcMain } from 'electron'
 import { join } from 'node:path'
 import { Worker } from 'node:worker_threads'
-import { AuctionWatcher } from '../../auctionWatcher.js'
+import { AuctionWatcher } from '../../helpers/auctionWatcher.js'
 import { getItems, setItems } from '../../db/auctionCache.js'
 import { AuctionResponse } from '../../types/index.js'
 import { getConfig } from '../../db/config.js'

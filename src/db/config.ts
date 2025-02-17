@@ -1,7 +1,7 @@
 import type { ConfigScheme } from '../types/index.js'
 import { KlafDocument } from 'klaf.js'
 import { FileSystemEngine } from 'klaf.js/engine/FileSystem'
-import { getHomeDir, getFilePathFromHomeDir } from '../homedir.js'
+import { getHomeDir, getFilePathFromHomeDir } from '../helpers/homedir.js'
 import { sendConfigUpdateSignal } from '../ipc/helpers/sendConfigUpdateSignal.js'
 
 const CONFIG_PATH = getFilePathFromHomeDir('./Data/config.db')
@@ -86,4 +86,8 @@ export async function getConfig(): Promise<ConfigScheme> {
 export async function setConfig(partialConfig: Partial<typeof DEFAULT_CONFIG>) {
   await db.partialUpdate({}, partialConfig)
   sendConfigUpdateSignal()
+}
+
+export function close() {
+  return db.close()
 }

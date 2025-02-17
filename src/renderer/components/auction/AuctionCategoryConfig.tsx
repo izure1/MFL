@@ -1,9 +1,10 @@
 import { useContext, useState } from 'react'
-import { Box, Button, Dialog, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
+import { Box, Button, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 import { AuctionWatchContext } from '../AuctionWatchProvider.js'
 import { AuctionItemWatchScheme } from '../../../types/index.js'
 import { createUUIDV4 } from '../../../utils/id.js'
 import MabinogiCategory from '../../../config/auction/category.json' with { type: 'json' }
+import BlurDialog from '../advanced/BlurDialog.js'
 
 const mabinogiCategories = Object
   .keys(MabinogiCategory)
@@ -34,7 +35,7 @@ export default function AuctionCategoryConfig({ pending }: {
 
   return (
     <>
-      <Dialog
+      <BlurDialog
         open={open}
         onClose={() => setOpen(false)}
         fullWidth
@@ -64,7 +65,7 @@ export default function AuctionCategoryConfig({ pending }: {
             </FormControl>
           </Box>
         </DialogContent>
-      </Dialog>
+      </BlurDialog>
 
       <Button
         variant='outlined'

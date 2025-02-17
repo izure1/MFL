@@ -1,7 +1,8 @@
 import { useContext, useMemo } from 'react'
-import { Button, Dialog, DialogContent, DialogContentText, DialogActions, DialogTitle } from '@mui/material'
+import { Button, DialogContent, DialogContentText, DialogActions, DialogTitle } from '@mui/material'
 import { SchemeMapContext } from './MacroProvider.js'
 import { ipc } from '../ipc.js'
+import BlurDialog from './advanced/BlurDialog.js'
 
 export default function MacroDrop({
   target,
@@ -26,7 +27,7 @@ export default function MacroDrop({
   }
 
   return (
-    <Dialog
+    <BlurDialog
       open={confirming}
       onClose={() => setTarget(null)}
     >
@@ -42,6 +43,6 @@ export default function MacroDrop({
         <Button onClick={handleDelete}>네</Button>
         <Button onClick={() => setTarget(null)}>아니오</Button>
       </DialogActions>
-    </Dialog>
+    </BlurDialog>
   )
 }

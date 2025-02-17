@@ -1,8 +1,11 @@
+import { UiohookKey } from 'uiohook-napi'
 import { KeyboardRegularButton, KeyboardSpecButton } from '@io-utils/keysender'
 
-type Keys = KeyboardRegularButton|KeyboardSpecButton
+type UiohookKeys = typeof UiohookKey[keyof typeof UiohookKey]
+type KeysenderKey = KeyboardRegularButton|KeyboardSpecButton
 
-const keycodeMap: Record<string, Keys> = {
+// Record<uioHookKey, keysenderKey>
+const keycodeMap: Record<UiohookKeys, KeysenderKey> = {
   "1": "escape",
   "2": "1",
   "3": "2",
@@ -31,7 +34,7 @@ const keycodeMap: Record<string, Keys> = {
   "26": "[",
   "27": "]",
   "28": "enter",
-  "29": "lCtrl",
+  "29": "ctrl",
   "30": "a",
   "31": "s",
   "32": "d",
@@ -57,7 +60,8 @@ const keycodeMap: Record<string, Keys> = {
   "52": ".",
   "53": "/",
   "54": "rShift",
-  "56": "lAlt",
+  "55": "num*",
+  "56": "alt",
   "57": "space",
   "58": "capsLock",
   "59": "f1",
@@ -70,21 +74,52 @@ const keycodeMap: Record<string, Keys> = {
   "66": "f8",
   "67": "f9",
   "68": "f10",
-  "87": "f11",
-  "88": "f12",
-  "102": "home",
-  "103": "up",
-  "104": "pageUp",
-  "105": "left",
-  "106": "right",
-  "107": "end",
-  "108": "down",
-  "109": "pageDown",
-  "110": "insert",
-  "111": "delete",
+  "69": "numLock",
+  "70": "scrollLock",
+  "71": "num7",
+  "72": "num8",
+  "73": "num9",
+  "74": "num-",
+  "75": "num4",
+  "76": "num5",
+  "77": "num6",
+  "78": "num+",
+  "79": "num1",
+  "80": "num2",
+  "81": "num3",
+  "82": "num0",
+  "83": "num.",
+  // "3612": "numEnter",
+  "3613": "rCtrl",
+  "3637": "num/",
+  "3639": "printScreen",
+  "3640": "rAlt",
+  "3653": "pause",
+  "3655": "home",
+  "3657": "pageUp",
+  "3663": "end",
+  "3665": "pageDown",
+  "3666": "insert",
+  "3667": "delete",
+  "3675": "lWin",
+  "3676": "rWin",
+  "57416": "up",
+  "57419": "left",
+  "57421": "right",
+  "57424": "down",
+  "61010": "num0",
+  "61011": "num.",
+  "61007": "num1",
+  "61008": "num2",
+  "61009": "num3",
+  "61003": "num4",
+  "57420": "num5",
+  "61005": "num6",
+  "60999": "num7",
+  "61000": "num8",
+  "61001": "num9",
 }
 
-export function fromLinuxKeycode(code: number): (typeof keycodeMap[keyof typeof keycodeMap])|undefined {
-  const key = code.toString() as keyof typeof keycodeMap
-  return keycodeMap[key]
+export function fromLinuxKeycode(code: number): KeysenderKey|undefined {
+  return keycodeMap[code.toString() as unknown as UiohookKeys]
 }

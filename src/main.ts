@@ -7,32 +7,29 @@ import { updateElectronApp } from 'update-electron-app'
 import { handle as checkPermission } from './ipc/hardware/checkPermission.js'
 import { handle as limit } from './ipc/app/limit.js'
 import { handle as findMabinogiProcess } from './ipc/hardware/mabinogi.js'
-import { createSubscriber as createProcessSubscriber } from './processObserver.js'
-import { createSubscriber as createIOSubscriber } from './ioObserver.js'
-import { auctionWatcher } from './auctionWatcher.js'
-import { stop as stopMacroRunner } from './macroRunner.js'
+import { createSubscriber as createProcessSubscriber } from './helpers/processObserver.js'
+import { createSubscriber as createIOSubscriber } from './helpers/ioObserver.js'
+import { auctionWatcher } from './helpers/auctionWatcher.js'
+import { stop as stopMacroRunner } from './helpers/macroRunner.js'
 import { stop as stopLogger } from './ipc/app/logging.js'
 import { sendIOSignal } from './ipc/helpers/sendIOSignal.js'
 import { handle as mainToRenderer } from './ipc/helpers/mainToRenderer.js'
-import {
-  unsubscribeAll
-} from './processObserver.js'
+import { unsubscribeAll } from './helpers/processObserver.js'
+import { crashReport } from './helpers/crash.js'
 
 import _iconImage from './renderer/assets/img/icon.png?url'
 import { delay, createRepeat } from './utils/timer.js'
 
+import { close as closeAuctionSubscribeDB } from './db/auctionSubscribe.js'
+import { close as closeAuctionWatchDB } from './db/auctionWatch.js'
+import { close as closeConfigDB } from './db/config.js'
+import { close as closeMacroDB } from './db/macro.js'
+import { getFilePathFromHomeDir } from './helpers/homedir.js'
+import { startup } from './helpers/startup.js'
+
 
 const iconImage = nativeImage.createFromDataURL(_iconImage)
 
-app.setAppUserModelId('org.izure.mfl')
-
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if ((await import('electron-squirrel-startup')).default) {
-  app.quit()
-  process.exit(0)
-}
-
-updateElectronApp()
 
 function *generateIpc() {
   yield import('./ipc/hardware/resume.js')
@@ -81,6 +78,7 @@ let overlayWindow: BrowserWindow|null
 let tray: Tray|null
 
 let processSubscriber: ReturnType<typeof createProcessSubscriber>|null = null
+let isMabinogiFocused = false
 
 async function clearApp() {
   unsubscribeAll()
@@ -143,13 +141,17 @@ async function listenProcess() {
     cancel()
     processSubscriber = createProcessSubscriber(process.pid)
     processSubscriber.onActivate(() => {
-      setOverlayWindow()
+      isMabinogiFocused = true
+      resetOverlayWindow()
       overlayWindow?.show()
     })
     processSubscriber.onDeactivate(() => {
+      isMabinogiFocused = false
+      resetOverlayWindow()
       overlayWindow?.hide()
     })
     if (processSubscriber.windowActivated) {
+      isMabinogiFocused = true
       setImmediate(() => overlayWindow?.show())
     }
   }, 15000, true)
@@ -177,10 +179,16 @@ async function listenIO() {
   onWheel(wrapper)
 }
 
-function setOverlayWindow() {
+function resetOverlayWindow() {
   const { width, height } = screen.getPrimaryDisplay().size
-  overlayWindow?.setAlwaysOnTop(true, 'screen-saver', 1)
-  overlayWindow?.setIgnoreMouseEvents(true, { forward: true })
+  if (isMabinogiFocused) {
+    overlayWindow.setAlwaysOnTop(true, 'screen-saver', 1)
+    overlayWindow.setIgnoreMouseEvents(true, { forward: true })
+  }
+  else {
+    overlayWindow.setAlwaysOnTop(false)
+    overlayWindow.setIgnoreMouseEvents(false)
+  }
   overlayWindow?.setSize(width, height, false)
 }
 
@@ -262,15 +270,15 @@ async function createWindow() {
 
   mainWindow.on('minimize', (e: Event) => {
     e.preventDefault()
+    resetOverlayWindow()
     mainWindow.setSkipTaskbar(true)
-    setOverlayWindow()
     tray = createTray()
   })
 
   mainWindow.on('restore', () => {
+    resetOverlayWindow()
     mainWindow.show()
     mainWindow.setSkipTaskbar(false)
-    setOverlayWindow()
     tray.destroy()
     tray = null
   })
@@ -291,40 +299,64 @@ async function createWindow() {
     
     // Show application to start
     mainWindow.show()
-    setOverlayWindow()
+    resetOverlayWindow()
   }, 1000)
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.whenReady().then(async () => {
-  if (await isElevated()) {
-    createWindow()
-  }
-})
 
-let allowCloseApp = false
-app.on('before-quit', async (e) => {
-  if (!allowCloseApp) {
-    e.preventDefault()
-    await clearApp()
-    allowCloseApp = true
-    app.quit()
-  }
-})
+/**
+ * 
+ * START ELECTRON MAIN PROCESS
+ * 
+ */
+app.setAppUserModelId('org.izure.mfl')
 
-app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
-  }
-})
+crashReport.setPath(getFilePathFromHomeDir('./Logs/Crashes'))
+crashReport.start()
 
-process.on('uncaughtException', (err) => {
-  mainToRenderer(err.message, err.stack, err.cause)
-})
+
+async function onStartup() {
+  // close database safety
+  await closeAuctionSubscribeDB()
+  await closeAuctionWatchDB()
+  await closeConfigDB()
+  await closeMacroDB()
+  // close app
+  app.quit()
+  process.exit(0)
+}
+
+// Handle creating/removing shortcuts on Windows when installing/uninstalling.
+if (!startup(onStartup)) {
+  updateElectronApp()
+  
+  // This method will be called when Electron has finished
+  // initialization and is ready to create browser windows.
+  // Some APIs can only be used after this event occurs.
+  app.whenReady().then(async () => {
+    if (await isElevated()) {
+      createWindow()
+    }
+  })
+
+  let allowCloseApp = false
+  app.on('before-quit', async (e) => {
+    if (!allowCloseApp) {
+      e.preventDefault()
+      await clearApp()
+      allowCloseApp = true
+      app.quit()
+    }
+  })
+
+  app.on('activate', () => {
+    // On OS X it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow()
+    }
+  })
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.

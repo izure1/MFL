@@ -1,7 +1,8 @@
 import type { ConfigScheme } from '../../types/index.js'
 import { useState } from 'react'
-import { Box, Button, Dialog, DialogContent, DialogContentText, DialogTitle, Slider, Typography } from '@mui/material'
+import { Box, Button, DialogContent, DialogContentText, DialogTitle, Slider } from '@mui/material'
 import { ipc } from '../ipc.js'
+import BlurDialog from './advanced/BlurDialog.js'
 
 export default function LimitConfigRate({
   config
@@ -32,7 +33,7 @@ export default function LimitConfigRate({
 
   return (
     <>
-      <Dialog
+      <BlurDialog
         open={configOpen}
         onClose={handleClose}
         fullWidth
@@ -57,7 +58,7 @@ export default function LimitConfigRate({
             />
           </Box>
         </DialogContent>
-      </Dialog>
+      </BlurDialog>
       <Button
         size='small'
         disableElevation

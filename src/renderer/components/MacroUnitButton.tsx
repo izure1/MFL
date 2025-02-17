@@ -3,7 +3,6 @@ import type { IOEvent, MacroDelayUnit, MacroIOUnit, MacroScheme, MacroUnit } fro
 import { useState } from 'react'
 import { css } from '@emotion/react'
 import {
-  Dialog,
   DialogTitle,
   DialogContent,
   FormControl,
@@ -20,6 +19,7 @@ import {
 import MacroUnitRawButton from './MacroUnitRawButton.js'
 import { fromLinuxKeycode } from '../../utils/keycode.js'
 import { createUUIDV4 } from '../../utils/id.js'
+import BlurDialog from './advanced/BlurDialog.js'
 
 export function createMacroIconData(unit: MacroUnit) {
   let text: string
@@ -212,7 +212,7 @@ export default function MacroUnitButton({
     <>
       {
         unit.hardware === 'delay' && (
-          <Dialog
+          <BlurDialog
             open={delayInputOpen}
             onClose={() => setDelayInputOpen(false)}
           >
@@ -226,12 +226,12 @@ export default function MacroUnitButton({
                 />
               </div>
             </DialogContent>
-          </Dialog>
+          </BlurDialog>
         )
       }
       {
         (unit.hardware === 'mouse' || unit.hardware === 'keyboard') && (
-          <Dialog
+          <BlurDialog
             open={toggleInputOpen}
             onClose={() => setToggleInputOpen(false)}
           >
@@ -244,7 +244,7 @@ export default function MacroUnitButton({
                 </RadioGroup>
               </FormControl>
             </DialogContent>
-          </Dialog>
+          </BlurDialog>
         )
       }
       <MacroUnitRawButton

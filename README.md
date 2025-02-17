@@ -64,9 +64,27 @@ _본 프로그램은 특정 하드웨어/소프트웨어로 인한 상대적 불
 Windows 10, Windows 11에서 테스트를 완료했습니다.  
 만일 오류를 발견하였다면, [이슈 게시판](https://github.com/izure1/mabinogi-foreground-limter/issues)을 이용하여 버그 제보를 해주세요.
 
+## 알려진 문제
+
+### 실행 시 **A JavaScript error occurred in the main process...** 오류 발생
+
+```text
+A JavaScript error occurred in the main process
+Uncaught Exception:
+SyntaxError: Unexpected token '
+```
+
+위 메세지가 뜨면서 에러가 발생하는 경우가 있습니다.  
+아래 순서를 따라 해결할 수 있습니다.
+
+1. **window+R**키를 눌러 **%USERPROFILE%** 입력하십시오.
+1. 사용자 디렉토리 내에 **MFL** 폴더를 삭제하세요.
+1. 재실행하시면 정상적으로 작동합니다.
+
 ## 직접 빌드하고 싶다면?
 
 1. 소스코드를 다운받으세요.
+1. 명령줄에 `npm install`를 입력하세요.
 1. 명령줄에 `npm run package`를 입력하세요.
 1. 빌드된 결과물이 `out` 디렉토리에 출력됩니다.
 
@@ -81,6 +99,7 @@ Windows 10, Windows 11에서 테스트를 완료했습니다.
 1. 배포를 위해 `forge.config.ts` 파일을 수정합니다.  
 **repository.owner** 값을 당신의 Github 아이디, **repository.name** 값을 저장소 이름으로 수정하세요.
 1. `npm run publish` 명령어를 입력하여 배포하세요.
+1. 저장소의 Release 페이지에서, draft된 버전을 실제로 배포하십시오.
 
 ## 라이센스
 

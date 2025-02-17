@@ -1,9 +1,9 @@
 import type { ConfigScheme } from '../../types/index.js'
-import { css } from '@emotion/react'
 import { useState } from 'react'
-import { Box, Button, Dialog, DialogContent, DialogContentText, DialogTitle, Grid, Slider, Typography } from '@mui/material'
+import { Box, Button, DialogContent, DialogContentText, DialogTitle, Grid, Slider, Typography } from '@mui/material'
 import { ipc } from '../ipc.js'
 import Cursor from './Cursor.js'
+import BlurDialog from './advanced/BlurDialog.js'
 
 interface ColorPalette {
   name: string
@@ -75,7 +75,7 @@ export default function CursorConfigCustom({
 
   return (
     <>
-      <Dialog
+      <BlurDialog
         open={configOpen}
         onClose={handleClose}
         fullWidth
@@ -127,8 +127,9 @@ export default function CursorConfigCustom({
                 <Box sx={{ mt: 1 }}>
                   <Grid container direction={'column'} columns={4}>
                     {
-                      palettes.map((palette) => (
+                      palettes.map((palette, i) => (
                         <Grid
+                          key={i}
                           container
                           item
                           direction={'row'}
@@ -138,6 +139,7 @@ export default function CursorConfigCustom({
                           {
                             palette.map((color) => (
                               <Grid
+                                key={color.rgb}
                                 item
                                 xs={1}
                                 sx={{
@@ -192,7 +194,7 @@ export default function CursorConfigCustom({
             </Grid>
           </Grid>
         </DialogContent>
-      </Dialog>
+      </BlurDialog>
       <Button
         size='small'
         disableElevation

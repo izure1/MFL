@@ -1,9 +1,10 @@
 import { useContext, useState } from 'react'
 import { css } from '@emotion/react'
-import { Box, Button, Dialog, DialogContent, DialogTitle } from '@mui/material'
+import { Box, Button, DialogContent, DialogTitle } from '@mui/material'
 import { SchemeMapContext } from './MacroProvider.js'
 import MacroList from './MacroList.js'
 import { ipc } from '../ipc.js'
+import BlurDialog from './advanced/BlurDialog.js'
 
 export default function MacroButton() {
   const [open, setOpen] = useState(false)
@@ -29,27 +30,10 @@ export default function MacroButton() {
 
   return (
     <>
-      <Button
-        variant='text'
-        size='large'
-        disableElevation
-        onClick={handle}
-        sx={{
-          fontFamily: 'Mabinogi'
-        }}
-      >매크로</Button>
-
-      <Dialog
+      <BlurDialog
         open={open}
         onClose={handleClose}
         fullWidth
-        sx={{
-          backdropFilter: 'blur(9px)',
-          '& .MuiDialog-paper': {
-            backgroundImage: 'none',
-            backgroundColor: 'rgb(24, 24, 26)'
-          }
-        }}
       >
         <DialogTitle sx={{ pb: 1 }}>
           <Box
@@ -71,7 +55,16 @@ export default function MacroButton() {
           `} /> 
           <MacroList schemeMap={schemeMap} />
         </DialogContent>
-      </Dialog>
+      </BlurDialog>
+      <Button
+        variant='text'
+        size='large'
+        disableElevation
+        onClick={handle}
+        sx={{
+          fontFamily: 'Mabinogi'
+        }}
+      >매크로</Button>
     </>
   )
 }

@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { handle as showItem } from '../external/showItem.js'
-import { getHomeDir } from '../../homedir.js'
+import { getHomeDir } from '../../helpers/homedir.js'
 
 export async function handle() {
   showItem(getHomeDir())

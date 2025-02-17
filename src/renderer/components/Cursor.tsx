@@ -26,6 +26,7 @@ export default forwardRef<HTMLDivElement, CursorComponentProps>(({
         border: ${cursorThickness}px solid ${cursorColor};
         border-radius: calc(1px / 0);
         pointer-events: none;
+        transition: border 0.15s linear;
       `}
     />
   )

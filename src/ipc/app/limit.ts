@@ -1,8 +1,8 @@
 import { ipcMain } from 'electron'
 import { suspend, resume } from 'ntsuspend'
 
-import { getActivateWindow, createSubscriber as createProcessSubscriber } from '../../processObserver.js'
-import { start as startMacroRunner, stop as stopMacroRunner } from '../../macroRunner.js'
+import { getActivateWindow, createSubscriber as createProcessSubscriber } from '../../helpers/processObserver.js'
+import { start as startMacroRunner, stop as stopMacroRunner } from '../../helpers/macroRunner.js'
 import { handle as getMabinogiProcess } from '../hardware/mabinogi.js'
 import { handle as rendererLog } from '../app/log.js'
 import { getConfig } from '../../db/config.js'

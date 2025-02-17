@@ -1,7 +1,8 @@
 import type { ConfigScheme } from '../../types/index.js'
 import { useState } from 'react'
-import { Box, Button, Dialog, DialogContent, DialogContentText, DialogTitle, Slider } from '@mui/material'
+import { Box, Button, DialogContent, DialogContentText, DialogTitle, Slider } from '@mui/material'
 import { ipc } from '../ipc.js'
+import BlurDialog from './advanced/BlurDialog.js'
 
 export default function LoggingConfigInterval({
   config
@@ -33,7 +34,7 @@ export default function LoggingConfigInterval({
 
   return (
     <>
-      <Dialog
+      <BlurDialog
         open={configOpen}
         onClose={handleClose}
         maxWidth='sm'
@@ -58,7 +59,7 @@ export default function LoggingConfigInterval({
             />
           </Box>
         </DialogContent>
-      </Dialog>
+      </BlurDialog>
       <Button
         size='small'
         disableElevation

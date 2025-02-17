@@ -1,9 +1,10 @@
 import styled from '@emotion/styled'
 import { Fragment, useState } from 'react'
-import { Box, CircularProgress, Dialog, DialogContent, DialogTitle, FormControl, Typography } from '@mui/material'
+import { Box, CircularProgress, DialogContent, DialogTitle, FormControl, Typography } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { humanizeNumber } from '../../../utils/format.js'
 import { AuctionItemScheme } from '../../../types/index.js'
+import BlurDialog from '../advanced/BlurDialog.js'
 
 const DefinitionList = styled.dl`
   & dt {
@@ -123,7 +124,7 @@ export default function AuctionList({
     <>
       {
         preview && (
-          <Dialog
+          <BlurDialog
             open={previewOpen}
             onClose={handlePreviewClose}
             fullWidth
@@ -194,7 +195,7 @@ export default function AuctionList({
                 }
               </DefinitionList>
             </DialogContent>
-          </Dialog>
+          </BlurDialog>
         )
       }
       <FormControl disabled={pending}>
@@ -232,6 +233,14 @@ export default function AuctionList({
               columns={Columns}
               onRowClick={(params) => select(params.row)}
               initialState={{
+                sorting: {
+                  sortModel: [
+                    {
+                      field: 'auction_price_per_unit',
+                      sort: 'asc',
+                    }
+                  ]
+                },
                 pagination: {
                   paginationModel: {
                     pageSize: 10

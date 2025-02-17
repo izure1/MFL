@@ -1,14 +1,35 @@
 import { useEffect, useState } from 'react'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { Box, Button, Dialog, DialogContent, DialogContentText,  DialogTitle } from '@mui/material'
+import { Box, Button, DialogContent,  DialogTitle } from '@mui/material'
 import { ipc } from '../ipc.js'
+import BlurDialog from './advanced/BlurDialog.js'
 
 
 const SpecUser = styled.span`
   font-size: 1rem;
   font-family: 'Mabinogi';
   color: rgb(225, 173, 145);
+`
+
+const ColorfulText = styled.div`
+  @keyframes Rotate {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  animation: Rotate 5s linear infinite;
+  background-image: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-clip: text;
+  background-size: 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 `
 
 interface UserWithExternal {
@@ -69,7 +90,7 @@ export default function AboutButton() {
       },
       {
         title: '테스터',
-        users: ['권련설화', '지금형이간다']
+        users: ['권련설화', '지금형이간다', '주덕배']
       },
       {
         title: '제작 중 염탐한 사람',
@@ -107,20 +128,16 @@ export default function AboutButton() {
         onClick={handle}
       >정보</Button>
 
-      <Dialog
+      <BlurDialog
         open={open}
         onClose={handleClose}
         onClick={handleCount}
         fullWidth
-        sx={{
-          backdropFilter: 'blur(9px)',
-          '& .MuiDialog-paper': {
-            backgroundImage: 'none',
-            backgroundColor: 'rgb(24, 24, 26)'
-          }
-        }}
       >
-        <DialogTitle sx={{ pb: 1 }}>마탕화면 도우미 {version}</DialogTitle>
+        <DialogTitle sx={{
+          pb: 1,
+          color: 'white !important'
+        }}>마탕화면 도우미 {version}</DialogTitle>
         <DialogContent>
           <hr css={css`
             height: 1px;
@@ -181,7 +198,7 @@ export default function AboutButton() {
             </Box>
           </Box>
         </DialogContent>
-      </Dialog>
+      </BlurDialog>
     </>
   )
 }

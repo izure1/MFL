@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { IOEvent } from '../../types/index.js'
-import { createSubscriber } from '../../ioObserver.js'
+import { createSubscriber } from '../../helpers/ioObserver.js'
 import { sendIOSignal } from '../helpers/sendIOSignal.js'
 
 let listening = false

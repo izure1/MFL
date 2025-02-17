@@ -1,8 +1,9 @@
 import type { ConfigScheme } from '../../types/index.js'
 import { useState } from 'react'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material'
+import { Button, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
 import { getLoggingDistDirectory } from '../../helpers/logger.js'
 import { ipc } from '../ipc.js'
+import BlurDialog from './advanced/BlurDialog.js'
 
 export default function LoggingConfigDirectory({
   config
@@ -40,7 +41,7 @@ export default function LoggingConfigDirectory({
 
   return (
     <>
-      <Dialog
+      <BlurDialog
         open={configOpen}
         onClose={handleClose}
         maxWidth='lg'
@@ -59,13 +60,10 @@ export default function LoggingConfigDirectory({
           <Button onClick={handleOpenDirectory}>열기</Button>
           <Button onClick={handleChangeDirectory}>변경</Button>
         </DialogActions>
-      </Dialog>
+      </BlurDialog>
       <Button
         size='small'
         disableElevation
-        sx={{
-          marginLeft: 2
-        }}
         onClick={handleChange}
       >저장 위치</Button>
     </>

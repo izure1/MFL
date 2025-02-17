@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material'
+import { Badge, Box, Button, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { DeleteForeverRounded } from '@mui/icons-material'
 import { AuctionWatchContext } from '../AuctionWatchProvider.js'
@@ -6,6 +6,7 @@ import { AuctionItemWatchScheme } from '../../../types/index.js'
 import { ipc } from '../../ipc.js'
 import { createUUIDV4 } from '../../../utils/id.js'
 import { optionResolvers, getFilteredAuctionItems } from '../../../helpers/auction.js'
+import BlurDialog from '../advanced/BlurDialog.js'
 
 export default function AuctionWatchSubscribe() {
   const [open, setOpen] = useState(false)
@@ -77,7 +78,7 @@ export default function AuctionWatchSubscribe() {
 
   return (
     <>
-      <Dialog
+      <BlurDialog
         open={open}
         onClose={() => setOpen(false)}
         fullWidth
@@ -152,7 +153,7 @@ export default function AuctionWatchSubscribe() {
             { watchData ? '현재 검색 설정 구독' : '먼저 카테고리를 선택하세요' }
           </Button>
         </DialogActions>
-      </Dialog>
+      </BlurDialog>
       <Badge
         variant='dot'
         color='warning'

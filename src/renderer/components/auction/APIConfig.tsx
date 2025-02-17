@@ -1,7 +1,8 @@
 import { ChangeEvent, useEffect, useState } from 'react'
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material'
+import { Box, Button, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material'
 import { ipc } from '../../ipc.js'
 import AuctionConfig from '../../../config/auction/api.json' with { type: 'json' }
+import BlurDialog from '../advanced/BlurDialog.js'
 
 export default function APIConfig({
   apiKey
@@ -32,7 +33,7 @@ export default function APIConfig({
 
   return (
     <>
-      <Dialog
+      <BlurDialog
         open={open}
         onClose={() => setOpen(false)}
         fullWidth
@@ -68,7 +69,7 @@ export default function APIConfig({
             <Button onClick={handleSave}>저장하기</Button>
           </Box>
         </DialogActions>
-      </Dialog>
+      </BlurDialog>
 
       <Button
         variant='outlined'

@@ -1,6 +1,5 @@
 import { AuctionItemOptionResolver, AuctionItemScheme, AuctionItemWatchScheme, AuctionResponse } from '../types/index.js'
 import { AuctionItemOptionResolvers } from '../config/auction/option.js'
-import { delay } from '../utils/timer.js'
 
 export const optionResolvers = new Map<string, AuctionItemOptionResolver>()
 for (const resolver of AuctionItemOptionResolvers) {

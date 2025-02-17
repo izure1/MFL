@@ -1,7 +1,7 @@
-import type { IOKeyboardEvent, IOMouseEvent, IOWheelEvent } from './types/index.js'
+import type { IOKeyboardEvent, IOMouseEvent, IOWheelEvent } from '../types/index.js'
 import { uIOhook } from 'uiohook-napi'
 import { useHookallSync } from 'hookall'
-import { fromLinuxKeycode } from './utils/keycode.js'
+import { fromLinuxKeycode } from '../utils/keycode.js'
 export { UiohookKey } from 'uiohook-napi'
 
 type IOHook = {

@@ -1,7 +1,7 @@
 import type { MacroScheme, MacroSchemeMap, MacroUnit, MacroIOUnit } from '../types/index.js'
 import { KlafDocument } from 'klaf.js'
 import { FileSystemEngine } from 'klaf.js/engine/FileSystem'
-import { getFilePathFromHomeDir } from '../homedir.js'
+import { getFilePathFromHomeDir } from '../helpers/homedir.js'
 
 const CONFIG_PATH = getFilePathFromHomeDir('./Data/macro.db')
 
@@ -76,4 +76,8 @@ export async function setMacro(name: string, scheme: MacroScheme): Promise<Macro
 
 export async function removeMacro(name: string): Promise<boolean> {
   return !!(await db.delete({ name }))
+}
+
+export function close() {
+  return db.close()
 }

@@ -2,7 +2,7 @@ import { AuctionItemScheme, AuctionItemWatchScheme, AuctionWantedItemInspectStag
 import { KlafDocument } from 'klaf.js'
 import { InMemoryEngine } from 'klaf.js/engine/InMemory'
 import { sendAuctionNonInspectedUpdateSignal } from '../ipc/helpers/sendAuctionNonInspectedUpdateSignal.js'
-import { auctionWatcher } from '../auctionWatcher.js'
+import { auctionWatcher } from '../helpers/auctionWatcher.js'
 
 const db = await KlafDocument.Open({
   path: 'auction-subscribe',
@@ -103,4 +103,8 @@ export async function changeItemInspectStage(
 
 export function fetchInspectTarget() {
   auctionWatcher.run()
+}
+
+export function close() {
+  return db.close()
 }

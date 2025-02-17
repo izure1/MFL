@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { changeItemInspectStage } from '../../db/auctionSubscribe.js'
-import { AuctionItemWatchScheme, AuctionWantedItemInspectStage, AuctionWantedItemScheme } from '../../types/index.js'
+import { AuctionItemWatchScheme, AuctionWantedItemInspectStage } from '../../types/index.js'
 
 export async function handle(watchData: AuctionItemWatchScheme) {
   await changeItemInspectStage(watchData, AuctionWantedItemInspectStage.Inspected)

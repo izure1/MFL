@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Select, TextField, Typography } from '@mui/material'
+import { Box, Button, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Select, TextField, Typography } from '@mui/material'
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { AuctionWatchContext } from '../AuctionWatchProvider.js'
 import { AuctionItemOptionResolvers } from '../../../config/auction/option.js'
@@ -6,6 +6,7 @@ import { optionResolvers } from '../../../helpers/auction.js'
 import { AuctionItemWatchScheme } from '../../../types/index.js'
 import { createUUIDV4 } from '../../../utils/id.js'
 import { humanizeNumber } from '../../../utils/format.js'
+import BlurDialog from '../advanced/BlurDialog.js'
 
 function findResolver(id: string) {
   const resolver = optionResolvers.get(id)
@@ -346,7 +347,7 @@ export default function AuctionWatchEditor({
   }, [data, open])
 
   return (
-    <Dialog
+    <BlurDialog
       open={open}
       onClose={onClose}
       fullWidth
@@ -382,6 +383,6 @@ export default function AuctionWatchEditor({
           <Button fullWidth onClick={handleDone}>완료</Button>
         </Box>
       </DialogActions>
-    </Dialog>
+    </BlurDialog>
   )
 }

@@ -1,6 +1,6 @@
 import type { ConfigScheme } from '../../types/index.js'
 import { Typography, Switch, Box } from '@mui/material'
-import { ChangeEvent, useEffect, useMemo } from 'react'
+import { ChangeEvent, useMemo } from 'react'
 import { ipc } from '../ipc.js'
 
 export default function AuctionConfig({
