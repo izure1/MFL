@@ -141,18 +141,19 @@ async function listenProcess() {
     cancel()
     processSubscriber = createProcessSubscriber(process.pid)
     processSubscriber.onActivate(() => {
-      isMabinogiFocused = true
-      resetOverlayWindow()
-      overlayWindow?.show()
+      setImmediate(() => {
+        isMabinogiFocused = true
+        resetOverlayWindow()
+      })
     })
     processSubscriber.onDeactivate(() => {
-      isMabinogiFocused = false
-      resetOverlayWindow()
-      overlayWindow?.hide()
+      setImmediate(() => {
+        isMabinogiFocused = false
+        resetOverlayWindow()
+      })
     })
     if (processSubscriber.windowActivated) {
-      isMabinogiFocused = true
-      setImmediate(() => overlayWindow?.show())
+      processSubscriber.emitActivate()
     }
   }, 15000, true)
 }
@@ -180,16 +181,22 @@ async function listenIO() {
 }
 
 function resetOverlayWindow() {
-  const { width, height } = screen.getPrimaryDisplay().size
+  if (!overlayWindow) {
+    return
+  }
   if (isMabinogiFocused) {
+    const { width, height } = screen.getPrimaryDisplay().size
+    overlayWindow.setSize(width, height, false)
     overlayWindow.setAlwaysOnTop(true, 'screen-saver', 1)
     overlayWindow.setIgnoreMouseEvents(true, { forward: true })
+    overlayWindow.show()
   }
   else {
     overlayWindow.setAlwaysOnTop(false)
-    overlayWindow.setIgnoreMouseEvents(false)
+    overlayWindow.setIgnoreMouseEvents(true)
+    overlayWindow.blur()
+    overlayWindow.hide()
   }
-  overlayWindow?.setSize(width, height, false)
 }
 
 async function createWindow() {
@@ -238,7 +245,7 @@ async function createWindow() {
     movable: false,
     skipTaskbar: true,
     show: false,
-    fullscreen: true,
+    fullscreen: false,
     webPreferences: {
       webSecurity: false,
       sandbox: true,

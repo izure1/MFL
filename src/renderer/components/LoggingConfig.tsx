@@ -6,6 +6,7 @@ import { ipc } from '../ipc.js'
 import LoggingConfigDirectory from './LoggingConfigDirectory.js'
 import LoggingConfigInterval from './LoggingConfigInterval.js'
 import LoggingConfigManager from './LoggingConfigManager.js'
+import { NeonSignText } from './advanced/NeonSignText.js'
 
 export default function LoggingConfig({
   config
@@ -42,7 +43,13 @@ export default function LoggingConfig({
           flexDirection='row'
           alignItems='center'
         >
-          <Typography variant='h5' color={ config.logging ? 'rgb(225, 173, 145)' : 'primary.dark' }>스냅샷 기록하기</Typography>
+          <NeonSignText
+            color={'primary.dark'}
+            variant={'h5'}
+            disabled={!config.logging}
+          >
+            스냅샷 기록하기
+          </NeonSignText>
           <Switch
             checked={config.logging}
             onChange={handleChangeLogging}

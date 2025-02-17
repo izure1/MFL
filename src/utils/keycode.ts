@@ -74,6 +74,8 @@ const keycodeMap: Record<UiohookKeys, KeysenderKey> = {
   "66": "f8",
   "67": "f9",
   "68": "f10",
+  "87": "f11",
+  "88": "f12",
   "69": "numLock",
   "70": "scrollLock",
   "71": "num7",

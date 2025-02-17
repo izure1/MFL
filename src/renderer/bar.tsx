@@ -58,7 +58,6 @@ export default function Titlebar() {
               />
             </Button>
             <HomeButton />
-            <MacroButton />
             {/* <CronJobButton /> */}
             <AuctionButton />
             <AboutButton />

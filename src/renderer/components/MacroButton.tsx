@@ -57,14 +57,13 @@ export default function MacroButton() {
         </DialogContent>
       </BlurDialog>
       <Button
-        variant='text'
-        size='large'
+        size='small'
         disableElevation
-        onClick={handle}
         sx={{
-          fontFamily: 'Mabinogi'
+          marginLeft: 2
         }}
-      >매크로</Button>
+        onClick={handle}
+      >매크로 관리</Button>
     </>
   )
 }

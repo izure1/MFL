@@ -3,6 +3,8 @@ import { Typography, Switch, Box } from '@mui/material'
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { delay } from '../../utils/timer.js'
 import { ipc } from '../ipc.js'
+import MacroButton from './MacroButton.js'
+import { NeonSignText } from './advanced/NeonSignText.js'
 
 export default function MacroConfig({
   config
@@ -39,12 +41,19 @@ export default function MacroConfig({
           flexDirection='row'
           alignItems='center'
         >
-          <Typography variant='h5' color={ config.macroRunning ? 'rgb(225, 173, 145)' : 'primary.dark' }>매크로 실행</Typography>
+          <NeonSignText
+            color={'primary.dark'}
+            variant={'h5'}
+            disabled={!config.macroRunning}
+          >
+            매크로 실행
+          </NeonSignText>
           <Switch
             checked={config.macroRunning}
             onChange={handleChangeRunning}
             disabled={pending}
           />
+          <MacroButton />
         </Box>
         <Typography variant='body1' color='rgb(230, 230, 230)'>
           { working ?

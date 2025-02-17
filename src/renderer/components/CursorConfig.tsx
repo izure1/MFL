@@ -3,6 +3,7 @@ import { Typography, Switch, Box } from '@mui/material'
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { ipc } from '../ipc.js'
 import CursorConfigCustom from './CursorConfigCustom.js'
+import { NeonSignText } from './advanced/NeonSignText.js'
 
 export default function CursorConfig({
   config
@@ -33,7 +34,13 @@ export default function CursorConfig({
           flexDirection='row'
           alignItems='center'
         >
-          <Typography variant='h5' color={ config.cursorRunning ? 'rgb(225, 173, 145)' : 'primary.dark' }>마우스 강조</Typography>
+          <NeonSignText
+            color={'primary.dark'}
+            variant={'h5'}
+            disabled={!config.cursorRunning}
+          >
+            마우스 강조
+          </NeonSignText>
           <Switch
             checked={config.cursorRunning}
             onChange={handleChangeRunning}

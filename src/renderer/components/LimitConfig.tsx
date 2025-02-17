@@ -4,6 +4,7 @@ import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { delay } from '../../utils/timer.js'
 import { ipc } from '../ipc.js'
 import LimitConfigRate from './LimitConfigRate.js'
+import { NeonSignText } from './advanced/NeonSignText.js'
 
 export default function LimitConfig({
   config
@@ -40,7 +41,13 @@ export default function LimitConfig({
           flexDirection='row'
           alignItems='center'
         >
-          <Typography variant='h5' color={ config.running ? 'rgb(225, 173, 145)' : 'primary.dark' }>게임 성능 제한</Typography>
+          <NeonSignText
+            color={'primary.dark'}
+            variant={'h5'}
+            disabled={!config.running}
+          >
+            게임 성능 제한
+          </NeonSignText>
           <Switch
             checked={config.running}
             onChange={handleChangeRunning}

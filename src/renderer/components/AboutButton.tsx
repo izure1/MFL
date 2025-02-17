@@ -4,32 +4,13 @@ import styled from '@emotion/styled'
 import { Box, Button, DialogContent,  DialogTitle } from '@mui/material'
 import { ipc } from '../ipc.js'
 import BlurDialog from './advanced/BlurDialog.js'
+import { NeonSignText } from './advanced/NeonSignText.js'
 
 
 const SpecUser = styled.span`
   font-size: 1rem;
   font-family: 'Mabinogi';
   color: rgb(225, 173, 145);
-`
-
-const ColorfulText = styled.div`
-  @keyframes Rotate {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-  animation: Rotate 5s linear infinite;
-  background-image: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-  background-clip: text;
-  background-size: 400%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 `
 
 interface UserWithExternal {
@@ -137,7 +118,9 @@ export default function AboutButton() {
         <DialogTitle sx={{
           pb: 1,
           color: 'white !important'
-        }}>마탕화면 도우미 {version}</DialogTitle>
+        }}>
+          <NeonSignText variant={'h5'}>마탕화면 도우미 {version}</NeonSignText>
+        </DialogTitle>
         <DialogContent>
           <hr css={css`
             height: 1px;

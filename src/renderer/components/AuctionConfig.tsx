@@ -2,6 +2,7 @@ import type { ConfigScheme } from '../../types/index.js'
 import { Typography, Switch, Box } from '@mui/material'
 import { ChangeEvent, useMemo } from 'react'
 import { ipc } from '../ipc.js'
+import { NeonSignText } from './advanced/NeonSignText.js'
 
 export default function AuctionConfig({
   config
@@ -22,7 +23,13 @@ export default function AuctionConfig({
           flexDirection='row'
           alignItems='center'
         >
-          <Typography variant='h5' color={ config.auctionWatching ? 'rgb(225, 173, 145)' : 'primary.dark' }>경매장 알림</Typography>
+          <NeonSignText
+            color={'primary.dark'}
+            variant={'h5'}
+            disabled={!config.auctionWatching}
+          >
+            경매장 알림
+          </NeonSignText>
           <Switch
             checked={config.auctionWatching}
             onChange={handleChangeWatching}
