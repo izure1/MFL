@@ -3,6 +3,30 @@
   src: url('./renderer/assets/fonts/Mabinogi_Classic_TTF.ttf');
 }
 
+@keyframes move-colorful-gradient {
+  to {
+    --colorful-gradient-position: 100% 50%;
+  }
+}
+
+@keyframes rotate-colorful-gradient {
+  to {
+    --colorful-gradient-angle: 360deg;
+  }
+}
+
+@property --colorful-gradient-position {
+  syntax: '<percentage>+';
+  initial-value: 0% 50%;
+  inherits: false;
+}
+
+@property --colorful-gradient-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
 html,
 body {
   width: 100%;

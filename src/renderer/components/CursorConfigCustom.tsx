@@ -7,7 +7,7 @@ import BlurDialog from './advanced/BlurDialog.js'
 
 interface ColorPalette {
   name: string
-  rgb: `rgb(${string},${string},${string})`
+  rgb: `rgb(${string},${string},${string})`|`${string}-gradient(${string})`
 }
 
 export default function CursorConfigCustom({
@@ -48,6 +48,10 @@ export default function CursorConfigCustom({
       { name: '발레스검보라', rgb: 'rgb(50,37,60)' },
       { name: '시암블랙', rgb: 'rgb(2,7,21)' },
     ],
+    [
+      { name: '빤지', rgb: 'linear-gradient(var(--colorful-gradient-angle), #ee7752, #e73c7e, #23a6d5, #23d5ab)' },
+      { name: '빤지', rgb: 'linear-gradient(var(--colorful-gradient-angle), red, yellow, aqua, blue)' },
+    ]
   ]
 
   function handleChange() {
@@ -144,7 +148,7 @@ export default function CursorConfigCustom({
                                 xs={1}
                                 sx={{
                                   height: '30px',
-                                  backgroundColor: color.rgb,
+                                  background: color.rgb,
                                   justifyContent: 'center',
                                   alignItems: 'center',
                                   cursor: 'pointer',

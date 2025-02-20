@@ -1,7 +1,7 @@
 {
   "name": "mabinogi-foreground-limiter",
   "productName": "MFL",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Limit your computer CPU when Mabinogi game is not activated.",
   "type": "module",
   "main": ".vite/build/main.js",
@@ -59,10 +59,7 @@
     "limit",
     "bes"
   ],
-  "author": {
-    "name": "izure",
-    "email": "admin@izure.org"
-  },
+  "author": "izure <admin@izure.org>",
   "license": "MIT",
   "dependencies": {
     "@emotion/react": "^11.11.4",

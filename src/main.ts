@@ -141,16 +141,12 @@ async function listenProcess() {
     cancel()
     processSubscriber = createProcessSubscriber(process.pid)
     processSubscriber.onActivate(() => {
-      setImmediate(() => {
-        isMabinogiFocused = true
-        resetOverlayWindow()
-      })
+      isMabinogiFocused = true
+      resetOverlayWindow()
     })
     processSubscriber.onDeactivate(() => {
-      setImmediate(() => {
-        isMabinogiFocused = false
-        resetOverlayWindow()
-      })
+      isMabinogiFocused = false
+      resetOverlayWindow()
     })
     if (processSubscriber.windowActivated) {
       processSubscriber.emitActivate()
@@ -277,17 +273,22 @@ async function createWindow() {
 
   mainWindow.on('minimize', (e: Event) => {
     e.preventDefault()
-    resetOverlayWindow()
     mainWindow.setSkipTaskbar(true)
+    mainWindow.blur()
     tray = createTray()
+    resetOverlayWindow()
   })
 
   mainWindow.on('restore', () => {
-    resetOverlayWindow()
     mainWindow.show()
     mainWindow.setSkipTaskbar(false)
+    mainWindow.focus()
     tray.destroy()
     tray = null
+    setImmediate(() => {
+      isMabinogiFocused = false
+      resetOverlayWindow()
+    })
   })
 
   mainWindow.on('closed', () => {

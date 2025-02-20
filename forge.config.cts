@@ -50,7 +50,15 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   hooks: {},
-  makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
+  makers: [
+    new MakerSquirrel({
+      name: 'MFL',
+      setupIcon: join('./src/renderer/assets/img/icon.ico')
+    }),
+    new MakerZIP({}, ['darwin']),
+    new MakerRpm({}),
+    new MakerDeb({})
+  ],
   publishers: [
     {
       name: '@electron-forge/publisher-github',

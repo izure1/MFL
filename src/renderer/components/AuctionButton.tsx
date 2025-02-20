@@ -1,5 +1,5 @@
 import { useContext, useMemo, useState } from 'react'
-import { Badge, Box, Button, DialogContent,  DialogTitle, IconButton, ButtonProps } from '@mui/material'
+import { Badge, Box, Button, DialogContent,  DialogTitle, IconButton } from '@mui/material'
 import { CloseRounded } from '@mui/icons-material'
 import Auction from './auction/Auction.js'
 import { AuctionWatchContext } from './AuctionWatchProvider.js'

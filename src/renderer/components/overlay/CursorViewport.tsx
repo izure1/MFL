@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef } from 'react'
+import { useContext, useMemo, useRef } from 'react'
 import { css } from '@emotion/react'
 import { ConfigContext } from '../ConfigProvider.js'
 import Cursor from '../Cursor.js'
