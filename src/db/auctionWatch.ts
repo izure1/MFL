@@ -1,5 +1,5 @@
 import type { AuctionItemWatchScheme } from '../types/index.js'
-import { KlafDocument } from 'klaf.js'
+import { DataJournal, KlafDocument } from 'klaf.js'
 import { FileSystemEngine } from 'klaf.js/engine/FileSystem'
 import { getFilePathFromHomeDir } from '../helpers/homedir.js'
 import { createUUIDV4 } from '../utils/id.js'
@@ -15,6 +15,7 @@ const MabinogiCategories = Object
 const db = await KlafDocument.Open({
   path: CONFIG_PATH,
   engine: new FileSystemEngine(),
+  journal: new DataJournal(new FileSystemEngine()),
   version: 1,
   scheme: {
     id: {
@@ -33,9 +34,17 @@ const db = await KlafDocument.Open({
 
 export async function getFromCategory(category?: string): Promise<AuctionItemWatchScheme[]> {
   if (category) {
-    return await db.pick({ itemCategory: category }, { desc: true })
+    const [err, rows] = await db.pick({ itemCategory: category }, { desc: true })
+    if (err) {
+      throw err
+    }
+    return rows
   }
-  return await db.pick({}, { desc: true })
+  const [err, rows] = await db.pick({}, { desc: true })
+  if (err) {
+    throw err
+  }
+  return rows
 }
 
 export async function add(watch: AuctionItemWatchScheme): Promise<void> {
@@ -43,7 +52,11 @@ export async function add(watch: AuctionItemWatchScheme): Promise<void> {
 }
 
 export async function update(watch: AuctionItemWatchScheme): Promise<void> {
-  if (!(await db.count({ id: watch.id }))) {
+  const [err, count] = await db.count({ id: watch.id })
+  if (err) {
+    throw err
+  }
+  if (!count) {
     await add(watch)
     return
   }

@@ -1,12 +1,13 @@
 import type { ConfigScheme } from '../../types/index.js'
-import { Typography, Switch, Box } from '@mui/material'
+import { Typography, Box } from '@mui/material'
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { delay } from '../../utils/timer.js'
 import { ipc } from '../ipc.js'
 import LoggingConfigDirectory from './LoggingConfigDirectory.js'
 import LoggingConfigInterval from './LoggingConfigInterval.js'
 import LoggingConfigManager from './LoggingConfigManager.js'
-import { NeonSignText } from './advanced/NeonSignText.js'
+import NeonSignText from './advanced/NeonSignText.js'
+import Android12Switch from './advanced/Android12Switch.js'
 
 export default function LoggingConfig({
   config
@@ -50,7 +51,7 @@ export default function LoggingConfig({
           >
             스냅샷 기록하기
           </NeonSignText>
-          <Switch
+          <Android12Switch
             checked={config.logging}
             onChange={handleChangeLogging}
             disabled={pending}

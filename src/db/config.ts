@@ -1,5 +1,5 @@
 import type { ConfigScheme } from '../types/index.js'
-import { KlafDocument } from 'klaf.js'
+import { DataJournal, KlafDocument } from 'klaf.js'
 import { FileSystemEngine } from 'klaf.js/engine/FileSystem'
 import { getHomeDir, getFilePathFromHomeDir } from '../helpers/homedir.js'
 import { sendConfigUpdateSignal } from '../ipc/helpers/sendConfigUpdateSignal.js'
@@ -18,12 +18,15 @@ const DEFAULT_CONFIG: ConfigScheme = {
   cursorThickness: 3,
   cursorColor: 'rgb(255, 0, 0)',
   cursorSize: 32,
+  cursorCrosshair: false,
+  clockActivate: true,
 }
 
 const db = await KlafDocument.Open({
   path: CONFIG_PATH,
   engine: new FileSystemEngine(),
-  version: 7,
+  journal: new DataJournal(new FileSystemEngine()),
+  version: 9,
   scheme: {
     limit: {
       default: (): number => 50,
@@ -72,7 +75,15 @@ const db = await KlafDocument.Open({
     cursorColor: {
       default: (): string => 'rgb(255, 0, 0)',
       validate: (v) => typeof v === 'string',
-    }
+    },
+    cursorCrosshair: {
+      default: (): boolean => false,
+      validate: (v) => typeof v === 'boolean',
+    },
+    clockActivate: {
+      default: (): boolean => true,
+      validate: (v) => typeof v === 'boolean',
+    },
   }
 })
 
@@ -80,7 +91,11 @@ export async function getConfig(): Promise<ConfigScheme> {
   if (!db.metadata.count) {
     await db.put({})
   }
-  return (await db.pick({})).at(0)
+  const [err, rows] = await db.pick({})
+  if (err) {
+    throw err
+  }
+  return rows.at(0)
 }
 
 export async function setConfig(partialConfig: Partial<typeof DEFAULT_CONFIG>) {

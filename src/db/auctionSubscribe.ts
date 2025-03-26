@@ -45,16 +45,24 @@ const db = await KlafDocument.Open({
 export async function getWantedItemsFromStage(
   stage: AuctionWantedItemInspectStage
 ): Promise<AuctionWantedItemScheme[]> {
-  return await db.pick({
+  const [err, rows] = await db.pick({
     inspect: stage
   })
+  if (err) {
+    throw err
+  }
+  return rows
 }
 
 export async function isInspectedItem(
   watchData: AuctionItemWatchScheme,
   item: AuctionWantedItemScheme
 ): Promise<boolean> {
-  const guess = (await db.pick({ id: item.id, watch_id: watchData.id })).at(0)
+  const [err, rows] = await db.pick({ id: item.id, watch_id: watchData.id })
+  if (err) {
+    throw err
+  }
+  const guess = rows.at(0)
   if (!guess) {
     return false
   }
@@ -70,7 +78,11 @@ export async function addInspectQueue(
   }
   const appended = []
   for (const t of item) {
-    const has = !!(await db.count({ id: t.id, watch_id: watchData.id }))
+    const [err, count] = await db.count({ id: t.id, watch_id: watchData.id })
+    if (err) {
+      throw err
+    }
+    const has = !!count
     if (has) {
       continue
     }
@@ -89,7 +101,7 @@ export async function changeItemInspectStage(
   watchData: AuctionItemWatchScheme,
   stage: AuctionWantedItemInspectStage
 ): Promise<number> {
-  const count = await db.partialUpdate({
+  const [err, count] = await db.partialUpdate({
     watch_id: watchData.id,
     inspect: {
       lt: stage
@@ -97,6 +109,9 @@ export async function changeItemInspectStage(
   }, {
     inspect: stage
   })
+  if (err) {
+    throw err
+  }
   sendAuctionNonInspectedUpdateSignal()
   return count
 }

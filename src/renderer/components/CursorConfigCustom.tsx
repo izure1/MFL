@@ -1,9 +1,12 @@
 import type { ConfigScheme } from '../../types/index.js'
-import { useState } from 'react'
-import { Box, Button, DialogContent, DialogContentText, DialogTitle, Grid, Slider, Typography } from '@mui/material'
+import { css } from '@emotion/react'
+import { ChangeEvent, useState } from 'react'
+import { Box, Button, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Grid, Slider, Typography } from '@mui/material'
 import { ipc } from '../ipc.js'
 import Cursor from './Cursor.js'
 import BlurDialog from './advanced/BlurDialog.js'
+import { createDebounce } from '../../utils/timer.js'
+import Android12Switch from './advanced/Android12Switch.js'
 
 interface ColorPalette {
   name: string
@@ -15,43 +18,34 @@ export default function CursorConfigCustom({
 }: {
   config: ConfigScheme
 }) {
+  const debounce = createDebounce(100)
   const [configOpen, setConfigOpen] = useState(false)
+  const [thickness, setThickness] = useState(config.cursorThickness)
+  const [size, setSize] = useState(config.cursorSize)
 
   const palettes: ColorPalette[][] = [
     [
-      { name: '빕분홍', rgb: 'rgb(255,170,170)' },
-      { name: '쉬머분홍', rgb: 'rgb(249,166,252)' },
-      { name: '딸기우유', rgb: 'rgb(255,129,211)' },
+      { name: '형광자주', rgb: 'rgb(192,0,192)' },
       { name: '핫핑크', rgb: 'rgb(199,25,103)' },
-    ],
-    [
       { name: '빕리레', rgb: 'rgb(114,0,0)' },
+      { name: '마룬', rgb: 'rgb(51,0,0)' },
+    ],
+    [
       { name: '와인', rgb: 'rgb(137,55,81)' },
-      { name: '엔틱화이트', rgb: 'rgb(223,213,210)' },
+      { name: '연분홍', rgb: 'rgb(255,170,170)' },
       { name: '벌리우드', rgb: 'rgb(220,191,151)' },
+      { name: '가리화', rgb: 'rgb(240,240,240)' },
     ],
     [
-      { name: '살구', rgb: 'rgb(234,158,113)' },
-      { name: '바나나', rgb: 'rgb(255,224,98)' },
-      { name: '진리골', rgb: 'rgb(242,163,58)' },
-      { name: '초콜릿', rgb: 'rgb(179,112,69)' },
-    ],
-    [
-      { name: '시스템다크레드', rgb: 'rgb(57,19,26)' },
       { name: '메론', rgb: 'rgb(152,226,148)' },
       { name: '형광민트', rgb: 'rgb(13,238,201)' },
-      { name: '다크시안', rgb: 'rgb(52,118,145)' },
-    ],
-    [
-      { name: '이웨카', rgb: 'rgb(90,149,245)' },
-      { name: '형광자주', rgb: 'rgb(192,0,192)' },
-      { name: '발레스검보라', rgb: 'rgb(50,37,60)' },
+      { name: '라데카', rgb: 'rgb(54,120,241)' },
       { name: '시암블랙', rgb: 'rgb(2,7,21)' },
     ],
     [
       { name: '빤지', rgb: 'linear-gradient(var(--colorful-gradient-angle), #ee7752, #e73c7e, #23a6d5, #23d5ab)' },
       { name: '빤지', rgb: 'linear-gradient(var(--colorful-gradient-angle), red, yellow, aqua, blue)' },
-    ]
+    ],
   ]
 
   function handleChange() {
@@ -62,12 +56,18 @@ export default function CursorConfigCustom({
     setConfigOpen(false)
   }
 
-  async function handleChangeCursorThickness(_e: Event, cursorThickness: number) {
-    await ipc.config.set({ cursorThickness })
+  function handleChangeCursorCrosshair(_e: ChangeEvent<HTMLInputElement>, cursorCrosshair: boolean) {
+    debounce.execute('config', () => ipc.config.set({ cursorCrosshair }))
   }
 
-  async function handleChangeCursorSize(_e: Event, cursorSize: number) {
-    await ipc.config.set({ cursorSize })
+  function handleChangeCursorThickness(_e: Event, cursorThickness: number) {
+    setThickness(cursorThickness)
+    debounce.execute('config', () => ipc.config.set({ cursorThickness }))
+  }
+
+  function handleChangeCursorSize(_e: Event, cursorSize: number) {
+    setSize(cursorSize)
+    debounce.execute('config', () => ipc.config.set({ cursorSize }))
   }
 
   async function handleChangeCursorColor(
@@ -102,7 +102,8 @@ export default function CursorConfigCustom({
                 </DialogContentText>
                 <Box>
                   <Slider
-                    value={config.cursorThickness}
+                    defaultValue={config.cursorThickness}
+                    value={thickness}
                     step={1}
                     min={1}
                     max={10}
@@ -116,13 +117,30 @@ export default function CursorConfigCustom({
                 </DialogContentText>
                 <Box>
                   <Slider
-                    value={config.cursorSize}
+                    defaultValue={config.cursorSize}
+                    value={size}
                     step={1}
                     min={10}
                     max={100}
                     valueLabelDisplay={'auto'}
                     onChange={handleChangeCursorSize}
                   />
+                </Box>
+
+                <Box>
+                  <DialogContentText>
+                    십자선
+                    <FormControlLabel
+                      sx={{ ml: 1 }}
+                      label={config.cursorCrosshair ? '현재 사용 중' : '사용하지 않음'}
+                      control={(
+                        <Android12Switch
+                          checked={config.cursorCrosshair}
+                          onChange={handleChangeCursorCrosshair}
+                        />
+                      )}
+                    />
+                  </DialogContentText>
                 </Box>
 
                 <DialogContentText>
@@ -187,12 +205,28 @@ export default function CursorConfigCustom({
                 <Grid container item xs sx={{
                   justifyContent: 'center',
                   alignItems: 'center',
+                  position: 'relative',
                 }}>
-                  <Cursor
-                    cursorColor={config.cursorColor}
-                    cursorSize={config.cursorSize}
-                    cursorThickness={config.cursorThickness}
-                  />
+                  <div
+                    style={{
+                      '--cursor-size': `${config.cursorSize}px`,
+                      '--cursor-thickness': `${config.cursorThickness}px`,
+                      '--cursor-color': config.cursorColor,
+                    } as React.CSSProperties}
+                    css={css`
+                      width: var(--cursor-size);
+                      height: var(--cursor-size);
+                      position: relative;
+                    `}
+                  >
+                    <Cursor
+                      cursorColor={config.cursorColor}
+                      cursorSize={config.cursorSize}
+                      cursorThickness={config.cursorThickness}
+                      x={config.cursorSize/2}
+                      y={config.cursorSize/2}
+                    />
+                  </div>
                 </Grid>
               </Grid>
             </Grid>

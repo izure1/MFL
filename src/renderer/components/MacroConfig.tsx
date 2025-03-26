@@ -1,10 +1,11 @@
 import type { ConfigScheme } from '../../types/index.js'
-import { Typography, Switch, Box } from '@mui/material'
+import { Typography, Box } from '@mui/material'
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { delay } from '../../utils/timer.js'
 import { ipc } from '../ipc.js'
 import MacroButton from './MacroButton.js'
-import { NeonSignText } from './advanced/NeonSignText.js'
+import NeonSignText from './advanced/NeonSignText.js'
+import Android12Switch from './advanced/Android12Switch.js'
 
 export default function MacroConfig({
   config
@@ -48,7 +49,7 @@ export default function MacroConfig({
           >
             매크로 실행
           </NeonSignText>
-          <Switch
+          <Android12Switch
             checked={config.macroRunning}
             onChange={handleChangeRunning}
             disabled={pending}

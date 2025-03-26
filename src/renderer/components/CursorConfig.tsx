@@ -1,9 +1,10 @@
 import type { ConfigScheme } from '../../types/index.js'
-import { Typography, Switch, Box } from '@mui/material'
+import { Typography, Box } from '@mui/material'
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { ipc } from '../ipc.js'
 import CursorConfigCustom from './CursorConfigCustom.js'
-import { NeonSignText } from './advanced/NeonSignText.js'
+import NeonSignText from './advanced/NeonSignText.js'
+import Android12Switch from './advanced/Android12Switch.js'
 
 export default function CursorConfig({
   config
@@ -41,7 +42,7 @@ export default function CursorConfig({
           >
             마우스 강조
           </NeonSignText>
-          <Switch
+          <Android12Switch
             checked={config.cursorRunning}
             onChange={handleChangeRunning}
             disabled={pending}

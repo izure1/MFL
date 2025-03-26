@@ -7,6 +7,7 @@ import AboutButton from './components/AboutButton.js'
 import MacroButton from './components/MacroButton.js'
 import CronJobButton from './components/CronJobButton.js'
 import AuctionButton from './components/AuctionButton.js'
+import OverlayButton from './components/OverlayButton.js'
 
 import { ipc } from './ipc.js'
 import LogoImage from './assets/img/logo.png'
@@ -60,6 +61,7 @@ export default function Titlebar() {
             <HomeButton />
             {/* <CronJobButton /> */}
             <AuctionButton />
+            <OverlayButton />
             <AboutButton />
           </Box>
           <Box

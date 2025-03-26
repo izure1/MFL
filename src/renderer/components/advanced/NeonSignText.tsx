@@ -5,7 +5,7 @@ interface NeonSignText extends TypographyProps {
   disabled?: boolean
 }
 
-export function NeonSignText(props: NeonSignText) {
+export default function NeonSignText(props: NeonSignText) {
   return (
     !!props.disabled ? (
       <Typography { ...props }>{props.children}</Typography>

@@ -4,7 +4,7 @@ import styled from '@emotion/styled'
 import { Box, Button, DialogContent,  DialogTitle } from '@mui/material'
 import { ipc } from '../ipc.js'
 import BlurDialog from './advanced/BlurDialog.js'
-import { NeonSignText } from './advanced/NeonSignText.js'
+import NeonSignText from './advanced/NeonSignText.js'
 
 
 const SpecUser = styled.span`

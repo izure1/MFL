@@ -5,32 +5,47 @@ interface CursorComponentProps {
   cursorThickness: number
   cursorSize: number
   cursorColor: string
+  x: number
+  y: number
 }
 
 export default forwardRef<HTMLDivElement, CursorComponentProps>(({
   cursorColor,
   cursorSize,
-  cursorThickness
+  cursorThickness,
+  x,
+  y,
 }, ref) => {
+  const halfSize = cursorSize / 2
+  x -= halfSize
+  y -= halfSize
   return (
     <div
       ref={ref}
+      style={{
+        '--cursor-color': cursorColor,
+        '--cursor-size': `${cursorSize}px`,
+        '--cursor-thickness': `${cursorThickness}px`,
+        '--cursor-x': `${x}px`,
+        '--cursor-y': `${y}px`,
+      } as React.CSSProperties}
       css={css`
-        width: ${cursorSize}px;
-        height: ${cursorSize}px;
-        position: relative;
+        width: var(--cursor-size);
+        height: var(--cursor-size);
+        position: absolute;
         box-sizing: border-box;
         border-radius: calc(1px / 0);
         background: transparent;
         top: 0;
         left: 0;
         pointer-events: none;
+        transform: translate(var(--cursor-x), var(--cursor-y));
 
         &::before {
           content: '';
           position: absolute;
           inset: 0;
-          padding: ${cursorThickness}px; /* 테두리 두께 */
+          padding: var(--cursor-thickness); /* 테두리 두께 */
           border-radius: calc(1px / 0); /* 요소의 radius보다 1px 크게 설정 */
           background: ${cursorColor};
           background-size: 400%;

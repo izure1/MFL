@@ -1,5 +1,7 @@
 export type { OpenDialogOptions, OpenDialogReturnValue } from 'electron'
 export type { Options as GlobOptions } from 'fast-glob'
+export type { IdleFunction, IdleWatch } from '../helpers/idleWatcher.js'
+
 import { UiohookKeyboardEvent, UiohookMouseEvent, UiohookWheelEvent } from 'uiohook-napi'
 
 export interface IProcess {
@@ -20,6 +22,8 @@ export interface ConfigScheme {
   cursorThickness: number
   cursorSize: number
   cursorColor: string
+  cursorCrosshair: boolean
+  clockActivate: boolean
 }
 
 export interface AuctionItem {
@@ -80,6 +84,10 @@ export interface AuctionItemOptionType {
   option_value2: string|null
   option_desc: string|null
 }
+
+export type BooleanConfigKeys<T extends ConfigScheme = ConfigScheme> = {
+  [K in keyof T]: T[K] extends boolean ? K : never
+}[keyof T]
 
 interface AuctionItemOptionDefaultResolver {
   id: string

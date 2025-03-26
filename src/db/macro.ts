@@ -1,5 +1,5 @@
 import type { MacroScheme, MacroSchemeMap, MacroUnit, MacroIOUnit } from '../types/index.js'
-import { KlafDocument } from 'klaf.js'
+import { DataJournal, KlafDocument } from 'klaf.js'
 import { FileSystemEngine } from 'klaf.js/engine/FileSystem'
 import { getFilePathFromHomeDir } from '../helpers/homedir.js'
 
@@ -8,6 +8,7 @@ const CONFIG_PATH = getFilePathFromHomeDir('./Data/macro.db')
 const db = await KlafDocument.Open({
   path: CONFIG_PATH,
   engine: new FileSystemEngine(),
+  journal: new DataJournal(new FileSystemEngine()),
   version: 0,
   scheme: {
     name: {
@@ -29,7 +30,10 @@ const db = await KlafDocument.Open({
 })
 
 export async function getMacroMap(): Promise<MacroSchemeMap> {
-  const rows = await db.pick({}, { order: 'name' })
+  const [err, rows] = await db.pick({}, { order: 'name' })
+  if (err) {
+    throw err
+  }
   const map: MacroSchemeMap = {}
   for (const row of rows) {
     map[row.name] = row
@@ -37,8 +41,13 @@ export async function getMacroMap(): Promise<MacroSchemeMap> {
   return map
 }
 
-export async function getMacroScheme(name: string): Promise<MacroScheme | null> {
-  return (await db.pick({ name })).at(0) ?? null
+export async function getMacroScheme(name: string): Promise<MacroScheme|null> {
+  const [err, rows] = await db.pick({ name })
+  if (err) {
+    throw err
+  }
+  const scheme = rows.at(0)
+  return scheme ?? null
 }
 
 function normalizeUnit<T extends MacroUnit>(unit: T): T {
@@ -65,17 +74,31 @@ export async function setMacro(name: string, scheme: MacroScheme): Promise<Macro
     trigger: scheme.trigger ? normalizeUnit(scheme.trigger) : null,
     units: scheme.units.map(normalizeUnit)
   }
-  if (!(await db.pick({ name })).length) {
+  const [err, rows] = await db.pick({ name })
+  if (err) {
+    throw err
+  }
+  if (!rows.length) {
     await db.put(newScheme)
   }
   else {
     await db.fullUpdate({ name }, newScheme)
   }
-  return (await db.pick({ name })).at(0)
+  const [err2, rows2] = await db.pick({ name })
+  if (err2) {
+    throw err
+  }
+  const macro = rows2.at(0)
+  return macro
 }
 
 export async function removeMacro(name: string): Promise<boolean> {
-  return !!(await db.delete({ name }))
+  const [err, count] = await db.delete({ name })
+  if (err) {
+    throw err
+  }
+  const deleted = !!count
+  return deleted
 }
 
 export function close() {

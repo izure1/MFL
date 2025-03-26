@@ -1,10 +1,11 @@
 import type { ConfigScheme } from '../../types/index.js'
-import { Typography, Switch, Box } from '@mui/material'
+import { Typography, Box } from '@mui/material'
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { delay } from '../../utils/timer.js'
 import { ipc } from '../ipc.js'
 import LimitConfigRate from './LimitConfigRate.js'
-import { NeonSignText } from './advanced/NeonSignText.js'
+import NeonSignText from './advanced/NeonSignText.js'
+import Android12Switch from './advanced/Android12Switch.js'
 
 export default function LimitConfig({
   config
@@ -48,7 +49,7 @@ export default function LimitConfig({
           >
             게임 성능 제한
           </NeonSignText>
-          <Switch
+          <Android12Switch
             checked={config.running}
             onChange={handleChangeRunning}
             disabled={pending}

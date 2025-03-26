@@ -90,3 +90,13 @@ legend {
   background-color: rgba(0, 0, 0, 0.3);
 }
 
+.transition-fade {
+  opacity: 0;
+  transform: translateX(-3rem);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.transition-fade.show {
+  transform: translateX(0);
+  opacity: 1;
+}

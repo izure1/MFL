@@ -3,7 +3,7 @@
 
 import { contextBridge, ipcRenderer } from 'electron'
 import { IpcRendererEvent } from 'electron/renderer'
-import {
+import type {
   ConfigScheme,
   IProcess,
   MacroScheme,
@@ -15,7 +15,8 @@ import {
   AuctionItemScheme,
   AuctionResponse,
   AuctionItemWatchScheme,
-  AuctionWantedItemScheme
+  AuctionWantedItemScheme,
+  IdleFunction
 } from './types/index.js'
 import _default from '@emotion/styled'
 
@@ -94,7 +95,28 @@ export const context = {
       _e,
       nonInspectedItems: AuctionWantedItemScheme[]
     ) => callback(nonInspectedItems)),
-  }
+  },
+  idle: {
+    add: (duration: number): Promise<string> => ipcRenderer.invoke('idle-add', duration),
+    addOnce: (duration: number): Promise<string> => ipcRenderer.invoke('idle-add-once', duration),
+    remove: (id: string, awake?: boolean): Promise<void> => ipcRenderer.invoke('idle-remove', id, awake),
+    onSleep: (id: string, callback: (id: string, deltaTime: number) => void) => {
+      const wrapper = (_e: IpcRendererEvent, _id: string, deltaTime: number) => {
+        if (id === _id) callback(id, deltaTime)
+      }
+      ipcRenderer.on('idle-on-sleep', wrapper)
+      return wrapper
+    },
+    onAwake: (id: string, callback: (id: string, deltaTime: number) => void) => {
+      const wrapper = (_e: IpcRendererEvent, _id: string, deltaTime: number) => {
+        if (id === _id) callback(id, deltaTime)
+      }
+      ipcRenderer.on('idle-on-awake', wrapper)
+      return wrapper
+    },
+    offSleep: (wrapper: (_e: IpcRendererEvent, id: string, deltaTime: number) => void) => ipcRenderer.off('idle-on-sleep', wrapper),
+    offAwake: (wrapper: (_e: IpcRendererEvent, id: string, deltaTime: number) => void) => ipcRenderer.off('idle-on-awake', wrapper),
+  },
 }
 
 contextBridge.exposeInMainWorld('ipc', context)

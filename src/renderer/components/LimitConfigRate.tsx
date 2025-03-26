@@ -3,13 +3,16 @@ import { useState } from 'react'
 import { Box, Button, DialogContent, DialogContentText, DialogTitle, Slider } from '@mui/material'
 import { ipc } from '../ipc.js'
 import BlurDialog from './advanced/BlurDialog.js'
+import { createDebounce } from '../../utils/timer.js'
 
 export default function LimitConfigRate({
   config
 }: {
   config: ConfigScheme
 }) {
+  const debounce = createDebounce(100)
   const [configOpen, setConfigOpen] = useState(false)
+  const [limit, setLimit] = useState(config.limit)
 
   const marks = [
     { value: 5, label: '5%' },
@@ -27,8 +30,9 @@ export default function LimitConfigRate({
     setConfigOpen(false)
   }
 
-  async function handleChangeLimit(_e: Event, limit: number) {
-    await ipc.config.set({ limit })
+  function handleChangeLimit(_e: Event, limit: number) {
+    setLimit(limit)
+    debounce.execute('config', () => ipc.config.set({ limit }))
   }
 
   return (
@@ -48,7 +52,8 @@ export default function LimitConfigRate({
           </DialogContentText>
           <Box mt={2}>
             <Slider
-              value={config.limit}
+              defaultValue={config.limit}
+              value={limit}
               step={1}
               min={5}
               max={95}

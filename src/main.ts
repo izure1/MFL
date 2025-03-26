@@ -16,6 +16,7 @@ import { sendIOSignal } from './ipc/helpers/sendIOSignal.js'
 import { handle as mainToRenderer } from './ipc/helpers/mainToRenderer.js'
 import { unsubscribeAll } from './helpers/processObserver.js'
 import { crashReport } from './helpers/crash.js'
+import { idleWatcher } from './helpers/idleWatcher.js'
 
 import _iconImage from './renderer/assets/img/icon.png?url'
 import { delay, createRepeat } from './utils/timer.js'
@@ -30,6 +31,14 @@ import { startup } from './helpers/startup.js'
 
 const iconImage = nativeImage.createFromDataURL(_iconImage)
 
+async function closeDatabases() {
+  await Promise.all([
+    closeAuctionSubscribeDB(),
+    closeAuctionWatchDB(),
+    closeConfigDB(),
+    closeMacroDB(),
+  ])
+}
 
 function *generateIpc() {
   yield import('./ipc/hardware/resume.js')
@@ -71,6 +80,10 @@ function *generateIpc() {
   yield import('./ipc/auction/inspect.js')
   yield import('./ipc/auction/getNonInspected.js')
   yield import('./ipc/auction/requestFetchWanted.js')
+
+  yield import('./ipc/idle/add.js')
+  yield import('./ipc/idle/addOnce.js')
+  yield import('./ipc/idle/remove.js')
 }
 
 let mainWindow: BrowserWindow|null
@@ -89,6 +102,8 @@ async function clearApp() {
 
   tray?.destroy()
   tray = null
+
+  await closeDatabases()
 
   BrowserWindow.getAllWindows().forEach((w) => w.close())
   mainWindow = null
@@ -174,6 +189,10 @@ async function listenIO() {
   onMousedown(wrapper)
   onMouseup(wrapper)
   onWheel(wrapper)
+}
+
+async function listenIdle() {
+  idleWatcher.start()
 }
 
 function resetOverlayWindow() {
@@ -298,6 +317,7 @@ async function createWindow() {
   setTimeout(async () => {
     await listenProcess()
     await listenIO()
+    await listenIdle()
 
     auctionWatcher.run()
     auctionWatcher.on('notification-click', (tuples) => {
@@ -322,13 +342,8 @@ app.setAppUserModelId('org.izure.mfl')
 crashReport.setPath(getFilePathFromHomeDir('./Logs/Crashes'))
 crashReport.start()
 
-
 async function onStartup() {
-  // close database safety
-  await closeAuctionSubscribeDB()
-  await closeAuctionWatchDB()
-  await closeConfigDB()
-  await closeMacroDB()
+  await closeDatabases()
   // close app
   app.quit()
   process.exit(0)

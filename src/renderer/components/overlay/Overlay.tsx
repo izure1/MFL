@@ -1,5 +1,6 @@
 import { css } from '@emotion/react'
 import CursorViewport from './CursorViewport.js'
+import TimerViewport from './TimerViewport.js'
 
 export default function Overlay() {
   return (
@@ -11,6 +12,7 @@ export default function Overlay() {
       left: 0;
     `}>
       <CursorViewport />
+      <TimerViewport reactionTime={1000} />
     </div>
   )
 }

@@ -3,12 +3,15 @@ import { useState } from 'react'
 import { Box, Button, DialogContent, DialogContentText, DialogTitle, Slider } from '@mui/material'
 import { ipc } from '../ipc.js'
 import BlurDialog from './advanced/BlurDialog.js'
+import { createDebounce } from '../../utils/timer.js'
 
 export default function LoggingConfigInterval({
   config
 }: {
   config: ConfigScheme
 }) {
+  const debounce = createDebounce(100)
+  const [loggingInterval, setLoggingInterval] = useState(config.loggingInterval)
   const [configOpen, setConfigOpen] = useState(false)
 
   const marks = [
@@ -28,8 +31,9 @@ export default function LoggingConfigInterval({
     setConfigOpen(false)
   }
 
-  async function handleChangeLoggingInterval(_e: Event, loggingInterval: number) {
-    await ipc.config.set({ loggingInterval })
+  function handleChangeLoggingInterval(_e: Event, loggingInterval: number) {
+    setLoggingInterval(loggingInterval)
+    debounce.execute('config', () => ipc.config.set({ loggingInterval }))
   }
 
   return (
@@ -49,7 +53,8 @@ export default function LoggingConfigInterval({
           </DialogContentText>
           <Box mt={2}>
             <Slider
-              value={config.loggingInterval}
+              defaultValue={config.loggingInterval}
+              value={loggingInterval}
               step={1}
               min={5}
               max={10}

@@ -1,26 +1,18 @@
-import { useContext, useMemo, useRef } from 'react'
+import { useContext, useMemo, useRef, useState } from 'react'
 import { css } from '@emotion/react'
 import { ConfigContext } from '../ConfigProvider.js'
 import Cursor from '../Cursor.js'
+import CursorCrosshair from '../CursorCrosshair.js'
 
 export default function CursorViewport() {
-  const cursorRef = useRef<HTMLDivElement>(null)
   const config = useContext(ConfigContext)
-
-  const halfSize = useMemo(() => {
-    if (!config) {
-      return 0
-    }
-    return config.cursorSize / 2
-  }, [config])
+  const [x, setX] = useState(0)
+  const [y, setY] = useState(0)
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     const { screenX, screenY } = e
-    const x = screenX - halfSize
-    const y = screenY - halfSize
-    if (cursorRef.current) {
-      cursorRef.current.style.transform = `translate(${x}px, ${y}px)`
-    }
+    setX(screenX)
+    setY(screenY)
   }
 
   return (
@@ -34,12 +26,21 @@ export default function CursorViewport() {
       `}
       onMouseMove={handleMouseMove}
     >
+      { config && config.cursorRunning && config.cursorCrosshair && (
+        <CursorCrosshair
+          cursorColor={config.cursorColor}
+          cursorSize={config.cursorSize}
+          x={x}
+          y={y}
+        />
+      ) }
       { config && config.cursorRunning && (
         <Cursor
-          ref={cursorRef}
           cursorColor={config.cursorColor}
           cursorSize={config.cursorSize}
           cursorThickness={config.cursorThickness}
+          x={x}
+          y={y}
         />
       ) }
     </div>

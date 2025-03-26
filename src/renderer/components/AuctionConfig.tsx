@@ -1,8 +1,9 @@
 import type { ConfigScheme } from '../../types/index.js'
-import { Typography, Switch, Box } from '@mui/material'
+import { Typography, Box } from '@mui/material'
 import { ChangeEvent, useMemo } from 'react'
 import { ipc } from '../ipc.js'
-import { NeonSignText } from './advanced/NeonSignText.js'
+import NeonSignText from './advanced/NeonSignText.js'
+import Android12Switch from './advanced/Android12Switch.js'
 
 export default function AuctionConfig({
   config
@@ -30,7 +31,7 @@ export default function AuctionConfig({
           >
             경매장 알림
           </NeonSignText>
-          <Switch
+          <Android12Switch
             checked={config.auctionWatching}
             onChange={handleChangeWatching}
           />
