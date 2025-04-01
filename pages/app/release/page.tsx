@@ -5,7 +5,7 @@ import CustomTypography from '../../components/CustomTypography'
 import { GithubReleaseData, useGithubReleases } from '../hook'
 import styles from './styles.module.scss'
 
-interface ReleaseProps extends React.ComponentPropsWithoutRef<'div'> {
+interface ReleaseProps {
 }
 
 const Release: React.FC<ReleaseProps> = () => {

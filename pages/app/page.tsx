@@ -2,7 +2,7 @@ import Header from './Header'
 import React from 'react'
 import WhyUse from './WhyUse'
 
-interface HomeProps extends React.ComponentPropsWithoutRef<'div'> {
+interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = () => {
