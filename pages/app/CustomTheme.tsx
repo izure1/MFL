@@ -5,7 +5,7 @@ import React from 'react'
 
 export const theme = createTheme({
   typography: {
-    fontFamily: 'Mabinogi'
+    fontFamily: 'var(--font-mabinogi)'
   },
   palette: {
     text: {

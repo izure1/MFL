@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
 import CustomTheme from './CustomTheme'
 import Footer from './Footer'
 import './globals.css'
@@ -18,6 +19,12 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
+const mabinogiFont = localFont({
+  src: '../fonts/Mabinogi_Classic_TTF.ttf',
+  display: 'swap',
+  variable: '--font-mabinogi',
+})
+
 export const metadata: Metadata = {
   title: '마탕화면 도우미 - MFL',
   description: '좀 더 편한 마비노기 생활을 위한 마탕화면 도우미 애플리케이션',
@@ -28,7 +35,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
   return (
     <html lang='ko'>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${mabinogiFont.className} ${mabinogiFont.variable} antialiased`}
       >
         <CustomTheme>
           {children}

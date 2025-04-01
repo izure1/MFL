@@ -12,13 +12,8 @@
   --color-darken: var(--darken);
 }
 
-@font-face {
-  font-family: 'Mabinogi';
-  src: url(/fonts/Mabinogi_classic_TTF.ttf);
-}
-
 body {
   background: var(--background) linear-gradient(180deg, black 0, transparent 10%);
   color: var(--foreground);
-  font-family: Mabinogi, Arial, Helvetica, sans-serif;
+  font-family: var(--font-mabinogi), Arial, Helvetica, sans-serif;
 }
