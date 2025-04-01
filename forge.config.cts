@@ -53,7 +53,9 @@ const config: ForgeConfig = {
   makers: [
     new MakerSquirrel({
       name: 'MFL',
-      setupIcon: join('./src/renderer/assets/img/icon.ico')
+      authors: 'izure',
+      iconUrl: join('./src/renderer/assets/img/icon.ico'),
+      setupIcon: join('./src/renderer/assets/img/icon.ico'),
     }),
     new MakerZIP({}, ['darwin']),
     new MakerRpm({}),

@@ -1,0 +1,133 @@
+@keyframes to-left {
+  from {
+    transform: translateX(30px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes to-right {
+  from {
+    transform: translateX(-30px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes to-top {
+  from {
+    transform: translateY(30px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes to-bottom {
+  from {
+    transform: translateY(-30px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes blur-in {
+  from {
+    filter: blur(10px);
+  }
+  to {
+    filter: blur(0);
+  }
+}
+
+.text-gradient {
+  -webkit-text-fill-color: transparent;
+  max-width: fit-content;
+  color: transparent;
+  background: linear-gradient(
+    100deg,
+    rgb(83, 116, 250) 15%,
+    rgb(253, 145, 121) 50%,
+    rgb(255, 105, 105) 90%) text
+}
+
+.on-view {
+  & .to-left {
+    animation: 0.5s to-left ease-in-out forwards;
+  }
+  & .to-right {
+    animation: 0.5s to-right ease-in-out forwards;
+  }
+  & .to-top {
+    animation: 0.5s to-top ease-in-out forwards;
+  }
+  & .to-bottom {
+    animation: 0.5s to-bottom ease-in-out forwards;
+  }
+}
+
+.header-title {
+  opacity: 0;
+  animation:
+    1s blur-in 0.5s ease-in-out forwards,
+    1s fade-in 0.5s ease-in-out forwards;
+}
+
+.header-description {
+  opacity: 0;
+  animation:
+    1s blur-in 1.5s ease-in-out forwards,
+    1s fade-in 1.5s ease-in-out forwards;
+}
+
+.header-download {
+  opacity: 0;
+  animation:
+    1s blur-in 2s ease-in-out forwards,
+    1s fade-in 2s ease-in-out forwards;
+}
+
+.preview-app-main {
+  opacity: 0;
+  animation:
+    1s fade-in 2.5s ease-in-out forwards,
+    1s to-right 2.5s ease-in-out forwards;
+}
+
+.reason-show {
+  opacity: 0;
+}
+
+.reason-snapshot {
+  width: 500px;
+  position: relative;
+  transform: rotate(-20deg);
+}
+
+.reason-snapshot-image {
+  position: absolute;
+  transition: transform 1s ease-in-out;
+  transform-origin: left center;
+}
+
+.on-view {
+  & .reason-show {
+    animation: 0.5s fade-in ease-in-out forwards;
+  }
+
+  & .reason-snapshot-image {
+    transform: rotate(calc(var(--index) * 10deg));
+  }
+}

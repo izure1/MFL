@@ -1,0 +1,10 @@
+.release {
+  & ol {
+    margin-top: 20px;
+    list-style: decimal;
+
+    & > li {
+      margin: 5px 0 0 30px;
+    }
+  }
+}

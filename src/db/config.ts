@@ -22,7 +22,7 @@ const DEFAULT_CONFIG: ConfigScheme = {
   clockActivate: true,
 }
 
-const db = await KlafDocument.Open({
+const db = await KlafDocument.Open<ConfigScheme>({
   path: CONFIG_PATH,
   engine: new FileSystemEngine(),
   journal: new DataJournal(new FileSystemEngine()),

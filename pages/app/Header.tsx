@@ -1,0 +1,57 @@
+import CustomTypography from '../components/CustomTypography'
+import HeaderDownload from './HeaderDownload'
+import styles from './style.module.scss'
+
+interface HeaderProps extends React.ComponentPropsWithoutRef<'div'> {
+}
+
+const Header: React.FC<HeaderProps> = async () => {
+  return (
+    <div className='min-h-[500px] h-dvh max-h-[1080px] w-full flex justify-center items-center'>
+      <div className='max-w-6xl'>
+        <div className='grid grid-rows-1 grid-cols-[repeat(2,_minmax(0,_auto))] gap-30'>
+          <div className='max-w-[400px]'>
+            <div className={styles['header-title']}>
+              <CustomTypography
+                variant={'h1'}
+                maxHeight={'5rem'}
+                className={styles['text-gradient']}
+              >
+                MFL
+              </CustomTypography>
+              <CustomTypography
+                variant={'overline'}
+                letterSpacing={'0.1rem'}
+              >
+                Mabinogi foreground limiter
+              </CustomTypography>
+            </div>
+            <div className={`mt-10 ${styles['header-description']}`}>
+              <CustomTypography variant={'h5'}>좀 더 <span className='text-4xl text-highlight'>편한</span> 마비노기 생활을 위한</CustomTypography>
+              <CustomTypography variant={'h4'} className='text-highlight'>마탕화면 도우미</CustomTypography>
+            </div>
+            <div className={`mt-5 ${styles['header-download']}`}>
+              <div>
+                <CustomTypography variant={'body1'}>
+                  MFL은 게임 마비노기의 여러가지 편의성을 도와주는 무료 애플리케이션입니다.
+                </CustomTypography>
+              </div>
+              <HeaderDownload className='mt-8' />
+            </div>
+          </div>
+
+          <div className={`w-auto h-full ${styles['preview-app-main']}`}>
+            <img
+              src='/img/preview-app-main.webp'
+              alt='마탕화면 도우미 실행 화면'
+              loading='lazy'
+              className='h-auto rounded-xl overflow-hidden'
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default Header
