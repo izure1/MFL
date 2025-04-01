@@ -4,7 +4,8 @@ import CustomTheme from './CustomTheme'
 import Footer from './Footer'
 import './globals.css'
 
-interface RootLayoutProps extends React.ComponentPropsWithoutRef<'div'> {
+interface RootLayoutProps {
+  children: React.ReactNode
 }
 
 const geistSans = Geist({
