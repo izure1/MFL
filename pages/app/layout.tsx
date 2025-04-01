@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   icons: '/img/icon.ico',
 }
 
-export const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
+const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
   return (
     <html lang='ko'>
       <body
