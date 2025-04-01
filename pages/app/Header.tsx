@@ -41,11 +41,14 @@ const Header: React.FC<HeaderProps> = async () => {
           </div>
 
           <div className={`w-auto h-full ${styles['preview-app-main']}`}>
-            <img
-              src='/img/preview-app-main.webp'
-              alt='마탕화면 도우미 실행 화면'
-              loading='lazy'
-              className='h-auto rounded-xl overflow-hidden'
+            <video
+              src='/img/preview-app-main.mp4'
+              className='h-auto rounded-xs overflow-hidden'
+              preload={'auto'}
+              muted={true}
+              autoPlay={true}
+              controls={false}
+              loop={true}
             />
           </div>
         </div>

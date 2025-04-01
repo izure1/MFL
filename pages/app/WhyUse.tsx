@@ -188,9 +188,14 @@ const WhyUse: React.FC<WhyUseProps> = ({ children }) => {
             [
               <div className='grid grid-rows-1 grid-cols-2 gap-2 my-12'>
                 <div className='rounded-xs overflow-hidden'>
-                  <img
-                    src='/img/preview-auction-search.webp'
-                    alt='마탕화면 도우미 경매장 검색'
+                  <video
+                    src='/img/preview-auction-search.mp4'
+                    className='h-auto rounded-xs overflow-hidden'
+                    preload={'auto'}
+                    muted={true}
+                    autoPlay={true}
+                    controls={false}
+                    loop={true}
                   />
                 </div>
                 <div className='rounded-xs overflow-hidden'>
@@ -220,11 +225,14 @@ const WhyUse: React.FC<WhyUseProps> = ({ children }) => {
           description={[
             [
               <div className='flex justify-center my-12'>
-                <img
-                  src='/img/preview-overlay.webp'
-                  alt='마탕화면 도우미 인게임 오버레이'
-                  loading='lazy'
-                  className='rounded-xs overflow-hidden'
+                <video
+                  src='/img/preview-overlay.mp4'
+                  className='h-auto rounded-xs overflow-hidden'
+                  preload={'auto'}
+                  muted={true}
+                  autoPlay={true}
+                  controls={false}
+                  loop={true}
                 />
               </div>
             ],
