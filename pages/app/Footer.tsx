@@ -1,5 +1,5 @@
 import CustomTypography from '@/components/CustomTypography'
-import { GitHub } from '@mui/icons-material'
+import { GitHub, HomeRounded } from '@mui/icons-material'
 import { IconButton } from '@mui/material'
 import Link from 'next/link'
 
@@ -14,12 +14,16 @@ interface FooterProps extends React.ComponentPropsWithoutRef<'div'> {
 const Footer: React.FC<FooterProps> = async () => {
   const sitemap: Sitemap[] = [
     {
-      text: '오류 제보',
-      url: 'https://github.com/izure1/mfl/issues'
+      text: '홈',
+      url: '/',
     },
     {
       text: '패치 노트',
-      url: '/release'
+      url: '/release',
+    },
+    {
+      text: '오류 제보',
+      url: 'https://github.com/izure1/MFL/issues',
     },
   ]
   return (
@@ -40,9 +44,17 @@ const Footer: React.FC<FooterProps> = async () => {
         {/* spacer */}
         <div></div>
         {/* navigator */}
-        <div>
+        <div className='flex flex-row gap-x-5'>
           <IconButton
-            href='https://github.com/izure1/mfl'
+            href='https://izure.org'
+            target='_blank'
+          >
+            <HomeRounded sx={{
+              color: 'rgb(230, 230, 230)'
+            }} />
+          </IconButton>
+          <IconButton
+            href='https://github.com/izure1/MFL'
             target='_blank'
           >
             <GitHub sx={{

@@ -1,5 +1,7 @@
-import OnView from '@/components/OnView'
+import Contributor from '../../contributor.json' with { type: 'json' }
+import { useEffect, useState } from 'react'
 import React, { CSSProperties } from 'react'
+import OnView from '../components/OnView'
 import CustomTypography from '../components/CustomTypography'
 import styles from './style.module.scss'
 
@@ -60,7 +62,7 @@ const WhyUse: React.FC<WhyUseProps> = ({ children }) => {
       <div className='w-3xl'>
         <WhyUseReason
           title={'백그라운드 성능 제한'}
-          overline={'게임을 하지 않을 때, 컴퓨터를 혹사시키지 마세요'}
+          overline={'컴퓨터도 휴식이 필요합니다'}
           description={[
             [
               `다른 작업을 하면서 마비노기를 바탕화면처럼 쓰시는 분들이 많습니다.`,
@@ -106,7 +108,7 @@ const WhyUse: React.FC<WhyUseProps> = ({ children }) => {
         />
 
         <WhyUseReason
-          title={'매크로 지원'}
+          title={'간편 매크로'}
           overline={'좀 더 편한 전투 시스템을 위해'}
           description={[
             [
@@ -147,7 +149,7 @@ const WhyUse: React.FC<WhyUseProps> = ({ children }) => {
         />
 
         <WhyUseReason
-          title={'블랙박스 스냅샷 지원'}
+          title={'블랙박스 스냅샷'}
           overline={'증거가 없으면, 주장은 단지 의견에 불과합니다'}
           description={[
             [
@@ -248,8 +250,32 @@ const WhyUse: React.FC<WhyUseProps> = ({ children }) => {
           overline={'향후 업데이트를 지원하세요'}
           description={[
             [
+              '프로젝트에 기여하여 업데이트를 지원해주세요.',
+              '아래는 이 프로젝트의 기여자입니다. 모두 감사합니다!',
+            ],
+            [
+              <div>
+                <hr className='border-none h-[1px] bg-darken my-15' />
+                <div>
+                  {
+                    Object.keys(Contributor).map((field) => (
+                      <div key={field} className='mb-10'>
+                        <CustomTypography variant='h5' className='text-highlight'>{field.toUpperCase()}</CustomTypography>
+                        <CustomTypography variant='body2' className='px-3'>
+                          {
+                            Contributor[field as keyof typeof Contributor].join(', ') || '-'
+                          }
+                        </CustomTypography>
+                      </div>
+                    ))
+                  }
+                </div>
+                <hr className='border-none h-[1px] bg-darken my-15' />
+              </div>
+            ],
+            [
               '마비노기의 불편함을 개선하기 위해 계속 업데이트됩니다.',
-              '오픈소스 프로젝트로 개선에 기여해보세요.'
+              '오류를 찾았거나, 건의사항이 있다면 아래 링크를 참조해주세요.'
             ],
             [
               <CustomTypography
@@ -258,10 +284,10 @@ const WhyUse: React.FC<WhyUseProps> = ({ children }) => {
                 className={`${styles['text-gradient']}`}
               >
                 <a
-                  href={'https://github.com/izure1/mfl'}
+                  href={'https://github.com/izure1/MFL/issues'}
                   target={'_blank'}
                 >
-                  https://github.com/izure1/mfl
+                  https://github.com/izure1/MFL/issues
                 </a>
               </CustomTypography>
             ],

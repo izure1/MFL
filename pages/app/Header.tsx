@@ -26,14 +26,18 @@ const Header: React.FC<HeaderProps> = async () => {
                 Mabinogi foreground limiter
               </CustomTypography>
             </div>
-            <div className={`mt-10 ${styles['header-description']}`}>
-              <CustomTypography variant={'h5'}>좀 더 <span className='text-4xl text-highlight'>편한</span> 마비노기 생활을 위한</CustomTypography>
+            <div className={`mt-8 ${styles['header-description']}`}>
+              <CustomTypography variant={'h5'}>
+                <span className='text-4xl text-highlight'>편한</span> 마비노기 생활을 위한
+              </CustomTypography>
               <CustomTypography variant={'h4'} className='text-highlight'>마탕화면 도우미</CustomTypography>
             </div>
             <div className={`mt-5 ${styles['header-download']}`}>
               <div>
                 <CustomTypography variant={'body1'}>
-                  MFL은 게임 마비노기의 여러가지 편의성을 도와주는 무료 애플리케이션입니다.
+                  MFL은 무료, 오픈소스, 프로젝트로 
+                  게임 마비노기에 편의성을 추가해주는 애플리케이션입니다. 
+                  게임을 위변조하지 않으며, 안전합니다.
                 </CustomTypography>
               </div>
               <HeaderDownload className='mt-8' />

@@ -1,3 +1,4 @@
+import Contributor from '../../../contributor.json' with { type: 'json' }
 import { useEffect, useState } from 'react'
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
@@ -71,7 +72,7 @@ export default function AboutButton() {
       },
       {
         title: '테스터',
-        users: ['권련설화', '지금형이간다', '주덕배']
+        users: Contributor.testers
       },
       {
         title: '제작 중 염탐한 사람',
