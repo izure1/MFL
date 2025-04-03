@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import localFont from 'next/font/local'
 import CustomTheme from './CustomTheme'
@@ -29,6 +29,11 @@ export const metadata: Metadata = {
   title: '마탕화면 도우미 - MFL',
   description: '편한 마비노기 생활을 위한 마탕화면 도우미 애플리케이션',
   icons: '/img/icon.ico',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 }
 
 const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {

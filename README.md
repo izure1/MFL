@@ -47,7 +47,3 @@ SyntaxError: Unexpected token '
 **repository.owner** 값을 당신의 Github 아이디, **repository.name** 값을 저장소 이름으로 수정하세요.
 1. `npm run publish` 명령어를 입력하여 배포하세요.
 1. 저장소의 Release 페이지에서, draft된 버전을 실제로 배포하십시오.
-
-## 라이센스
-
-MIT 라이센스를 따릅니다.
