@@ -45,7 +45,7 @@ const HeaderDownload: React.FC<HeaderDownloadProps> = (props) => {
           variant='caption'
           className='text-darken'
         >
-          Released at {published_at}
+          Released at {new Date(published_at).toLocaleString()}
         </CustomTypography>
       </div>
     </div>

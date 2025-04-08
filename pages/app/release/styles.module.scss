@@ -1,10 +1,11 @@
 .release {
   & ol {
-    margin-top: 20px;
-    list-style: decimal;
-
-    & > li {
-      margin: 5px 0 0 30px;
+    @media screen and (min-width: 1024px) {
+      list-style-type: decimal;
+      & > li {
+        margin: 5px 0 0 30px;
+      }
     }
+    margin-top: 20px;
   }
 }

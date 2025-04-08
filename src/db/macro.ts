@@ -5,7 +5,7 @@ import { getFilePathFromHomeDir } from '../helpers/homedir.js'
 
 const CONFIG_PATH = getFilePathFromHomeDir('./Data/macro.db')
 
-const db = await KlafDocument.Open({
+const db = await KlafDocument.Open<MacroScheme>({
   path: CONFIG_PATH,
   engine: new FileSystemEngine(),
   journal: new DataJournal(new FileSystemEngine()),

@@ -139,6 +139,7 @@ async function isElevated() {
   }
   const elevated = await checkPermission()
   if (!elevated) {
+    await clearApp()
     dialog.showErrorBox('권한이 부족합니다', '관리자 권한으로 실행해주세요.\n앱을 종료합니다.')
     app.quit()
     return false

@@ -8,9 +8,9 @@ interface HeaderProps extends React.ComponentPropsWithoutRef<'div'> {
 const Header: React.FC<HeaderProps> = async () => {
   return (
     <div className='min-h-[500px] h-dvh max-h-[1080px] w-full flex justify-center items-center'>
-      <div className='max-w-6xl'>
-        <div className='grid grid-rows-1 grid-cols-[repeat(2,_minmax(0,_auto))] gap-30'>
-          <div className='max-w-[400px]'>
+      <div className='max-w-full lg:max-w-5xl px-5 lg:px-0'>
+        <div className='grid grid-rows-1 grid-cols-1 lg:grid-cols-[repeat(2,_minmax(0,_auto))] gap-10'>
+          <div className='lg:max-w-[350px]'>
             <div className={styles['header-title']}>
               <CustomTypography
                 variant={'h1'}
@@ -46,6 +46,7 @@ const Header: React.FC<HeaderProps> = async () => {
 
           <div className={`w-auto h-full ${styles['preview-app-main']}`}>
             <video
+              width={'100%'}
               src='/img/preview-app-main.mp4'
               className='h-auto rounded-xs overflow-hidden'
               preload={'auto'}

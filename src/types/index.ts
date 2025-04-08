@@ -168,7 +168,7 @@ export interface MacroDelayUnit extends MacroUnitScheme {
 
 export type MacroUnit = MacroIOUnit|MacroDelayUnit
 
-export interface MacroScheme {
+export interface MacroScheme extends KlafDocumentable {
   name: string
   trigger: MacroIOUnit
   type: 'once'|'while'|'repeat'

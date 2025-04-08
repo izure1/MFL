@@ -1,5 +1,4 @@
 import Contributor from '../../contributor.json' with { type: 'json' }
-import { useEffect, useState } from 'react'
 import React, { CSSProperties } from 'react'
 import OnView from '../components/OnView'
 import CustomTypography from '../components/CustomTypography'
@@ -59,7 +58,7 @@ interface WhyUseProps extends React.ComponentPropsWithoutRef<'div'> {
 const WhyUse: React.FC<WhyUseProps> = ({ children }) => {
   return (
     <div className='flex justify-center'>
-      <div className='w-3xl'>
+      <div className='w-full px-5 lg:px-0 lg:max-w-3xl'>
         <WhyUseReason
           title={'백그라운드 성능 제한'}
           overline={'컴퓨터도 휴식이 필요합니다'}
@@ -73,7 +72,7 @@ const WhyUse: React.FC<WhyUseProps> = ({ children }) => {
             ],
             [
               <div>
-                <div className='grid grid-rows-1 grid-cols-2 gap-4'>
+                <div className='grid grid-rows-1 grid-cols-1 lg:grid-cols-2 gap-4'>
                   <div className='shrink rounded-xs overflow-hidden'>
                     <img
                       src='/img/chart-limit-before.svg'
@@ -153,7 +152,7 @@ const WhyUse: React.FC<WhyUseProps> = ({ children }) => {
           overline={'증거가 없으면, 주장은 단지 의견에 불과합니다'}
           description={[
             [
-              <div className='h-[40rem] flex justify-center items-center translate-y-[-15rem] pointer-events-none'>
+              <div className='max-w-[85%] h-[40rem] flex justify-center items-center translate-y-[-15rem] pointer-events-none'>
                 <div className={styles['reason-snapshot']}>
                   {
                     [1, 2, 3].map((i) => (
@@ -188,9 +187,10 @@ const WhyUse: React.FC<WhyUseProps> = ({ children }) => {
           overline={'원하는 매물의 실시간 알림을 받아보세요'}
           description={[
             [
-              <div className='grid grid-rows-1 grid-cols-2 gap-2 my-12'>
-                <div className='rounded-xs overflow-hidden'>
+              <div className='grid grid-rows-1 grid-cols-1 lg:grid-cols-2 gap-2 my-12'>
+                <div className='rounded-xs overflow-hidden flex justify-center'>
                   <video
+                    width={'100%'}
                     src='/img/preview-auction-search.mp4'
                     className='h-auto rounded-xs overflow-hidden'
                     preload={'auto'}
@@ -200,7 +200,7 @@ const WhyUse: React.FC<WhyUseProps> = ({ children }) => {
                     loop={true}
                   />
                 </div>
-                <div className='rounded-xs overflow-hidden'>
+                <div className='rounded-xs overflow-hidden flex justify-center'>
                   <img
                     src='/img/preview-auction-subscribe.webp'
                     alt='마탕화면 도우미 경매장 구독'

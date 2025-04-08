@@ -12,7 +12,7 @@ const MabinogiCategories = Object
     return MabinogiCategory[category as keyof typeof MabinogiCategory]
   })
 
-const db = await KlafDocument.Open({
+const db = await KlafDocument.Open<AuctionItemWatchScheme>({
   path: CONFIG_PATH,
   engine: new FileSystemEngine(),
   journal: new DataJournal(new FileSystemEngine()),

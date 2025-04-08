@@ -12,13 +12,13 @@ const Release: React.FC<ReleaseProps> = () => {
   const releaseNotes: GithubReleaseData[] = useGithubReleases(10)
   return (
     <div className='my-20'>
-      <div className='h-[200px] mx-10'>
+      <div className='h-[200px] text-center lg:text-start lg:mx-10'>
         <CustomTypography variant='h3'>지난 패치 노트</CustomTypography>
         <CustomTypography variant='body1'>
           최근 릴리스된 10개의 패치노트를 보여드립니다.
         </CustomTypography>
       </div>
-      <div className='my-20 mx-20'>
+      <div className='my-20 text-center lg:text-start lg:mx-20'>
         {
           releaseNotes.map((release, i) => (
             <div
@@ -43,8 +43,8 @@ const Release: React.FC<ReleaseProps> = () => {
               </article>
               {
                 releaseNotes.length-1 > i && (
-                  <div className='my-20 h-52'>
-                    <div className='bg-white w-1 h-full ml-30' />
+                  <div className='my-20 h-52 flex justify-center lg:justify-start'>
+                    <div className='bg-white w-1 h-full lg:ml-30' />
                   </div>
                 )
               }
