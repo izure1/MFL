@@ -54,7 +54,7 @@ const config: ForgeConfig = {
     new MakerSquirrel({
       name: 'MFL',
       authors: 'izure',
-      iconUrl: join('./src/renderer/assets/img/icon.ico'),
+      iconUrl: 'https://mfl.izure.org/favicon.ico',
       setupIcon: join('./src/renderer/assets/img/icon.ico'),
     }),
     new MakerZIP({}, ['darwin']),

@@ -15,6 +15,10 @@ export default function LoggingConfigInterval({
   const [configOpen, setConfigOpen] = useState(false)
 
   const marks = [
+    { value: 1, label: '1초' },
+    { value: 2, label: '2초' },
+    { value: 3, label: '3초' },
+    { value: 4, label: '4초' },
     { value: 5, label: '5초' },
     { value: 6, label: '6초' },
     { value: 7, label: '7초' },
@@ -47,16 +51,18 @@ export default function LoggingConfigInterval({
         <DialogTitle>기록 간격</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            5 ~ 10초 사이로 값을 설정할 수 있습니다.
+            1 ~ 10초 사이로 값을 설정할 수 있습니다.
             <br />
-            대부분의 대화 로그를 녹취하길 바란다면, 6 ~ 7초를 권장합니다.
+            일상적인 대화 로그를 녹취하길 바란다면, 5 ~ 7초를 권장합니다.
+            <br />
+            던전에서는 1 ~ 2초를 권장합니다.
           </DialogContentText>
           <Box mt={2}>
             <Slider
               defaultValue={config.loggingInterval}
               value={loggingInterval}
               step={1}
-              min={5}
+              min={1}
               max={10}
               marks={marks}
               valueLabelDisplay='auto'

@@ -177,7 +177,7 @@ const WhyUse: React.FC<WhyUseProps> = ({ children }) => {
             ],
             [
               '스크린샷 용량은 최대한 압축되어 저장됩니다.',
-              <CustomTypography variant='caption' className='text-darken'>(평균 1시간 당 30MB)</CustomTypography>,
+              <CustomTypography variant='caption' className='text-darken'>(5초 간격 저장 시, 평균 1시간 당 30MB)</CustomTypography>,
             ]
           ]}
         />

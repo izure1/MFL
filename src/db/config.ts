@@ -41,8 +41,8 @@ const db = await KlafDocument.Open<ConfigScheme>({
       validate: (v) => typeof v === 'boolean',
     },
     loggingInterval: {
-      default: (): number => 7,
-      validate: (v) => typeof v === 'number' && v >= 5 && v <= 10,
+      default: (): number => 5,
+      validate: (v) => typeof v === 'number' && v >= 1 && v <= 10,
     },
     logging: {
       default: (): boolean => false,
