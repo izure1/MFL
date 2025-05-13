@@ -666,7 +666,7 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
       '분양 메달',
     ],
     generator: (keyword: string) => (item: AuctionItem) => {
-      const options = findMatched(item, '인챈트', '종족명')
+      const options = findMatched(item, '펫 정보', '종족명')
       return options.some((option) => {
         const v = option.option_value
         return v.includes(keyword)
