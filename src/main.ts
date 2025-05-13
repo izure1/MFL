@@ -28,7 +28,6 @@ import { close as closeMacroDB } from './db/macro.js'
 import { getFilePathFromHomeDir } from './helpers/homedir.js'
 import { startup } from './helpers/startup.js'
 
-
 const iconImage = nativeImage.createFromDataURL(_iconImage)
 
 async function closeDatabases() {
@@ -291,8 +290,7 @@ async function createWindow() {
     })
   }
 
-  mainWindow.on('minimize', (e: Event) => {
-    e.preventDefault()
+  mainWindow.on('minimize', () => {
     mainWindow.setSkipTaskbar(true)
     mainWindow.blur()
     tray = createTray()
@@ -332,17 +330,6 @@ async function createWindow() {
   }, 1000)
 }
 
-
-/**
- * 
- * START ELECTRON MAIN PROCESS
- * 
- */
-app.setAppUserModelId('org.izure.mfl')
-
-crashReport.setPath(getFilePathFromHomeDir('./Logs/Crashes'))
-crashReport.start()
-
 async function onStartup() {
   await closeDatabases()
   // close app
@@ -358,6 +345,17 @@ if (!startup(onStartup)) {
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   app.whenReady().then(async () => {
+
+    /**
+     * 
+     * START ELECTRON MAIN PROCESS
+     * 
+     */
+    app.setAppUserModelId('org.izure.mfl')
+
+    crashReport.setPath(getFilePathFromHomeDir('./Logs/Crashes'))
+    crashReport.start()
+
     if (await isElevated()) {
       createWindow()
     }
