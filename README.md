@@ -11,6 +11,8 @@ Windows 10, Windows 11에서 테스트를 완료했습니다.
 
 ### 실행 시 **A JavaScript error occurred in the main process...** 오류 발생
 
+데이터베이스 파일이 깨짐으로써 발생하는 오류로 추정됩니다.
+
 ```text
 A JavaScript error occurred in the main process
 Uncaught Exception:
@@ -23,6 +25,26 @@ SyntaxError: Unexpected token '
 1. **window+R**키를 눌러 **%USERPROFILE%** 입력하십시오.
 1. 사용자 디렉토리 내에 **MFL** 폴더를 삭제하세요.
 1. 재실행하시면 정상적으로 작동합니다.
+
+### 실행 시 **Error [ERR_MODULE_NOT_FOUND]: Cannot find package...** 오류 발생
+
+오류가 있는 버전으로 자동 업데이트되어 발생한 오류로 추정됩니다.
+
+```text
+A JavaScript error occurred in the main process
+
+[Content]
+Uncaught Exception:
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package...
+```
+
+위 메세지가 뜨면서 에러가 발생하는 경우가 있습니다.  
+아래 순서를 따라 해결할 수 있습니다.
+
+1. **window+R**키를 눌러 **%appdata%..\\..\\Local** 입력하십시오.
+1. 디렉토리 내에 **MFL** 폴더를 삭제하세요.
+1. [홈페이지](https://mfl.izure.org)에서 최신 버전을 다시 받아주세요.
+1. 재설치하시면 정상적으로 작동합니다.
 
 ### Windows 11에서 설치 앱이 바탕화면에 추가되지 않는 오류
 
