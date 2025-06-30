@@ -1,5 +1,5 @@
 import type { MacroScheme, MacroSchemeMap, MacroUnit, MacroIOUnit } from '../types/index.js'
-import { DataJournal, KlafDocument } from 'klaf.js'
+import { KlafDocument } from 'klaf.js'
 import { FileSystemEngine } from 'klaf.js/engine/FileSystem'
 import { getFilePathFromHomeDir } from '../helpers/homedir.js'
 
@@ -8,7 +8,6 @@ const CONFIG_PATH = getFilePathFromHomeDir('./Data/macro.db')
 const db = await KlafDocument.Open<MacroScheme>({
   path: CONFIG_PATH,
   engine: new FileSystemEngine(),
-  journal: new DataJournal(new FileSystemEngine()),
   version: 0,
   scheme: {
     name: {

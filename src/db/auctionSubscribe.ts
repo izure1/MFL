@@ -1,5 +1,5 @@
 import { AuctionItemScheme, AuctionItemWatchScheme, AuctionWantedItemInspectStage, AuctionWantedItemScheme } from '../types/index.js'
-import { KlafDocument, KlafDocumentable } from 'klaf.js'
+import { KlafDocument } from 'klaf.js'
 import { InMemoryEngine } from 'klaf.js/engine/InMemory'
 import { sendAuctionNonInspectedUpdateSignal } from '../ipc/helpers/sendAuctionNonInspectedUpdateSignal.js'
 import { auctionWatcher } from '../helpers/auctionWatcher.js'
@@ -10,10 +10,12 @@ const db = await KlafDocument.Open<AuctionWantedItemScheme>({
   version: 0,
   scheme: {
     id: {
-      default: () => ''
+      default: () => '',
+      index: true,
     },
     watch_id: {
-      default: () => ''
+      default: () => '',
+      index: true,
     },
     item_category: {
       default: () => ''

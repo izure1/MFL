@@ -84,8 +84,8 @@ export default function AboutButton() {
         title: '다운로드',
         users: [
           {
-            text: 'https://github.com/izure1/MFL',
-            url: 'https://github.com/izure1/MFL'
+            text: 'https://mfl.izure.org',
+            url: 'https://mfl.izure.org'
           }
         ]
       },

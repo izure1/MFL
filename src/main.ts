@@ -337,6 +337,18 @@ async function onStartup() {
   process.exit(0)
 }
 
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow) {
+      mainWindow.show()
+    }
+  })
+}
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (!startup(onStartup)) {
   updateElectronApp()
@@ -345,7 +357,6 @@ if (!startup(onStartup)) {
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   app.whenReady().then(async () => {
-
     /**
      * 
      * START ELECTRON MAIN PROCESS

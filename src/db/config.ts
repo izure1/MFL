@@ -1,5 +1,5 @@
 import type { ConfigScheme } from '../types/index.js'
-import { DataJournal, KlafDocument } from 'klaf.js'
+import { KlafDocument } from 'klaf.js'
 import { FileSystemEngine } from 'klaf.js/engine/FileSystem'
 import { getHomeDir, getFilePathFromHomeDir } from '../helpers/homedir.js'
 import { sendConfigUpdateSignal } from '../ipc/helpers/sendConfigUpdateSignal.js'
@@ -25,7 +25,6 @@ const DEFAULT_CONFIG: ConfigScheme = {
 const db = await KlafDocument.Open<ConfigScheme>({
   path: CONFIG_PATH,
   engine: new FileSystemEngine(),
-  journal: new DataJournal(new FileSystemEngine()),
   version: 9,
   scheme: {
     limit: {

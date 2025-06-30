@@ -1,5 +1,5 @@
 import type { AuctionItemWatchScheme } from '../types/index.js'
-import { DataJournal, KlafDocument } from 'klaf.js'
+import { KlafDocument } from 'klaf.js'
 import { FileSystemEngine } from 'klaf.js/engine/FileSystem'
 import { getFilePathFromHomeDir } from '../helpers/homedir.js'
 import { createUUIDV4 } from '../utils/id.js'
@@ -15,12 +15,12 @@ const MabinogiCategories = Object
 const db = await KlafDocument.Open<AuctionItemWatchScheme>({
   path: CONFIG_PATH,
   engine: new FileSystemEngine(),
-  journal: new DataJournal(new FileSystemEngine()),
   version: 1,
   scheme: {
     id: {
       default: () => createUUIDV4(),
-      validate: (v) => typeof v === 'string'
+      validate: (v) => typeof v === 'string',
+      index: true,
     },
     itemCategory: {
       default: () => '',
