@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-import { css } from '@emotion/react'
 import { context as detectorContext } from './DetectorProvider.js'
 import { Box, Container } from '@mui/material'
 import Loading from './Loading.js'
@@ -23,9 +22,10 @@ export default function Main() {
         left={0}
         zIndex={-1}
         sx={{
-          background: `url(${bgImage}) no-repeat center`,
+          background: `rgba(0, 0, 0, 0.3) url(${bgImage}) no-repeat center`,
+          backgroundBlendMode: 'multiply',
           backgroundSize: 'cover',
-          backdropFilter: 'blur(0)'
+          backdropFilter: 'blur(0)',
         }}
       >
         <Box

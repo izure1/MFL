@@ -68,7 +68,7 @@ export default function AboutButton() {
       },
       {
         title: '만든 사람',
-        users: ['아리시에로']
+        users: ['토리엘']
       },
       {
         title: '테스터',

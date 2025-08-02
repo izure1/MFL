@@ -674,10 +674,42 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     }
   },
   {
+    id: '39a9bc9b-1abb-4e65-8f60-d777992aa9f4',
+    type: 'text',
+    defaultValue: '',
+    name: '펫 종족명 제외',
+    category: [
+      '분양 메달',
+    ],
+    generator: (keyword: string) => (item: AuctionItem) => {
+      const options = findMatched(item, '펫 정보', '종족명')
+      return options.some((option) => {
+        const v = option.option_value
+        return !v.includes(keyword)
+      })
+    }
+  },
+  {
+    id: '555d8118-c403-44f8-a3fd-cbde9f8737f3',
+    type: 'range',
+    defaultValue: [0, MAX_NUMBER],
+    name: '펫 레벨',
+    category: [
+      '분양 메달',
+    ],
+    generator: (min: number, max: number) => (item: AuctionItem) => {
+      const options = findMatched(item, '펫 정보', '레벨')
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
+    }
+  },
+  {
     id: 'f8d7c4e5-b85f-45b2-99bd-6e698bee38ab',
     type: 'range',
     defaultValue: [0, MAX_NUMBER],
-    name: '펫 누적레벨',
+    name: '펫 누적 레벨',
     category: [
       '분양 메달',
     ],
@@ -699,6 +731,22 @@ export const AuctionItemOptionResolvers: AuctionItemOptionResolver[] = [
     ],
     generator: (min: number, max: number) => (item: AuctionItem) => {
       const options = findMatched(item, '펫 정보', '펫 포인트')
+      return options.some((option) => {
+        const v = parseFloat(option.option_value)
+        return v >= min && v <= max
+      })
+    }
+  },
+  {
+    id: '6baba1be-0b7e-49c3-bfca-d5f917a8134b',
+    type: 'range',
+    defaultValue: [0, MAX_NUMBER],
+    name: '펫 최대 소환 시간',
+    category: [
+      '분양 메달',
+    ],
+    generator: (min: number, max: number) => (item: AuctionItem) => {
+      const options = findMatched(item, '펫 정보', '최대 소환 시간')
       return options.some((option) => {
         const v = parseFloat(option.option_value)
         return v >= min && v <= max

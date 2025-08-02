@@ -16,7 +16,6 @@ import type {
   AuctionResponse,
   AuctionItemWatchScheme,
   AuctionWantedItemScheme,
-  IdleFunction
 } from './types/index.js'
 import _default from '@emotion/styled'
 

@@ -46,7 +46,7 @@ export default forwardRef<HTMLDivElement, CursorCrosshairComponentProps>(({
       {/* vertical line */}
       <div
         css={css`
-          width: 2px;
+          width: 1px;
           height: 200%;
           background: linear-gradient(
             0deg,
@@ -64,7 +64,7 @@ export default forwardRef<HTMLDivElement, CursorCrosshairComponentProps>(({
       <div
         css={css`
           width: 200%;
-          height: 2px;
+          height: 1px;
           background: linear-gradient(
             90deg,
             var(--cursor-color) 0% calc(50% - max(50px, var(--padding-size))),
