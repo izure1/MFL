@@ -12,7 +12,6 @@ export async function getConfig(): Promise<ConfigScheme> {
     (config as any)[key] = JSON.parse(value) as any;
   }
 
-  console.log(config)
   return config;
 }
 
