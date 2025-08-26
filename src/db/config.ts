@@ -5,13 +5,15 @@ import { sendConfigUpdateSignal } from '../ipc/helpers/sendConfigUpdateSignal.js
 export async function getConfig(): Promise<ConfigScheme> {
   const db = getDB();
   const stmt = db.prepare('SELECT key, value FROM config');
-  const rows = stmt.all() as { key: keyof ConfigScheme; value: string }[];
+  const rows = stmt.all() as { key: string, value: string }[];
 
   const config = {} as ConfigScheme;
-  for (const row of rows) {
-    config[row.key] = JSON.parse(row.value);
+  for (const { key, value } of rows) {
+    (config as any)[key] = JSON.parse(value) as any;
   }
-  return Promise.resolve(config);
+
+  console.log(config)
+  return config;
 }
 
 export async function setConfig(partialConfig: Partial<ConfigScheme>): Promise<void> {
@@ -23,7 +25,6 @@ export async function setConfig(partialConfig: Partial<ConfigScheme>): Promise<v
   }
 
   sendConfigUpdateSignal();
-  return Promise.resolve();
 }
 
 export function close() {
