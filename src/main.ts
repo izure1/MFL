@@ -3,12 +3,14 @@ import type { IOEvent } from './types/index.js'
 import path from 'node:path'
 import { app, BrowserWindow, Menu, Tray, dialog, nativeImage, screen } from 'electron'
 import { updateElectronApp } from 'update-electron-app'
+import { fork } from 'node:child_process'
 
 import { handle as checkPermission } from './ipc/hardware/checkPermission.js'
 import { handle as limit } from './ipc/app/limit.js'
 import { handle as findMabinogiProcess } from './ipc/hardware/mabinogi.js'
 import { createSubscriber as createProcessSubscriber } from './helpers/processObserver.js'
 import { createSubscriber as createIOSubscriber } from './helpers/ioObserver.js'
+import { socketObserverManager } from './helpers/socketObserverManager.js'
 import { auctionWatcher } from './helpers/auctionWatcher.js'
 import { stop as stopMacroRunner } from './helpers/macroRunner.js'
 import { stop as stopLogger } from './ipc/app/logging.js'
@@ -27,6 +29,9 @@ import { close as closeConfigDB } from './db/config.js'
 import { close as closeMacroDB } from './db/macro.js'
 import { getFilePathFromHomeDir } from './helpers/homedir.js'
 import { startup } from './helpers/startup.js'
+
+import { parseChat } from './ipc/socket/chat.js'
+import { NodeWinPcap } from 'node-win-pcap'
 
 const iconImage = nativeImage.createFromDataURL(_iconImage)
 
@@ -285,8 +290,6 @@ async function createWindow() {
     ]).then(() => delay(1000)).then(() => {
       mainWindow.webContents.send('set-hash', '/main')
       overlayWindow.webContents.send('set-hash', '/overlay')
-      // mainWindow.webContents.openDevTools()
-      // overlayWindow.webContents.openDevTools()
     })
   }
 
@@ -323,6 +326,30 @@ async function createWindow() {
       mainWindow.show()
       mainToRenderer('auction-show-alerted')
     })
+
+    // const workerPath = path.join(import.meta.dirname, './worker/chatCapture.worker.js')
+    // const worker = fork(workerPath, [], {
+    //   execPath: process.execPath, // Electron의 Node.js 사용
+    //   silent: false
+    // })
+
+    // worker.on('message', (message) => {
+    //   console.log('Message from worker:', message)
+    // })
+
+    // console.log(process.versions)
+    // socketObserverManager.getObserver('Chat').on('packet', (packet) => {
+    //   // const chat = parseChat(packet.data)
+    //   console.log(packet)
+    //   // console.log(chat)
+    //   // mainToRenderer('log', packet)
+    // }).on('error', (error) => {
+    //   // console.error('Chat observer error:', error)
+    //   mainToRenderer('log', {
+    //     type: 'error',
+    //     message: `Chat observer error: ${error.message}`,
+    //   })
+    // }).start()
     
     // Show application to start
     mainWindow.show()

@@ -1,15 +1,14 @@
-import type { BooleanConfigKeys, ConfigScheme } from '../../types/index.js'
+import type { MatchedProperties, ConfigScheme } from '../../types/index.js'
 import { Box, FormControlLabel, Tooltip } from '@mui/material'
 import React, { ChangeEvent, forwardRef, useMemo } from 'react'
 import { ipc } from '../ipc.js'
 import Android12Switch from './advanced/Android12Switch.js'
 import NeonSignText from './advanced/NeonSignText.js'
 
-
 interface OverlayActivateSwitchProps {
   title: React.ReactNode
   description: React.ReactNode
-  configProperty: BooleanConfigKeys<ConfigScheme>
+  configProperty: MatchedProperties<ConfigScheme, boolean>
   config: ConfigScheme
 }
 
@@ -42,7 +41,7 @@ export default forwardRef<HTMLDivElement, OverlayActivateSwitchProps>(({
           control={(
             <Android12Switch
               size={'medium'}
-              checked={config[configProperty]}
+              checked={config[configProperty] as any}
               onChange={handleChangeConfig}
             />
           )}

@@ -15,6 +15,7 @@ const config: ForgeConfig = {
       unpack: [
         '**/@img/**/*',
         '**/sharp/**/*',
+        "**/node-win-pcap/**/*",
         '**/node-screenshots/**/*',
         '**/node-screenshots-win32-x64-msvc/**/*',
       ].join(',')
@@ -25,6 +26,7 @@ const config: ForgeConfig = {
         const optionalDependencies = [
           '@img',
           'node-screenshots-win32-x64-msvc',
+          'node-win-pcap',
         ]
         const tasks = optionalDependencies.map((moduleName) => {
           const modulePath = `node_modules/${moduleName}`
@@ -97,6 +99,10 @@ const config: ForgeConfig = {
         },
         {
           entry: 'src/worker/loggingCapture.worker.ts',
+          config: 'vite.worker.config.ts'
+        },
+        {
+          entry: 'src/worker/chatCapture.worker.ts',
           config: 'vite.worker.config.ts'
         },
       ],

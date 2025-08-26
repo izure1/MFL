@@ -7,6 +7,7 @@ import AboutButton from './components/AboutButton.js'
 import MacroButton from './components/MacroButton.js'
 import CronJobButton from './components/CronJobButton.js'
 import AuctionButton from './components/AuctionButton.js'
+import AuctionDistributorButton from './components/AuctionDistributorButton.js'
 import OverlayButton from './components/OverlayButton.js'
 
 import { ipc } from './ipc.js'
@@ -52,7 +53,7 @@ export default function Titlebar() {
           >
             <Button onClick={async () => openExternal('https://mabinogi.nexon.com/')}>
               <img
-                src={LogoImage}
+                src={LogoImage as any}
                 css={css`
                   height: 30px;
                 `}
@@ -61,6 +62,7 @@ export default function Titlebar() {
             <HomeButton />
             {/* <CronJobButton /> */}
             <AuctionButton />
+            <AuctionDistributorButton />
             <OverlayButton />
             <AboutButton />
           </Box>

@@ -44,7 +44,7 @@ export default function OverlayButton() {
             <OverlayActivateSwitch
               title={'현재 시각 표시'}
               description={'게임 내에서 현재 시각을 표시합니다'}
-              configProperty={'clockActivate'}
+              configProperty={'clockActivate' as never}
               config={config}
             />
           </Box>

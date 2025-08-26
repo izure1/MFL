@@ -86,8 +86,8 @@ export interface AuctionItemOptionType {
   option_desc: string|null
 }
 
-export type BooleanConfigKeys<T extends ConfigScheme = ConfigScheme> = {
-  [K in keyof T]: T[K] extends boolean ? K : never
+export type MatchedProperties<T, U> = {
+  [K in keyof T]: T[K] extends U ? K : never
 }[keyof T]
 
 interface AuctionItemOptionDefaultResolver {

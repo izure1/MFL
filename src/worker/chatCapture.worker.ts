@@ -1,12 +1,12 @@
-import { ipcMain } from 'electron'
-import { getMacroMap } from '../../db/macro.js'
+import { NodeWinPcap } from 'node-win-pcap'
+import RemoteAddresses from '../config/socket/address.json' with { type: 'json' }
 
-export interface Chat {
+interface ChatMessage {
   nickname: string
   message: string
 }
 
-export function parseChat(buffer: Buffer): Chat|null {
+function parseChat(buffer: Buffer): ChatMessage|null {
   // 'Rl' (82, 108) 위치 찾기
   const rlIndex = buffer.indexOf(Buffer.from([82, 108]))
   if (rlIndex === -1) {
@@ -39,12 +39,25 @@ export function parseChat(buffer: Buffer): Chat|null {
   }
 }
 
-export async function handle(buffer: Buffer): Promise<Chat|null> {
-  return parseChat(buffer)
-}
+// Pass the ipAddress to the constructor
+const sniffer = new NodeWinPcap() // Example: Sniff on loopback interface
 
-export function ipc() {
-  ipcMain.handle('socket-chat-parse', async (_e, buffer: Buffer) => {
-    return await handle(buffer)
-  })
-}
+sniffer.on('packet', (packet) => {
+  // The parsed IP header is now available
+  // const chat = parseChat(packet.data)
+  // if (chat === null) {
+  //   return
+  // }
+  process.send(packet.ipHeader)
+  // console.log(chat)
+})
+
+sniffer.on('error', (err) => {
+  console.error('Sniffer Error:', err)
+})
+
+// Start sniffing with filters passed directly to the start method
+const sourceFilter = RemoteAddresses.Chat // Example: Capture all local traffic
+const destFilter = NodeWinPcap.GetLocalAddress() // Example: No filter on destination
+
+sniffer.start(sourceFilter, destFilter)
