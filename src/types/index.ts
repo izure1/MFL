@@ -3,14 +3,13 @@ export type { Options as GlobOptions } from 'fast-glob'
 export type { IdleFunction, IdleWatch } from '../helpers/idleWatcher.js'
 
 import { UiohookKeyboardEvent, UiohookMouseEvent, UiohookWheelEvent } from 'uiohook-napi'
-import type { KlafDocumentable } from 'klaf.js'
 
 export interface IProcess {
   pid: number
   name: string
 }
 
-export interface ConfigScheme extends KlafDocumentable {
+export interface ConfigScheme {
   limit: number
   running: boolean
   macroRunning: boolean
@@ -27,7 +26,7 @@ export interface ConfigScheme extends KlafDocumentable {
   clockActivate: boolean
 }
 
-export interface AuctionItem extends KlafDocumentable {
+export interface AuctionItem {
   item_name: string
   item_display_name: string
   item_count: number
@@ -60,7 +59,7 @@ export interface AuctionWantedItemScheme extends AuctionItemScheme {
 
 export type AuctionWantedItemTuple = [AuctionItemWatchScheme, AuctionWantedItemScheme[]]
 
-export interface AuctionItemWatchScheme extends KlafDocumentable {
+export interface AuctionItemWatchScheme {
   id: string
   itemCategory: string
   itemOptions: {
@@ -168,7 +167,7 @@ export interface MacroDelayUnit extends MacroUnitScheme {
 
 export type MacroUnit = MacroIOUnit|MacroDelayUnit
 
-export interface MacroScheme extends KlafDocumentable {
+export interface MacroScheme {
   name: string
   trigger: MacroIOUnit
   type: 'once'|'while'|'repeat'

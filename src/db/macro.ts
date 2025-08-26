@@ -1,105 +1,67 @@
-import type { MacroScheme, MacroSchemeMap, MacroUnit, MacroIOUnit } from '../types/index.js'
-import { KlafDocument } from 'klaf.js'
-import { FileSystemEngine } from 'klaf.js/engine/FileSystem'
-import { getFilePathFromHomeDir } from '../helpers/homedir.js'
-
-const CONFIG_PATH = getFilePathFromHomeDir('./Data/macro.db')
-
-const db = await KlafDocument.Open<MacroScheme>({
-  path: CONFIG_PATH,
-  engine: new FileSystemEngine(),
-  version: 0,
-  scheme: {
-    name: {
-      default: () => 'Unknown',
-      validate: (v) => typeof v === 'string'
-    },
-    type: {
-      default: (): 'once'|'while'|'repeat' => 'once',
-      validate: (v) => ['once', 'while', 'repeat'].includes(v as string)
-    },
-    trigger: {
-      default: (): MacroIOUnit|null => null
-    },
-    units: {
-      default: (): MacroUnit[] => [] as MacroUnit[],
-      validate: (v) => Array.isArray(v)
-    }
-  }
-})
+import type { MacroScheme, MacroSchemeMap } from '../types/index.js';
+import { getDB, closeDB } from './sqlite.js';
 
 export async function getMacroMap(): Promise<MacroSchemeMap> {
-  const [err, rows] = await db.pick({}, { order: 'name' })
-  if (err) {
-    throw err
-  }
-  const map: MacroSchemeMap = {}
+  const db = getDB();
+  const stmt = db.prepare('SELECT * FROM macro ORDER BY name');
+  const rows = stmt.all() as any[];
+
+  const map: MacroSchemeMap = {};
   for (const row of rows) {
-    map[row.name] = row
+    map[row.name] = {
+      ...row,
+      trigger: JSON.parse(row.trigger),
+      units: JSON.parse(row.units),
+    };
   }
-  return map
+  return Promise.resolve(map);
 }
 
-export async function getMacroScheme(name: string): Promise<MacroScheme|null> {
-  const [err, rows] = await db.pick({ name })
-  if (err) {
-    throw err
-  }
-  const scheme = rows.at(0)
-  return scheme ?? null
-}
+export async function getMacroScheme(name: string): Promise<MacroScheme | null> {
+  const db = getDB();
+  const stmt = db.prepare('SELECT * FROM macro WHERE name = ?');
+  const row = stmt.get(name) as any;
 
-function normalizeUnit<T extends MacroUnit>(unit: T): T {
-  const { hardware, id, button, toggle, duration } = unit
-  switch (hardware) {
-    case 'delay': return {
-      hardware,
-      id,
-      duration,
-    } as T
-    case 'keyboard':
-    case 'mouse': return {
-      hardware,
-      id,
-      toggle,
-      button,
-    } as T
+  if (!row) {
+    return Promise.resolve(null);
   }
+
+  return Promise.resolve({
+    ...row,
+    trigger: JSON.parse(row.trigger),
+    units: JSON.parse(row.units),
+  });
 }
 
 export async function setMacro(name: string, scheme: MacroScheme): Promise<MacroScheme> {
-  const newScheme: MacroScheme = {
-    ...scheme,
-    trigger: scheme.trigger ? normalizeUnit(scheme.trigger) : null,
-    units: scheme.units.map(normalizeUnit)
+  const db = getDB();
+  const existing = await getMacroScheme(name);
+
+  if (existing) {
+    if (name !== scheme.name) {
+        const deleteStmt = db.prepare('DELETE FROM macro WHERE name = ?');
+        deleteStmt.run(name);
+        const insertStmt = db.prepare('INSERT INTO macro (name, type, trigger, units) VALUES (?, ?, ?, ?)');
+        insertStmt.run(scheme.name, scheme.type, JSON.stringify(scheme.trigger), JSON.stringify(scheme.units));
+    } else {
+        const stmt = db.prepare('UPDATE macro SET type = ?, trigger = ?, units = ? WHERE name = ?');
+        stmt.run(scheme.type, JSON.stringify(scheme.trigger), JSON.stringify(scheme.units), name);
+    }
+  } else {
+    const stmt = db.prepare('INSERT INTO macro (name, type, trigger, units) VALUES (?, ?, ?, ?)');
+    stmt.run(scheme.name, scheme.type, JSON.stringify(scheme.trigger), JSON.stringify(scheme.units));
   }
-  const [err, rows] = await db.pick({ name })
-  if (err) {
-    throw err
-  }
-  if (!rows.length) {
-    await db.put(newScheme)
-  }
-  else {
-    await db.fullUpdate({ name }, newScheme)
-  }
-  const [err2, rows2] = await db.pick({ name })
-  if (err2) {
-    throw err
-  }
-  const macro = rows2.at(0)
-  return macro
+
+  return getMacroScheme(scheme.name);
 }
 
 export async function removeMacro(name: string): Promise<boolean> {
-  const [err, count] = await db.delete({ name })
-  if (err) {
-    throw err
-  }
-  const deleted = !!count
-  return deleted
+  const db = getDB();
+  const stmt = db.prepare('DELETE FROM macro WHERE name = ?');
+  const result = stmt.run(name);
+  return Promise.resolve(result.changes > 0);
 }
 
 export function close() {
-  return db.close()
+  closeDB();
 }

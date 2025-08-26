@@ -1,8 +1,8 @@
-import type { AuctionItem, AuctionItemScheme } from '../types/index.js'
-import xx from 'xxhashjs'
-import { sendAuctionUpdateSignal } from '../ipc/helpers/sendAuctionUpdateSignal.js'
+import type { AuctionItem, AuctionItemScheme } from '../types/index.js';
+import xx from 'xxhashjs';
+import { sendAuctionUpdateSignal } from '../ipc/helpers/sendAuctionUpdateSignal.js';
 
-const db = new Map<string, Map<string, AuctionItemScheme>>()
+const db = new Map<string, Map<string, AuctionItemScheme>>();
 
 function createItemHash(item: AuctionItem): string {
   const {
@@ -10,7 +10,7 @@ function createItemHash(item: AuctionItem): string {
     item_display_name,
     item_option,
     date_auction_expire
-  } = item
+  } = item;
   const components = [
     date_auction_expire,
     item_count,
@@ -22,20 +22,19 @@ function createItemHash(item: AuctionItem): string {
         option_value,
         option_value2,
         option_desc,
-      } = option
+      } = option;
       return [
         option_type,
         option_sub_type,
         option_value,
-        option_value,
         option_value2,
         option_desc
-      ].join(',')
+      ].join(',');
     })
-  ]
-  const stringify = components.join(',')
-  const hash = xx.h64(stringify, 0)
-  return hash.toString(16)
+  ];
+  const stringify = components.join(',');
+  const hash = xx.h64(stringify, 0);
+  return hash.toString(16);
 }
 
 function normalized(category: string, item: AuctionItem): AuctionItemScheme {
@@ -43,25 +42,25 @@ function normalized(category: string, item: AuctionItem): AuctionItemScheme {
     id: createItemHash(item),
     item_category: category,
     ...item,
-  }
+  };
 }
 
 export function getItems(category: string): AuctionItemScheme[] {
   if (!db.has(category)) {
-    db.set(category, new Map())
+    db.set(category, new Map());
   }
   return [...db.get(category).values()].toSorted((a, b) => {
     return b.auction_price_per_unit - a.auction_price_per_unit
-  })
+  });
 }
 
 export function setItems(category: string, items: AuctionItem[]) {
-  const map = new Map()
-  const normalizedItems = items.map((t) => normalized(category, t))
+  const map = new Map();
+  const normalizedItems = items.map((t) => normalized(category, t));
   for (const item of normalizedItems) {
-    map.set(item.id, item)
+    map.set(item.id, item);
   }
-  db.delete(category)
-  db.set(category, map)
-  sendAuctionUpdateSignal(category)
+  db.delete(category);
+  db.set(category, map);
+  sendAuctionUpdateSignal(category);
 }

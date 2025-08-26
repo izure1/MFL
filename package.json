@@ -48,7 +48,8 @@
     "fs-extra": "^11.3.0",
     "ts-node": "^10.9.2",
     "typescript": "~5.9.2",
-    "vite": "^5.3.3"
+    "vite": "^5.3.3",
+    "@types/better-sqlite3": "^7.6.11"
   },
   "keywords": [
     "mabinogi",
@@ -59,6 +60,7 @@
   "author": "izure <admin@izure.org>",
   "license": "MIT",
   "dependencies": {
+    "better-sqlite3": "^11.1.2",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@fontsource/roboto": "^5.0.13",
@@ -74,7 +76,6 @@
     "get-folder-size": "^5.0.0",
     "hookall": "^2.1.2",
     "is-elevated": "^4.0.0",
-    "klaf.js": "^4.0.1-beta.0",
     "node-screenshots": "^0.2.1",
     "node-win-pcap": "^0.0.10",
     "normalize-path": "^3.0.0",
