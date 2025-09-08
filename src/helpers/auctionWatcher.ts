@@ -8,7 +8,7 @@ import { getFromCategory as getWatchesFromCategory } from '../db/auctionWatch.js
 import { getItems } from '../db/auctionCache.js'
 import { addInspectQueue, changeItemInspectStage } from '../db/auctionSubscribe.js'
 import { handle as fetchAuctionItems } from '../ipc/auction/fetch.js'
-import { spawnWorker } from '../utils/worker.js'
+import { spawnPreserveWorker } from '../utils/worker.js'
 import { createRepeat, delay } from '../utils/timer.js'
 import { createXMLString } from '../utils/xml.js'
 import { handle as mainToRenderer } from '../ipc/helpers/mainToRenderer.js'
@@ -20,26 +20,30 @@ interface AuctionWatcherEvents {
 }
 
 export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
-  static readonly FetchInterval = 1000 * 60 * 10 // 10minutes
-  static readonly ParsingDelay = 50
-  static readonly ParsingDelayPerEA = 2500
+  static readonly FetchInterval = 1000 * 60 * 3 // 3minutes
+  static readonly FetchingDelayPerPage = 100
 
   private readonly _interval: number
-  private readonly _parsingDelay: number
-  private readonly _parsingDelayPerEA: number 
+  private readonly _fetchDelayPerPage: number
   private _running: boolean
+  private _fetching: boolean
   private _repeat: ReturnType<typeof createRepeat>
   private _cancelRepeat: (() => void)|null
+  private _parsingWorker: ReturnType<typeof spawnPreserveWorker<FilterWorkerParameter, AuctionItemScheme[]>>
   private _notification: Notification
 
-  constructor(interval: number, parsingDelay: number, parsingDelayPerEA: number) {
+  constructor(interval: number, fetchDelayPerPage: number) {
     super()
     this._interval = interval
-    this._parsingDelay = parsingDelay
-    this._parsingDelayPerEA = parsingDelayPerEA
+    this._fetchDelayPerPage = fetchDelayPerPage
     this._running = false
+    this._fetching = false
     this._repeat = createRepeat()
     this._cancelRepeat = null
+    this._parsingWorker = spawnPreserveWorker(
+      new Worker(join(import.meta.dirname, './worker/auctionFilter.worker.js')),
+      'AuctionWatcher Filter Worker'
+    )
     this._notification = null
   }
 
@@ -51,12 +55,8 @@ export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
     return this._interval
   }
 
-  get parsingDelay() {
-    return this._parsingDelay
-  }
-
-  get parsingDelayPerEA() {
-    return this._parsingDelayPerEA
+  get fetchingDelayPerPage() {
+    return this._fetchDelayPerPage
   }
 
   private _createToastString({ title, body, actions }: {
@@ -103,28 +103,25 @@ export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
     const watches = await getWatchesFromCategory()
     const newAdded: AuctionWantedItemTuple[] = []
     for (const watchData of watches) {
-      await fetchAuctionItems(watchData.itemCategory)
-      const auctionItems = getItems(watchData.itemCategory)
-      const workerPath = join(import.meta.dirname, './worker/auctionFilter.worker.js')
-      const queue = []
-      let beforeIndex = auctionItems.length
-      while (auctionItems.length) {
-        beforeIndex -= this._parsingDelayPerEA
-        const buffer = auctionItems.splice(beforeIndex, this._parsingDelayPerEA)
-        const filteringTask = spawnWorker<FilterWorkerParameter, AuctionItemScheme[]>(
-          new Worker(workerPath),
-          {
-            auctionItems: buffer,
-            watchData
-          }
-        )
-        const [err, filteredItems] = await catchError(filteringTask)
-        if (err) {
-          throw err
-        }
-        queue.push(...filteredItems)
-        await delay(this._parsingDelay)
-      }
+      await fetchAuctionItems(watchData, this._fetchDelayPerPage)
+      const queue = getItems(watchData.itemCategory)
+      // const queue = []
+      // let beforeIndex = auctionItems.length
+      // while (auctionItems.length) {
+      //   beforeIndex -= this._itemCountPerParsing
+      //   const buffer = auctionItems.splice(beforeIndex, this._itemCountPerParsing)
+      //   const filteringTask = this._parsingWorker.request({
+      //     auctionItems: buffer,
+      //     watchData,
+      //   })
+      //   const [err, filteredItems] = await catchError(filteringTask)
+      //   if (err) {
+      //     throw err
+      //   }
+      //   queue.push(...filteredItems)
+      //   await delay(this._delayPerParsing)
+      // }
+      // queue.sort((a, b) => a.auction_price_per_unit - b.auction_price_per_unit)
       const pending = await addInspectQueue(watchData, queue)
       if (pending.length) {
         newAdded.push([watchData, pending])
@@ -182,29 +179,37 @@ export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
   }
 
   run(): void {
-    this.clear()
+    if (this._running) {
+      throw new Error('Already running')
+    }
     this._running = true
     this._cancelRepeat = this._repeat(async () => {
+      if (this._fetching) {
+        return
+      }
       const { auctionWatching } = await getConfig()
       if (!auctionWatching) {
         return
       }
+      this._fetching = true
       const newAddedTuples = await this.requestFindWantedItems()
       await this.alert(newAddedTuples)
+      this._fetching = false
     }, this._interval, true)
   }
 
-  clear(): void {
+  destroy(): void {
     if (this._cancelRepeat) {
       this._cancelRepeat()
       this._cancelRepeat = null
     }
+    this._parsingWorker.terminate()
     this._running = false
+    this._fetching = false
   }
 }
 
 export const auctionWatcher = new AuctionWatcher(
   AuctionWatcher.FetchInterval,
-  AuctionWatcher.ParsingDelay,
-  AuctionWatcher.ParsingDelayPerEA
+  AuctionWatcher.FetchingDelayPerPage,
 )

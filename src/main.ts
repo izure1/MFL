@@ -3,7 +3,6 @@ import type { IOEvent } from './types/index.js'
 import path from 'node:path'
 import { app, BrowserWindow, Menu, Tray, dialog, nativeImage, screen } from 'electron'
 import { updateElectronApp } from 'update-electron-app'
-import { fork } from 'node:child_process'
 
 import { handle as checkPermission } from './ipc/hardware/checkPermission.js'
 import { handle as limit } from './ipc/app/limit.js'
@@ -30,8 +29,8 @@ import { close as closeMacroDB } from './db/macro.js'
 import { getFilePathFromHomeDir } from './helpers/homedir.js'
 import { startup } from './helpers/startup.js'
 
-import { parseChat } from './ipc/socket/chat.js'
-import { NodeWinPcap } from 'node-win-pcap'
+// import { parseChat } from './ipc/socket/chat.js'
+// import { NodeWinPcap } from 'node-win-pcap'
 
 const iconImage = nativeImage.createFromDataURL(_iconImage)
 
@@ -326,6 +325,8 @@ async function createWindow() {
       mainWindow.show()
       mainToRenderer('auction-show-alerted')
     })
+
+    // 거대한 뿔피리 실시간 알림을 위한 작업
 
     // const workerPath = path.join(import.meta.dirname, './worker/chatCapture.worker.js')
     // const worker = fork(workerPath, [], {

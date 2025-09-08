@@ -45,13 +45,33 @@ function normalized(category: string, item: AuctionItem): AuctionItemScheme {
   };
 }
 
-export function getItems(category: string): AuctionItemScheme[] {
+export function getItems(category: string, ascSort?: keyof AuctionItemScheme): AuctionItemScheme[] {
   if (!db.has(category)) {
     db.set(category, new Map());
   }
-  return [...db.get(category).values()].toSorted((a, b) => {
-    return b.auction_price_per_unit - a.auction_price_per_unit
-  });
+  const allItemsInCategory = [...db.get(category).values()]
+  if (!ascSort) {
+    return allItemsInCategory
+  }
+  if (allItemsInCategory.length === 0) {
+    return []
+  }
+  switch (typeof allItemsInCategory[0][ascSort]) {
+    case 'undefined':
+      throw new Error(`Cannot sort by undefined property: ${String(ascSort)}`);
+    case 'string':
+      return allItemsInCategory.sort((a, b) => {
+        const aValue = (a[ascSort] ?? '') as string;
+        const bValue = (b[ascSort] ?? '') as string;
+        return aValue.localeCompare(bValue);
+      });
+    case 'number':
+      return allItemsInCategory.sort((a, b) => {
+        const aValue = (a[ascSort] ?? 0) as number;
+        const bValue = (b[ascSort] ?? 0) as number;
+        return aValue - bValue;
+      });
+  }
 }
 
 export function setItems(category: string, items: AuctionItem[]) {

@@ -7,11 +7,17 @@ import { handle as getMabinogiProcess } from '../../ipc/hardware/mabinogi.js'
 import { getConfig } from '../../db/config.js'
 import { createThrottling } from '../../utils/timer.js'
 import { catchError } from '../../utils/error.js'
-import { spawnWorker } from '../../utils/worker.js'
+import { spawnPreserveWorker } from '../../utils/worker.js'
 import { getLoggingDistDirectory } from '../../helpers/logger.js'
 
 let cancelCapture: ReturnType<ReturnType<typeof createThrottling>> = null
 let running = false
+
+const captureWorkerPath = join(import.meta.dirname, './worker/loggingCapture.worker.js')
+const captureWorker = spawnPreserveWorker<CaptureWorkerParameter, Error|void>(
+  new Worker(captureWorkerPath),
+  'Logging Capture Worker'
+)
 
 const CAPTURE_MIN_WIDTH = 1024
 const CAPTURE_MAX_WIDTH = 1280
@@ -35,17 +41,13 @@ async function loop() {
       const win = NodeWindow.all().find(getMabinogiWindow)
       if (!win) return
       if (!running) return
-      const workerPath = join(import.meta.dirname, './worker/loggingCapture.worker.js')
-      const loggingTask = spawnWorker<CaptureWorkerParameter, Error|void>(
-        new Worker(workerPath),
-        {
-          appName: 'Mabinogi',
-          directory: getLoggingDistDirectory(loggingDirectory),
-          minWidth: CAPTURE_MIN_WIDTH,
-          maxWidth: CAPTURE_MAX_WIDTH,
-          quality: CAPTURE_QUALITY,
-        }
-      )
+      const loggingTask = captureWorker.request({
+        appName: 'Mabinogi',
+        directory: getLoggingDistDirectory(loggingDirectory),
+        minWidth: CAPTURE_MIN_WIDTH,
+        maxWidth: CAPTURE_MAX_WIDTH,
+        quality: CAPTURE_QUALITY,
+      })
       const [err] = await catchError(loggingTask)
       if (err) {
         throw err

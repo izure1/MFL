@@ -90,6 +90,15 @@ export default function AboutButton() {
         ]
       },
       {
+        title: '패치 노트',
+        users: [
+          {
+            text: 'https://mfl.izure.org/release',
+            url: 'https://mfl.izure.org/release'
+          }
+        ]
+      },
+      {
         title: '개발자 홈페이지',
         users: [
           {
@@ -97,7 +106,7 @@ export default function AboutButton() {
             url: 'https://izure.org'
           }
         ]
-      }
+      },
     ],
   ]
 

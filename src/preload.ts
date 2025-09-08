@@ -78,7 +78,7 @@ export const context = {
     remove: (patterns: string|string[]): Promise<string[]> => ipcRenderer.invoke('fs-remove', patterns),
   },
   auction: {
-    fetch: (category: string): Promise<AuctionResponse> => ipcRenderer.invoke('auction-fetch', category),
+    fetch: (watchData: AuctionItemWatchScheme, fetchDelayPerPage?: number, ascSort?: keyof AuctionItemScheme): Promise<AuctionResponse> => ipcRenderer.invoke('auction-fetch', watchData, fetchDelayPerPage, ascSort),
     watchGetFromCategory: (category?: string): Promise<AuctionItemWatchScheme[]> => ipcRenderer.invoke('auction-watch-get-category', category),
     watchSet: (watchData: AuctionItemWatchScheme): Promise<void> => ipcRenderer.invoke('auction-watch-set', watchData),
     watchRemove: (watchData: AuctionItemWatchScheme): Promise<void> => ipcRenderer.invoke('auction-watch-remove', watchData),

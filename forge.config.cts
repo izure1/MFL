@@ -98,6 +98,10 @@ const config: ForgeConfig = {
           config: 'vite.worker.config.ts'
         },
         {
+          entry: 'src/worker/auctionFetchWithFilter.worker.ts',
+          config: 'vite.worker.config.ts'
+        },
+        {
           entry: 'src/worker/loggingCapture.worker.ts',
           config: 'vite.worker.config.ts'
         },

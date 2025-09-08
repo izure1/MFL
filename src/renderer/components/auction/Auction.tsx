@@ -47,7 +47,7 @@ export default function Auction() {
       return
     }
     setPending(true)
-    const res = await ipc.auction.fetch(category)
+    const res = await ipc.auction.fetch(watchData, 0, 'auction_price_per_unit')
     setPending(false)
     setSearchResult(res)
   }

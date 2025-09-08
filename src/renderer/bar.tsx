@@ -7,7 +7,7 @@ import AboutButton from './components/AboutButton.js'
 import MacroButton from './components/MacroButton.js'
 import CronJobButton from './components/CronJobButton.js'
 import AuctionButton from './components/AuctionButton.js'
-import AuctionDistributorButton from './components/AuctionDistributorButton.js'
+import MabiboogiButton from './components/MabiboogiButton.js'
 import OverlayButton from './components/OverlayButton.js'
 
 import { ipc } from './ipc.js'
@@ -62,7 +62,7 @@ export default function Titlebar() {
             <HomeButton />
             {/* <CronJobButton /> */}
             <AuctionButton />
-            <AuctionDistributorButton />
+            <MabiboogiButton />
             <OverlayButton />
             <AboutButton />
           </Box>

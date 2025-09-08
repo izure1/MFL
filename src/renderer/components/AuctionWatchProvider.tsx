@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react'
 import { AuctionItemWatchScheme, AuctionWantedItemScheme } from '../../types/index.js'
-import AuctionWatchEditor from './/auction/AuctionWatchEditor.js'
+import AuctionWatchEditor from './auction/AuctionWatchEditor.js'
 import { ipc } from '../ipc.js'
 
 export const AuctionWatchContext = createContext<{

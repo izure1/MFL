@@ -50,6 +50,10 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find package...
 
 원인 파악 중에 있습니다.
 
+### 설치파일 실행 후 아무런 반응도 없는 오류
+
+백신 프로그램의 오작동으로 추정됩니다. 백신 프로그램을 끄고 재실행해보세요.
+
 ## 직접 빌드하고 싶다면?
 
 1. 소스코드를 다운받으세요.
@@ -65,7 +69,7 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find package...
 1. [Github 토큰 생성 방법](https://www.electronjs.org/docs/latest/tutorial/tutorial-publishing-updating)을 참고하여 **Github Token** 생성하세요.
 1. 다운받은 소스코드 디렉토리 루트에 **.env** 파일을 생성합니다.  
 파일에 `GITHUB_TOKEN=your-token`을 기입하세요.  
-1. 배포를 위해 `forge.config.ts` 파일을 수정합니다.  
+1. 배포를 위해 `forge.config.cts` 파일을 수정합니다.  
 **repository.owner** 값을 당신의 Github 아이디, **repository.name** 값을 저장소 이름으로 수정하세요.
 1. `npm run publish` 명령어를 입력하여 배포하세요.
 1. 저장소의 Release 페이지에서, draft된 버전을 실제로 배포하십시오.
