@@ -14,7 +14,7 @@ export function spawnWorker<T, R>(worker: Worker, data: T): Promise<R> {
   })
 }
 
-class PreserveWorker<T, R> {
+class PreserveWorker {
   private _worker: Worker
   private _requesting: boolean
   readonly name: string
@@ -34,7 +34,7 @@ class PreserveWorker<T, R> {
     worker.setMaxListeners(0)
   }
 
-  request(data: T): Promise<R> {
+  request<T, R>(data: T): Promise<R> {
     this._requesting = true
     return new Promise((resolve, reject) => {
       const clear = () => {
@@ -69,6 +69,6 @@ class PreserveWorker<T, R> {
   }
 }
 
-export function spawnPreserveWorker<T, R>(worker: Worker, name = ''): PreserveWorker<T, R> {
-  return new PreserveWorker<T, R>(worker, name)
+export function spawnPreserveWorker(worker: Worker, name = ''): PreserveWorker {
+  return new PreserveWorker(worker, name)
 }

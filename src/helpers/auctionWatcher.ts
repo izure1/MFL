@@ -1,19 +1,14 @@
-import type { WorkerParameter as FilterWorkerParameter } from '../worker/auctionFilter.worker.js'
 import { Notification } from 'electron'
 import { join } from 'node:path'
 import { EventEmitter } from 'node:events'
-import { Worker } from 'node:worker_threads'
 import { getConfig } from '../db/config.js'
 import { getFromCategory as getWatchesFromCategory } from '../db/auctionWatch.js'
 import { getItems } from '../db/auctionCache.js'
 import { addInspectQueue, changeItemInspectStage } from '../db/auctionSubscribe.js'
-import { handle as fetchAuctionItems } from '../ipc/auction/fetch.js'
-import { spawnPreserveWorker } from '../utils/worker.js'
-import { createRepeat, delay } from '../utils/timer.js'
+import { createRepeat } from '../utils/timer.js'
 import { createXMLString } from '../utils/xml.js'
 import { handle as mainToRenderer } from '../ipc/helpers/mainToRenderer.js'
-import { AuctionItemScheme, AuctionWantedItemInspectStage, AuctionWantedItemTuple } from '../types/index.js'
-import { catchError } from '../utils/error.js'
+import { AuctionWantedItemInspectStage, AuctionWantedItemTuple } from '../types/index.js'
 
 interface AuctionWatcherEvents {
   'notification-click': [AuctionWantedItemTuple[]]
@@ -29,7 +24,6 @@ export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
   private _fetching: boolean
   private _repeat: ReturnType<typeof createRepeat>
   private _cancelRepeat: (() => void)|null
-  private _parsingWorker: ReturnType<typeof spawnPreserveWorker<FilterWorkerParameter, AuctionItemScheme[]>>
   private _notification: Notification
 
   constructor(interval: number, fetchDelayPerPage: number) {
@@ -40,10 +34,6 @@ export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
     this._fetching = false
     this._repeat = createRepeat()
     this._cancelRepeat = null
-    this._parsingWorker = spawnPreserveWorker(
-      new Worker(join(import.meta.dirname, './worker/auctionFilter.worker.js')),
-      'AuctionWatcher Filter Worker'
-    )
     this._notification = null
   }
 
@@ -103,25 +93,7 @@ export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
     const watches = await getWatchesFromCategory()
     const newAdded: AuctionWantedItemTuple[] = []
     for (const watchData of watches) {
-      await fetchAuctionItems(watchData, this._fetchDelayPerPage)
-      const queue = getItems(watchData.itemCategory)
-      // const queue = []
-      // let beforeIndex = auctionItems.length
-      // while (auctionItems.length) {
-      //   beforeIndex -= this._itemCountPerParsing
-      //   const buffer = auctionItems.splice(beforeIndex, this._itemCountPerParsing)
-      //   const filteringTask = this._parsingWorker.request({
-      //     auctionItems: buffer,
-      //     watchData,
-      //   })
-      //   const [err, filteredItems] = await catchError(filteringTask)
-      //   if (err) {
-      //     throw err
-      //   }
-      //   queue.push(...filteredItems)
-      //   await delay(this._delayPerParsing)
-      // }
-      // queue.sort((a, b) => a.auction_price_per_unit - b.auction_price_per_unit)
+      const queue = await getItems(watchData)
       const pending = await addInspectQueue(watchData, queue)
       if (pending.length) {
         newAdded.push([watchData, pending])
@@ -203,7 +175,6 @@ export class AuctionWatcher extends EventEmitter<AuctionWatcherEvents> {
       this._cancelRepeat()
       this._cancelRepeat = null
     }
-    this._parsingWorker.terminate()
     this._running = false
     this._fetching = false
   }

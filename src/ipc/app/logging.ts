@@ -14,7 +14,7 @@ let cancelCapture: ReturnType<ReturnType<typeof createThrottling>> = null
 let running = false
 
 const captureWorkerPath = join(import.meta.dirname, './worker/loggingCapture.worker.js')
-const captureWorker = spawnPreserveWorker<CaptureWorkerParameter, Error|void>(
+const captureWorker = spawnPreserveWorker(
   new Worker(captureWorkerPath),
   'Logging Capture Worker'
 )
@@ -41,7 +41,7 @@ async function loop() {
       const win = NodeWindow.all().find(getMabinogiWindow)
       if (!win) return
       if (!running) return
-      const loggingTask = captureWorker.request({
+      const loggingTask = captureWorker.request<CaptureWorkerParameter, Error|void>({
         appName: 'Mabinogi',
         directory: getLoggingDistDirectory(loggingDirectory),
         minWidth: CAPTURE_MIN_WIDTH,

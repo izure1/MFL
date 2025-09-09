@@ -1,20 +1,35 @@
-import type { AuctionItem, AuctionItemScheme } from '../types/index.js';
-import xx from 'xxhashjs';
-import { sendAuctionUpdateSignal } from '../ipc/helpers/sendAuctionUpdateSignal.js';
+import type { AuctionItem, AuctionItemScheme, AuctionItemWatchScheme } from '../types/index.js'
+import type { WorkerParameter as AuctionFilterWorkerParameter } from '../worker/auctionFilter.worker.js'
+import { join } from 'node:path'
+import { Worker } from 'node:worker_threads'
+import xx from 'xxhashjs'
+import { sendAuctionUpdateSignal } from '../ipc/helpers/sendAuctionUpdateSignal.js'
+import { createFetcher } from '../helpers/auction.js'
+import { spawnPreserveWorker } from '../utils/worker.js'
+import AuctionConfig from '../config/auction/api.json' with { type: 'json' }
+import { getConfig } from './config.js'
 
-const db = new Map<string, Map<string, AuctionItemScheme>>();
+const workerPath = join(import.meta.dirname, './worker/auctionFilter.worker.js')
+const worker = spawnPreserveWorker(
+  new Worker(workerPath),
+  'Auction Filter Worker'
+)
+
+const db = new Map<string, Map<string, AuctionItemScheme>>()
+const latestFetch = new Map<string, number>()
+const maximumCacheAge = 3 * 60 * 1000 // 3 minutes
 
 function createItemHash(item: AuctionItem): string {
   const {
-    item_count,
     item_display_name,
     item_option,
-    date_auction_expire
-  } = item;
-  const components = [
     date_auction_expire,
-    item_count,
+    auction_price_per_unit,
+  } = item
+  const components = [
     item_display_name,
+    date_auction_expire,
+    auction_price_per_unit,
     ...(item_option ?? []).flatMap((option) => {
       const {
         option_type,
@@ -29,12 +44,12 @@ function createItemHash(item: AuctionItem): string {
         option_value,
         option_value2,
         option_desc
-      ].join(',');
+      ].join(',')
     })
-  ];
-  const stringify = components.join(',');
-  const hash = xx.h64(stringify, 0);
-  return hash.toString(16);
+  ]
+  const stringify = components.join(',')
+  const hash = xx.h64(stringify, 0)
+  return hash.toString(16)
 }
 
 function normalized(category: string, item: AuctionItem): AuctionItemScheme {
@@ -42,45 +57,73 @@ function normalized(category: string, item: AuctionItem): AuctionItemScheme {
     id: createItemHash(item),
     item_category: category,
     ...item,
-  };
+  }
 }
 
-export function getItems(category: string, ascSort?: keyof AuctionItemScheme): AuctionItemScheme[] {
-  if (!db.has(category)) {
-    db.set(category, new Map());
+export async function getItems(watchData: AuctionItemWatchScheme, ascSort?: keyof AuctionItemScheme): Promise<AuctionItemScheme[]> {
+  if (!db.has(watchData.itemCategory)) {
+    db.set(watchData.itemCategory, new Map())
   }
-  const allItemsInCategory = [...db.get(category).values()]
-  if (!ascSort) {
-    return allItemsInCategory
-  }
-  if (allItemsInCategory.length === 0) {
+
+  // Remove old cached items and re-fetch
+  await fetchItems(watchData)
+
+  const table = db.get(watchData.itemCategory)
+  const allItemsInCategory = [...table.values()]
+  const filteredItems = await worker.request<AuctionFilterWorkerParameter, AuctionItemScheme[]>({
+    watchData,
+    auctionItems: allItemsInCategory,
+  })
+  if (filteredItems.length === 0) {
     return []
   }
-  switch (typeof allItemsInCategory[0][ascSort]) {
+  if (!ascSort) {
+    return filteredItems
+  }
+  switch (typeof filteredItems[0][ascSort]) {
     case 'undefined':
-      throw new Error(`Cannot sort by undefined property: ${String(ascSort)}`);
+      throw new Error(`Cannot sort by undefined property: ${String(ascSort)}`)
     case 'string':
-      return allItemsInCategory.sort((a, b) => {
-        const aValue = (a[ascSort] ?? '') as string;
-        const bValue = (b[ascSort] ?? '') as string;
-        return aValue.localeCompare(bValue);
-      });
+      return filteredItems.sort((a, b) => {
+        const aValue = (a[ascSort] ?? '') as string
+        const bValue = (b[ascSort] ?? '') as string
+        return aValue.localeCompare(bValue)
+      })
     case 'number':
-      return allItemsInCategory.sort((a, b) => {
-        const aValue = (a[ascSort] ?? 0) as number;
-        const bValue = (b[ascSort] ?? 0) as number;
-        return aValue - bValue;
-      });
+      return filteredItems.sort((a, b) => {
+        const aValue = (a[ascSort] ?? 0) as number
+        const bValue = (b[ascSort] ?? 0) as number
+        return aValue - bValue
+      })
   }
 }
 
-export function setItems(category: string, items: AuctionItem[]) {
-  const map = new Map();
-  const normalizedItems = items.map((t) => normalized(category, t));
-  for (const item of normalizedItems) {
-    map.set(item.id, item);
+async function fetchItems(watchData: AuctionItemWatchScheme): Promise<void> {
+  const now = Date.now()
+  const isFetchedBefore = latestFetch.has(watchData.itemCategory)
+  const lastFetch = latestFetch.get(watchData.itemCategory) ?? 0
+  if (isFetchedBefore && now - lastFetch < maximumCacheAge) {
+    return
   }
-  db.delete(category);
-  db.set(category, map);
-  sendAuctionUpdateSignal(category);
+  latestFetch.set(watchData.itemCategory, now)
+  
+  db.delete(watchData.itemCategory)
+  db.set(watchData.itemCategory, new Map())
+
+  const table = db.get(watchData.itemCategory)
+  const { auction_path, domain } = AuctionConfig
+  const { apiKey } = await getConfig()
+
+  for await (const res of createFetcher(auction_path, domain, apiKey, watchData)) {
+    if (res.error) {
+      throw res.error
+    }
+    const items = res.auction_item ?? []
+    const normalizedItems = items.map((t) => normalized(watchData.itemCategory, t))
+    for (const item of normalizedItems) {
+      table.set(item.id, item)
+    }
+  }
+
+  sendAuctionUpdateSignal(watchData)
 }

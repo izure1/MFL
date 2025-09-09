@@ -1,6 +1,5 @@
 import { AuctionItemOptionResolver, AuctionItemScheme, AuctionItemWatchScheme, AuctionResponse } from '../types/index.js'
 import { AuctionItemOptionResolvers } from '../config/auction/option.js'
-import { delay } from '../utils/timer.js'
 
 export const optionResolvers = new Map<string, AuctionItemOptionResolver>()
 for (const resolver of AuctionItemOptionResolvers) {
@@ -50,13 +49,12 @@ export function getFilteredAuctionItems(
   return filteredItems
 }
 
-export async function fetchItems(
-  auctionPath: string,
+export async function *createFetcher(
+  auction_path: string,
   domain: string,
   apiKey: string,
-  watchData: AuctionItemWatchScheme,
-  delayPerPage: number
-): Promise<AuctionResponse> {
+  watchData: AuctionItemWatchScheme
+): AsyncGenerator<AuctionResponse, void, unknown> {
   const validates = []
   for (const option of watchData.itemOptions) {
     if (!optionResolvers.has(option.resolver_id)) {
@@ -68,11 +66,10 @@ export async function fetchItems(
     validates.push(validate as (item: AuctionItemScheme) => boolean)
   }
 
-  const url = new URL(auctionPath, domain)
+  const url = new URL(auction_path, domain)
   url.searchParams.append('auction_item_category', watchData.itemCategory)
 
   let next_cursor = ''
-  const auction_item = []
   do {
     if (next_cursor) {
       url.searchParams.delete('cursor')
@@ -85,27 +82,27 @@ export async function fetchItems(
     })
     const data = await res.json() as AuctionResponse
     if (data.error) {
-      return data
+      yield data
     }
+    const items = []
     for (const item of data.auction_item) {
-      let valid = true
-      for (const validate of validates) {
-        if (!validate(item)) {
-          valid = false
-          break
-        }
-      }
-      if (!valid) {
-        continue
-      }
-      auction_item.push(item)
+      // let valid = true
+      // for (const validate of validates) {
+      //   if (!validate(item)) {
+      //     valid = false
+      //     break
+      //   }
+      // }
+      // if (!valid) {
+      //   continue
+      // }
+      items.push(item)
     }
     next_cursor = data.next_cursor
-    await delay(delayPerPage)
+    yield {
+      auction_item: items,
+      next_cursor,
+    }
   } while (!!next_cursor)
-
-  return {
-    auction_item,
-    next_cursor: '',
-  }
 }
+

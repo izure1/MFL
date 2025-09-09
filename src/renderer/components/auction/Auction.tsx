@@ -7,7 +7,6 @@ import { AuctionWatchContext } from '../AuctionWatchProvider.js'
 import MabinogiAuctionWatchSubscribe from './AuctionWatchSubscribe.js'
 import { ipc } from '../../ipc.js'
 import { AuctionResponse } from '../../../types/index.js'
-import { getFilteredAuctionItems } from '../../../helpers/auction.js'
 import { ConfigContext } from '../ConfigProvider.js'
 
 export default function Auction() {
@@ -24,10 +23,7 @@ export default function Auction() {
     if (!searchResult || !searchResult.auction_item) {
       return []
     }
-    if (!watchData) {
-      return searchResult.auction_item
-    }
-    return getFilteredAuctionItems(searchResult.auction_item, watchData)
+    return searchResult.auction_item
   }, [searchResult, watchData])
 
   const searchResultError = useMemo(() => {
@@ -47,14 +43,14 @@ export default function Auction() {
       return
     }
     setPending(true)
-    const res = await ipc.auction.fetch(watchData, 0, 'auction_price_per_unit')
+    const res = await ipc.auction.fetch(watchData, 'auction_price_per_unit')
     setPending(false)
     setSearchResult(res)
   }
 
   useEffect(() => {
     search()
-  }, [searchable, category])
+  }, [searchable, category, JSON.stringify(watchData)])
 
   return (
     <>
