@@ -17,7 +17,7 @@ let processSubscriber: ReturnType<typeof createProcessSubscriber> = null
 let eventAttached = false
 
 const JOB_LOOP_INTERVAL = 100
-const JOB_IGNORE_TIME = 1000 * 60 // 1 minute
+const JOB_IGNORE_TIME = 1000 * 30 // 30 seconds
 
 let latestDeactivateTime = 0
 
