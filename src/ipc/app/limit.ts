@@ -17,6 +17,9 @@ let processSubscriber: ReturnType<typeof createProcessSubscriber> = null
 let eventAttached = false
 
 const JOB_LOOP_INTERVAL = 100
+const JOB_IGNORE_TIME = 1000 * 60 // 1 minute
+
+let latestDeactivateTime = 0
 
 function stopLoop() {
   if (!loopId) {
@@ -68,7 +71,10 @@ async function loop(pid: number) {
     Math.floor(step * limit / 100) >
     Math.floor((step - 1) * limit / 100)
   ) {
-    sleep(pid)
+    const now = Date.now()
+    if (now - latestDeactivateTime > JOB_IGNORE_TIME) {
+      sleep(pid)
+    }
   }
   else {
     awake(pid)
@@ -119,6 +125,7 @@ export async function handle(active: boolean) {
       rendererLog('Mabinogi activated.')
     })
     processSubscriber.onDeactivate(() => {
+      latestDeactivateTime = Date.now()
       startLoop(pid)
       rendererLog('Mabinogi deactivated.')
     })
