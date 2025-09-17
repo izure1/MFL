@@ -26,11 +26,8 @@ import { close as closeAuctionSubscribeDB } from './db/auctionSubscribe.js'
 import { close as closeAuctionWatchDB } from './db/auctionWatch.js'
 import { close as closeConfigDB } from './db/config.js'
 import { close as closeMacroDB } from './db/macro.js'
-import { getFilePathFromHomeDir } from './helpers/homedir.js'
+import { getFilePathFromHomeDir, ensureHomeDir } from './helpers/homedir.js'
 import { startup } from './helpers/startup.js'
-
-// import { parseChat } from './ipc/socket/chat.js'
-// import { NodeWinPcap } from 'node-win-pcap'
 
 const iconImage = nativeImage.createFromDataURL(_iconImage)
 
@@ -390,10 +387,14 @@ if (!startup(onStartup)) {
      * START ELECTRON MAIN PROCESS
      * 
      */
+    ensureHomeDir('./Data')
+    ensureHomeDir('./Logs/Crashes')
+
     app.setAppUserModelId('org.izure.mfl')
 
     crashReport.setPath(getFilePathFromHomeDir('./Logs/Crashes'))
     crashReport.start()
+
 
     if (await isElevated()) {
       createWindow()

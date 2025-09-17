@@ -12,7 +12,7 @@ export function getHomeDir(): string {
 export function ensureHomeDir(relativePath = ''): string {
   const fullPath = join(getHomeDir(), relativePath)
   mkdirSync(fullPath, { recursive: true })
-  return fullPath
+  return normalize(fullPath)
 }
 
 export function getFilePathFromHomeDir(path: string): string {
