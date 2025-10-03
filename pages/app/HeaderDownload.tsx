@@ -37,6 +37,7 @@ const HeaderDownload: React.FC<HeaderDownloadProps> = (props) => {
         sx={{
           py: 1.5
         }}
+        disabled={true}
       >
         {tag_name} 다운로드
       </Button>
