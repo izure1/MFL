@@ -1,10 +1,13 @@
 # !! 비인가 주의사항 !!
 
-**현재 마탕화면 도우미는 비인가 프로그램으로 등록된 것으로 추측되는 이슈가 있습니다. 관련 내용으로 문의가 진행 중이고, 그 이전까지는 사용을 자제해주시길 바랍니다.**
+**현재 마탕화면 도우미는 2025-10-02일 기준, 비인가 프로그램으로 등록된 것으로 추측되는 이슈가 있습니다.  
+관련 내용으로 문의가 진행 중이고, 그 이전까지는 사용을 자제해주시길 바랍니다.**
 
-https://arca.live/b/mabi/149536452?mode=best&p=1
-
-https://arca.live/b/mabi/149539649?mode=best&p=1
+|관련 링크|
+|---|
+|https://mabinogi.nexon.com/page/news/notice_view.asp?id=4893084|
+|https://arca.live/b/mabi/149536452?mode=best&p=1|
+|https://arca.live/b/mabi/149539649?mode=best&p=1|
 
 
 # 마탕화면 도우미 - MFL
@@ -82,3 +85,4 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find package...
 **repository.owner** 값을 당신의 Github 아이디, **repository.name** 값을 저장소 이름으로 수정하세요.
 1. `npm run publish` 명령어를 입력하여 배포하세요.
 1. 저장소의 Release 페이지에서, draft된 버전을 실제로 배포하십시오.
+
