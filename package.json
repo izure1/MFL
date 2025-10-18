@@ -77,7 +77,6 @@
     "hookall": "^2.1.2",
     "is-elevated": "^4.0.0",
     "node-screenshots": "^0.2.1",
-    "node-win-pcap": "^0.0.11",
     "normalize-path": "^3.0.0",
     "ntsuspend": "^1.0.2",
     "path-browserify": "^1.0.1",

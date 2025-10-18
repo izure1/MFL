@@ -9,7 +9,6 @@ import { handle as limit } from './ipc/app/limit.js'
 import { handle as findMabinogiProcess } from './ipc/hardware/mabinogi.js'
 import { createSubscriber as createProcessSubscriber } from './helpers/processObserver.js'
 import { createSubscriber as createIOSubscriber } from './helpers/ioObserver.js'
-// import { socketObserverManager } from './helpers/socketObserverManager.js'
 import { auctionWatcher } from './helpers/auctionWatcher.js'
 import { stop as stopMacroRunner } from './helpers/macroRunner.js'
 import { stop as stopLogger } from './ipc/app/logging.js'
@@ -322,32 +321,6 @@ async function createWindow() {
       mainWindow.show()
       mainToRenderer('auction-show-alerted')
     })
-
-    // 거대한 뿔피리 실시간 알림을 위한 작업
-
-    // const workerPath = path.join(import.meta.dirname, './worker/chatCapture.worker.js')
-    // const worker = fork(workerPath, [], {
-    //   execPath: process.execPath, // Electron의 Node.js 사용
-    //   silent: false
-    // })
-
-    // worker.on('message', (message) => {
-    //   console.log('Message from worker:', message)
-    // })
-
-    // console.log(process.versions)
-    // socketObserverManager.getObserver('Chat').on('packet', (packet) => {
-    //   // const chat = parseChat(packet.data)
-    //   console.log(packet)
-    //   // console.log(chat)
-    //   // mainToRenderer('log', packet)
-    // }).on('error', (error) => {
-    //   // console.error('Chat observer error:', error)
-    //   mainToRenderer('log', {
-    //     type: 'error',
-    //     message: `Chat observer error: ${error.message}`,
-    //   })
-    // }).start()
     
     // Show application to start
     mainWindow.show()
